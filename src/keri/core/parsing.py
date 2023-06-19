@@ -704,7 +704,7 @@ class Parser:
 
 
         """
-        serdery = serdering.Serdery()
+        serdery = serdering.Serdery(version=kering.Version)
 
         if ims is None:
             ims = self.ims
@@ -985,10 +985,13 @@ class Parser:
                                              "attachment group of size={}.".format(pags))
             raise  # no pipeline group so can't preflush, must flush stream
 
-        if sadder.proto == Protos.keri:
-            serder = Serder(sad=sadder)
+        if isinstance(serder, serdering.SerderKERI):
+            ilk = serder.ilk  # dispatch abased on ilk
 
-            ilk = serder.ked["t"]  # dispatch abased on ilk
+        #if sadder.proto == Protos.keri:
+            #serder = Serder(sad=sadder)
+
+            #ilk = serder.ked["t"]  # dispatch abased on ilk
 
             if ilk in [Ilks.icp, Ilks.rot, Ilks.ixn, Ilks.dip, Ilks.drt]:  # event msg
                 firner, dater = frcs[-1] if frcs else (None, None)  # use last one if more than one
@@ -1011,9 +1014,9 @@ class Parser:
                     if trqs:
                         kvy.processReceiptQuadruples(serder, trqs, firner=firner)
 
-                except AttributeError as e:
+                except AttributeError as ex:
                     raise kering.ValidationError("No kevery to process so dropped msg"
-                                                 "= {}.".format(serder.pretty()))
+                                                 "= {}.".format(serder.pretty())) from ex
 
             elif ilk in [Ilks.rct]:  # event receipt msg (nontransferable)
                 if not (cigars or wigers or tsgs):
@@ -1120,21 +1123,29 @@ class Parser:
                 raise kering.ValidationError("Unexpected message ilk = {} for evt ="
                                              " {}.".format(ilk, serder.pretty()))
 
-        elif sadder.proto == Protos.acdc:
-            creder = Creder(sad=sadder)
-            args = dict(creder=creder)
+        elif isinstance(serder, serdering.SerderACDC):
+            ilk = serder.ilk  # dispatch based on ilk
 
-            if sadtsgs:
-                args["sadsigers"] = sadtsgs
+        #elif sadder.proto == Protos.acdc:
+            if ilk is None:  # default for ACDC
+                #creder = Creder(sad=sadder)
 
-            if sadcigs:
-                args["sadcigars"] = sadcigs
+                args = dict(creder=serder)  # dict(creder=creder)
 
-            try:
-                vry.processCredential(**args)
-            except AttributeError as e:
-                raise kering.ValidationError("No verifier to process so dropped credential"
-                                             "= {}.".format(creder.pretty()))
+                if sadtsgs:
+                    args["sadsigers"] = sadtsgs
+
+                if sadcigs:
+                    args["sadcigars"] = sadcigs
+
+                try:
+                    vry.processCredential(**args)
+                except AttributeError as e:
+                    raise kering.ValidationError("No verifier to process so dropped credential"
+                                                 "= {}.".format(serder.pretty()))
+            else:
+                raise kering.ValidationError("Unexpected message ilk = {} for evt ="
+                                             " {}.".format(ilk, serder.pretty()))
 
         else:
             raise kering.ValidationError("Unexpected protocol type = {} for event message ="

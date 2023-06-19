@@ -222,7 +222,7 @@ class Serder:
                                 k=[], nt='0', n=[], bt='0', b=[], c=[], a=[])),
                         Ilks.rot: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
-                                kt='0',k=[], nt='0', n=[], bt='0', b=[], br=[],
+                                kt='0',k=[], nt='0', n=[], bt='0', br=[],
                                 ba=[], a=[])),
                         Ilks.ixn: Fieldage({Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='', a=[])),
@@ -233,7 +233,7 @@ class Serder:
                                 di='')),
                         Ilks.drt: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
-                                kt='0',k=[], nt='0', n=[], bt='0', b=[], br=[],
+                                kt='0',k=[], nt='0', n=[], bt='0', br=[],
                                 ba=[], a=[], di='')),
                         Ilks.rct: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0')),
@@ -278,7 +278,7 @@ class Serder:
                                 k=[], nt='0', n=[], bt='0', b=[], c=[], a=[])),
                         Ilks.rot: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
-                                kt='0',k=[], nt='0', n=[], bt='0', b=[], br=[],
+                                kt='0',k=[], nt='0', n=[], bt='0', br=[],
                                 ba=[], a=[])),
                         Ilks.ixn: Fieldage({Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='', a=[])),
@@ -289,7 +289,7 @@ class Serder:
                                 di='')),
                         Ilks.drt: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
-                                kt='0',k=[], nt='0', n=[], bt='0', b=[], br=[],
+                                kt='0',k=[], nt='0', n=[], bt='0', br=[],
                                 ba=[], a=[], di='')),
                         Ilks.rct: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0')),
@@ -1029,6 +1029,15 @@ class Serder:
         """
         return self._vrsn
 
+    @property
+    def version(self):
+        """version property getter alias of .vrsn
+
+        Returns:
+            version (Versionage): instance of protocol version for this Serder
+        """
+        return self.vrsn
+
 
     @property
     def size(self):
@@ -1148,8 +1157,8 @@ class SerderKERI(Serder):
 
     @property
     def sner(self):
-        """
-        sner (Number of sequence number) property getter
+        """Number instance of sequence number, sner property getter
+
         Returns:
             (Number): of ._sad["s"] hex number str converted
         """
@@ -1159,8 +1168,7 @@ class SerderKERI(Serder):
 
     @property
     def sn(self):
-        """
-        sn (sequence number) property getter
+        """Sequence number, sn property getter
         Returns:
             sn (int): of .sner.num from .sad["s"]
         """
@@ -1168,8 +1176,8 @@ class SerderKERI(Serder):
 
     @property
     def seals(self):
-        """
-        seals property getter
+        """Seals property getter
+
         Returns:
             seals (list): from ._sad["a"]
         """
@@ -1179,8 +1187,8 @@ class SerderKERI(Serder):
 
     @property
     def traits(self):
-        """
-        traits property getter  (config traits)
+        """Traits list property getter  (config traits)
+
         Returns:
             traits (list): from ._sad["c"]
         """
@@ -1190,8 +1198,11 @@ class SerderKERI(Serder):
     #Properties of estive Serders ilks in  (icp, rot, dip, drt)
     @property
     def tholder(self):
-        """
-        Returns Tholder instance as converted from ._sad['kt'] or None if missing.
+        """Tholder property getter
+
+        Returns:
+            tholder (Tholder): instance as converted from ._sad['kt']
+                or None if missing.
 
         """
         return Tholder(sith=self._sad["kt"]) if "kt" in self._sad else None
@@ -1199,8 +1210,7 @@ class SerderKERI(Serder):
 
     @property
     def verfers(self):
-        """
-        Returns list of Verfer instances as converted from ._sad['k'].
+        """Returns list of Verfer instances as converted from ._sad['k'].
         One for each key.
         verfers property getter
         """
@@ -1210,25 +1220,58 @@ class SerderKERI(Serder):
 
     @property
     def ntholder(self):
-        """
-        Returns Tholder instance as converted from ._sad['nt'] or None if missing.
+        """Returns Tholder instance as converted from ._sad['nt'] or None if missing.
 
         """
         return Tholder(sith=self._sad["nt"]) if "nt" in self._sad else None
 
 
     @property
-    def ndigers(self):
+    def ndigs(self):
         """
-        Returns list of Diger instances as converted from ._sad['n'].
-        One for each next key digests.
-        ndigers property getter
+        Returns:
+            (list): digs
+        """
+        if self.vrsn.major < 2 and self.vrsn.minor < 1 and self.ilk == Ilks.vcp:
+            return None
+
+        return self._sad.get("n")
+
+
+    @property
+    def digs(self):
+        """
+        Returns:
+            (list): digs
+        """
+        return self.ndigs
+
+
+    @property
+    def ndigers(self):
+        """NDigers property getter
+
+        Returns:
+            ndigers (list[Diger]): instance as converted from ._sad['n'].
+            One for each next key digests.
         """
         if self.vrsn.major < 2 and self.vrsn.minor < 1 and self.ilk == Ilks.vcp:
             return None
 
         digs = self._sad.get("n")
         return [Diger(qb64=dig) for dig in digs] if digs is not None else None
+
+
+    @property
+    def digers(self):
+        """Digers property getter, alias of .ndigers
+
+        Returns:
+            digers (list[Diger]): instance as converted from ._sad['n'].
+            One for each next key digests.
+        """
+        return self.ndigers
+
 
 
     @property
@@ -1253,14 +1296,47 @@ class SerderKERI(Serder):
 
 
     @property
-    def berfers(self):
+    def backers(self):
+        """Backers property getter
+
+        Returns:
+            backers (list[str]): aids qb64 from ._sad['b'].
+                           One for each backer (witness).
+
         """
+        baks = self._sad.get("b")
+        return baks if baks is not None else None
+
+    @property
+    def berfers(self):
+        """Berfers property getter
         Returns list of Verfer instances as converted from ._sad['b'].
-        One for each backer (witness).
-        berfers property getter
+                One for each backer (witness).
+
         """
         baks = self._sad.get("b")
         return [Verfer(qb64=bak) for bak in baks] if baks is not None else None
+
+
+    @property
+    def cuts(self):
+        """Cuts property getter
+        Returns list of aids of instances as converted from ._sad['br'].
+                 One for each backer (witness) to be cut (removed).
+
+        """
+        cuts = self._sad.get("br")
+        return cuts if cuts is not None else None
+
+    @property
+    def adds(self):
+        """Adds property getter
+        Returns list of aids of instances as converted from ._sad['ba'].
+                 One for each backer (witness) to be added.
+
+        """
+        adds = self._sad.get("ba")
+        return adds if adds is not None else None
 
 
     #Properties for delegated Serders ilks in (dip, drt)

@@ -180,7 +180,7 @@ def test_parser():
         msgs.extend(counter.qb64b)
         msgs.extend(siger.qb64b)
 
-        # Event 8 Interaction
+        # Event 8 Interaction but already abandoned
         serder = interact(pre=kever.prefixer.qb64,
                           dig=kever.serder.saider.qb64,
                           sn=8)
@@ -196,7 +196,7 @@ def test_parser():
         msgs.extend(counter.qb64b)
         msgs.extend(siger.qb64b)
 
-        # Event 8 Rotation
+        # Event 8 Rotation override interaction but already abandoned
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[4].verfer.qb64],
                         dig=kever.serder.saider.qb64,

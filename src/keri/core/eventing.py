@@ -1825,9 +1825,10 @@ class Kever:
         # Can't use usual serder.saider.verify(sad=ked) on inception when digestive
         # since both 'd' and 'i' field are dummied so use prefixer verification
         # otherwise use saider verification below
-        if not self.prefixer.digestive:
-            if not serder.saider.verify(sad=ked):
-                raise ValidationError("Invalid SAID {} for event {}".format(ked["d"], ked))
+        # don't need this with new SerderKERI because .verify() checks for this.
+        #if not self.prefixer.digestive:
+            #if not serder.saider.verify(sad=ked):
+                #raise ValidationError("Invalid SAID {} for event {}".format(ked["d"], ked))
 
 
         self.serder = serder  # need whole serder for digest agility comparisons
@@ -1872,7 +1873,7 @@ class Kever:
 
         # need this to recognize recovery events and transferable receipts
         # last establishment event location
-        self.lastEst = LastEstLoc(s=self.sner.num, d=self.serder.saider.qb64)
+        self.lastEst = LastEstLoc(s=self.sner.num, d=self.serder.said)
 
 
     def config(self, serder, estOnly=None, doNotDelegate=None):
@@ -1925,10 +1926,11 @@ class Kever:
                 and timestamps.
 
         """
-        if not self.transferable:  # not transferable so no events after inception allowed
-            raise ValidationError("Unexpected event = {} is nontransferable "
-                                  " state.".format(serder.ked))
         ked = serder.ked
+        if not self.transferable:  # not transferable so no further events allowed
+            raise ValidationError("Unexpected event = {} is nontransferable "
+                                  " or abandoned state.".format(ked))
+
         if serder.pre != self.prefixer.qb64:
             raise ValidationError("Mismatch event aid prefix = {} expecting"
                                   " = {} for evt = {}.".format(ked["i"],
@@ -2009,7 +2011,7 @@ class Kever:
             self.adds = adds
 
             # last establishment event location need this to recognize recovery events
-            self.lastEst = LastEstLoc(s=self.sner.num, d=self.serder.saider.qb64)
+            self.lastEst = LastEstLoc(s=self.sner.num, d=self.serder.said)
             if fn is not None:  # first is non-idempotent for fn check mode fn is None
                 self.fner = Number(num=fn)
                 self.dater = Dater(dts=dts)
@@ -2478,9 +2480,9 @@ class Kever:
             self.db.wits.put(keys=dgkey, vals=[coring.Prefixer(qb64=w) for w in wits])
         self.db.putEvt(dgkey, serder.raw)  # idempotent (maybe already excrowed)
         val = (coring.Prefixer(qb64b=serder.preb), coring.Seqner(sn=serder.sn))
-        for verfer in serder.verfers:
+        for verfer in (serder.verfers if serder.verfers is not None else []):
             self.db.pubs.add(keys=(verfer.qb64,), val=val)
-        for diger in serder.digers:
+        for diger in (serder.digers if serder.digers is not None else []):
             self.db.digs.add(keys=(diger.qb64,), val=val)
         if first:  # append event dig to first seen database in order
             if seqner and saider:  # authorized delegated or issued event
@@ -2990,8 +2992,9 @@ class Kevery:
                 #kever.cues = self.cues This is injected when inception is accepted
                 sno = kever.sner.num + 1  # proper sn of new inorder event
 
-                if not serder.saider.verify(sad=serder.ked):
-                    raise ValidationError("Invalid SAID {} for event {}".format(said, serder.ked))
+                # new SerderKERI.verify() already checks for this
+                #if not serder.saider.verify(sad=serder.ked):
+                    #raise ValidationError("Invalid SAID {} for event {}".format(said, serder.ked))
 
                 if sn > sno:  # sn later than sno so out of order escrow
                     # escrow out-of-order event
