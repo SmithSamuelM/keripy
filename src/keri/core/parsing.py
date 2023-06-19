@@ -12,6 +12,7 @@ from dataclasses import dataclass, astuple
 from .coring import (Ilks, CtrDex, Counter, Seqner, Siger, Cigar, IdxSigDex,
                      Dater, Verfer, Prefixer, Serder, Saider, Pather, Protos,
                      Sadder, )
+from . import serdering
 from .. import help
 from .. import kering
 from ..vc.proving import Creder
@@ -656,6 +657,7 @@ class Parser:
 
         return True  # should never return
 
+
     def msgParsator(self, ims=None, framed=True, pipeline=False,
                     kvy=None, tvy=None, exc=None, rvy=None, vry=None):
         """
@@ -702,6 +704,8 @@ class Parser:
 
 
         """
+        serdery = serdering.Serdery()
+
         if ims is None:
             ims = self.ims
 
@@ -714,14 +718,24 @@ class Parser:
             raise kering.ColdStartError("Expecting message counter tritet={}"
                                         "".format(cold))
         # Otherwise its a message cold start
-        while True:  # extract and deserialize message from ims
+
+        while True:  # extract, deserialize, and strip message from ims
             try:
-                sadder = Sadder(raw=ims)
+                serder = serdery.reap(ims=ims)  # can set version here
             except kering.ShortageError as ex:  # need more bytes
                 yield
-            else:  # extracted successfully
-                del ims[:sadder.size]  # strip off event from front of ims
-                break
+            else: # extracted and stripped successfully
+                break  # break out of while loop
+
+
+        #while True:  # extract and deserialize message from ims
+            #try:
+                #sadder = Sadder(raw=ims)
+            #except kering.ShortageError as ex:  # need more bytes
+                #yield
+            #else:  # extracted successfully
+                #del ims[:sadder.size]  # strip off event from front of ims
+                #break
 
         sigers = []  # list of Siger instances of attached indexed controller signatures
         wigers = []  # list of Siger instance of attached indexed witness signatures

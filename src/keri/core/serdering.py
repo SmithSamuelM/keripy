@@ -60,7 +60,17 @@ class Serdery:
 
     """
 
-    def reap(self, ims, *, version=Version):
+    def __init__(self, *, version=None):
+        """Init instance
+
+        Parameters:
+            version (Versionage | None): instance supported protocol version
+                     None means do not enforce a supported version
+        """
+        self.version = version  # default version
+
+
+    def reap(self, ims, *, version=None):
         """Extract and return Serder subclass based on protocol type reaped from
         version string inside serialized raw of Serder.
 
@@ -74,6 +84,8 @@ class Serdery:
             version (Versionage | None): instance supported protocol version
                 None means do not enforce a supported version
         """
+        version = version if version is not None else self.version
+
         if len(ims) < Serder.InhaleSize:
             raise ShortageError(f"Need more raw bytes for Serdery to reap.")
 
@@ -404,7 +416,7 @@ class Serder:
                 if label not in self._sad:
                     raise FieldError(f"Missing primary said field in {self._sad}.")
                 self._said = self._sad[label]  # not verified
-            except Exception:
+            except Exception as ex:
                 self._said = None  # no saidive field
 
             if strip:  #only when raw is bytearray
@@ -806,7 +818,7 @@ class Serder:
         if "v" not in sad:
             raise FieldError(f"Missing version string field in {sad}.")
 
-        return sad, proto, version, kind, size
+        return sad, proto, vrsn, kind, size
 
 
     @staticmethod
