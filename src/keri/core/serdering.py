@@ -1115,10 +1115,23 @@ class SerderKERI(Serder):
                 raise ValidationError(f"Invalid identifier prefix = "
                                       f"{self.pre}.") from ex
 
-            if code not in PreDex:
+            if self.ilk in (Ilks.dip, Ilks.drt):
+                idex = DigDex  # delegatee must be digest said
+            else:
+                idex = PreDex  # non delegatee may be non digest
+
+            if code not in idex:
                 raise ValidationError(f"Invalid identifier prefix code = {code}.")
 
+        if self.ilk in (Ilks.dip, Ilks.drt):
+            try:
+                code = Matter(qb64=self.delpre).code
+            except Exception as ex:
+                raise ValidationError(f"Invalid delegator prefix = "
+                                      f"{self.delpre}.") from ex
 
+            if code not in PreDex:  # delegator must be digest said
+                raise ValidationError(f"Invalid delegator prefix code = {code}.")
 
 
     @property
