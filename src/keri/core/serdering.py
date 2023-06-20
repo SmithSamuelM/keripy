@@ -1317,6 +1317,28 @@ class SerderKERI(Serder):
         baks = self._sad.get("b")
         return [Verfer(qb64=bak) for bak in baks] if baks is not None else None
 
+    # properties for rotative Serders like rot drt
+
+    @property
+    def prior(self):
+        """Prior property getter
+        Returns:
+            prior (str): said qb64 of prior event from ._sad['p'].
+
+        """
+        prior = self._sad.get("p")
+        return prior if prior is not None else None
+
+
+    @property
+    def priorb(self):
+        """Priorb bytes property getter
+        Returns:
+            priorb (str): said qb64b of prior event from ._sad['p'].
+
+        """
+        return self.prior.encode("utf-8") if self.prior is not None else None
+
 
     @property
     def cuts(self):

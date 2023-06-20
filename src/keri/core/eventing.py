@@ -17,6 +17,7 @@ from . import coring
 from .coring import (versify, Serials, Ilks, MtrDex, NonTransDex, CtrDex, Counter,
                      Number, Seqner, Siger, Cigar, Dater, Indexer, IdrDex,
                      Verfer, Diger, Prefixer, Serder, Tholder, Saider)
+from . import serdering
 from .. import help
 from .. import kering
 from ..db import basing, dbing
@@ -1659,7 +1660,7 @@ class Kever:
         # may update state as we go because if invalid we fail to finish init
         self.version = serder.version  # version dispatch ?
 
-        ilk = serder.ked["t"]
+        ilk = serder.ilk # serder.ked["t"]
         if ilk not in (Ilks.icp, Ilks.dip):
             raise ValidationError("Expected ilk = {} or {} got {} for evt = {}."
                                   "".format(Ilks.icp, Ilks.dip,
@@ -1888,7 +1889,7 @@ class Kever:
                                        else self.DoNotDelegate)
                               else False)  # ensure default doNotDelegate is boolean
 
-        cnfg = serder.ked["c"]  # process cnfg for traits
+        cnfg = serder.traits # serder.ked["c"]  # process cnfg for traits
         if TraitDex.EstOnly in cnfg:
             self.estOnly = True
         if TraitDex.DoNotDelegate in cnfg:
@@ -2135,7 +2136,7 @@ class Kever:
             if not self.serder.compare(said=dig):  # prior event dig not match
                 raise ValidationError("Mismatch event dig = {} with"
                                       " state dig = {} for evt = {}."
-                                      "".format(dig, self.serder.saider.qb64, ked))
+                                      "".format(dig, self.serder.said, ked))
 
         # check derivation code of pre for non-transferable
         if not self.digers:  # prior next list is empty so rotations not allowed
@@ -2595,7 +2596,7 @@ class Kever:
 
         return (state(pre=self.prefixer.qb64,
                       sn=self.sn, # property self.sner.num
-                      pig=(self.serder.ked["p"] if "p" in self.serder.ked else ""),
+                      pig=(self.serder.prior if self.serder.prior is not None else ""),
                       dig=self.serder.said,
                       fn=self.fn, # property self.fner.num
                       stamp=self.dater.dts,  # need to add dater object for first seen dts
