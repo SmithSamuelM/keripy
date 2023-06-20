@@ -1295,6 +1295,7 @@ class SerderKERI(Serder):
         return self.bner.num if self.bner is not None else None
 
 
+    # properties for incentive Serders like icp, dip
     @property
     def backers(self):
         """Backers property getter
@@ -1307,6 +1308,7 @@ class SerderKERI(Serder):
         baks = self._sad.get("b")
         return baks if baks is not None else None
 
+
     @property
     def berfers(self):
         """Berfers property getter
@@ -1317,7 +1319,8 @@ class SerderKERI(Serder):
         baks = self._sad.get("b")
         return [Verfer(qb64=bak) for bak in baks] if baks is not None else None
 
-    # properties for rotative Serders like rot drt
+
+    # properties for priorative Serders like ixn rot drt
 
     @property
     def prior(self):
@@ -1339,6 +1342,8 @@ class SerderKERI(Serder):
         """
         return self.prior.encode("utf-8") if self.prior is not None else None
 
+
+    # properties for rotative Serders like rot drt
 
     @property
     def cuts(self):
@@ -1362,6 +1367,7 @@ class SerderKERI(Serder):
 
 
     #Properties for delegated Serders ilks in (dip, drt)
+
     @property
     def delpre(self):
         """
@@ -1382,25 +1388,25 @@ class SerderKERI(Serder):
 
 
     #Properties for state Serder ilk is None
-    @property
-    def fner(self):
-        """
-        fner (Number of first seen ordinal) property getter
-        Returns:
-            (Number): of ._sad["f"] hex number str converted  (state message)
-        """
-        # auto converts hex num str to int
-        return Number(num=self._sad["f"]) if "f" in self._sad else None
+    #@property
+    #def fner(self):
+        #"""
+        #fner (Number of first seen ordinal) property getter
+        #Returns:
+            #(Number): of ._sad["f"] hex number str converted  (state message)
+        #"""
+        ## auto converts hex num str to int
+        #return Number(num=self._sad["f"]) if "f" in self._sad else None
 
 
-    @property
-    def fn(self):
-        """
-        fn (first seen ordinal number) property getter
-        Returns:
-            fn (int): of .fner.num from ._sad["f"]
-        """
-        return self.fner.num if self.fner is not None else None
+    #@property
+    #def fn(self):
+        #"""
+        #fn (first seen ordinal number) property getter
+        #Returns:
+            #fn (int): of .fner.num from ._sad["f"]
+        #"""
+        #return self.fner.num if self.fner is not None else None
 
 
     #Properties for exn  exchange

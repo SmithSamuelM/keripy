@@ -644,8 +644,8 @@ def test_serderkeri():
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
 
     serder = SerderKERI(raw=raw)
@@ -674,8 +674,8 @@ def test_serderkeri():
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
 
 def test_serderkeri_icp():
@@ -739,12 +739,14 @@ def test_serderkeri_icp():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -771,12 +773,14 @@ def test_serderkeri_icp():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
 
     # Test with non-digestive code for 'i' saidive field no sad
@@ -866,12 +870,14 @@ def test_serderkeri_icp():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -898,12 +904,14 @@ def test_serderkeri_icp():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -981,12 +989,14 @@ def test_serderkeri_rot():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
     assert serder.cuts == []
     assert serder.adds == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1013,12 +1023,14 @@ def test_serderkeri_rot():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
     assert serder.cuts == []
     assert serder.adds == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1086,10 +1098,12 @@ def test_serderkeri_ixn():
     assert serder.bner == None
     assert serder.bn == None
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1116,10 +1130,14 @@ def test_serderkeri_ixn():
     assert serder.bner == None
     assert serder.bn == None
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
+    assert serder.cuts == None
+    assert serder.adds == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
     """End Test"""
 
 def test_serderkeri_dip():
@@ -1183,12 +1201,14 @@ def test_serderkeri_dip():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1215,12 +1235,14 @@ def test_serderkeri_dip():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
 
     # Test with non-digestive code for 'i' saidive field no sad
@@ -1313,12 +1335,14 @@ def test_serderkeri_dip():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1345,12 +1369,14 @@ def test_serderkeri_dip():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert [verfer.qb64 for verfer in serder.berfers] == []
+    assert serder.prior == None
+    assert serder.priorb == None
     assert serder.cuts == None
     assert serder.adds == None
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1427,12 +1453,14 @@ def test_serderkeri_drt():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
     assert serder.cuts == []
     assert serder.adds == []
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1459,12 +1487,14 @@ def test_serderkeri_drt():
     assert serder.bner.num == 0
     assert serder.bn == 0
     assert serder.berfers == None
+    assert serder.prior == ""
+    assert serder.priorb == b""
     assert serder.cuts == []
     assert serder.adds == []
     assert serder.delpre == ''
     assert serder.delpreb == b''
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1532,8 +1562,8 @@ def test_serderkeri_rct():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1562,8 +1592,8 @@ def test_serderkeri_rct():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
     """End Test"""
 
 def test_serderkeri_qry():
@@ -1631,8 +1661,8 @@ def test_serderkeri_qry():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1661,8 +1691,8 @@ def test_serderkeri_qry():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1732,8 +1762,8 @@ def test_serderkeri_rpy():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1762,8 +1792,8 @@ def test_serderkeri_rpy():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1832,8 +1862,8 @@ def test_serderkeri_pro():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1862,8 +1892,8 @@ def test_serderkeri_pro():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -1932,8 +1962,8 @@ def test_serderkeri_bar():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -1962,8 +1992,8 @@ def test_serderkeri_bar():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     """End Test"""
 
@@ -2035,8 +2065,8 @@ def test_serderkeri_exn():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
     serder = SerderKERI(raw=raw)
     assert serder.raw == raw
@@ -2065,8 +2095,8 @@ def test_serderkeri_exn():
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
 
 
     """End Test"""
@@ -2130,8 +2160,8 @@ def test_serderkeri_vcp():
     assert serder.berfers == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
     assert serder.uuid == None
     assert serder.nonce == ''
 
@@ -2162,8 +2192,8 @@ def test_serderkeri_vcp():
     assert serder.berfers == []
     assert serder.delpre == None
     assert serder.delpreb == None
-    assert serder.fner == None
-    assert serder.fn == None
+    #assert serder.fner == None
+    #assert serder.fn == None
     assert serder.uuid == None
     assert serder.nonce == ''
 
