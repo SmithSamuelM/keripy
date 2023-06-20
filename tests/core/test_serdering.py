@@ -641,6 +641,7 @@ def test_serderkeri():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -671,6 +672,7 @@ def test_serderkeri():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -738,6 +740,7 @@ def test_serderkeri_icp():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -772,6 +775,7 @@ def test_serderkeri_icp():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -869,6 +873,7 @@ def test_serderkeri_icp():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -903,6 +908,7 @@ def test_serderkeri_icp():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -988,6 +994,7 @@ def test_serderkeri_rot():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1022,6 +1029,7 @@ def test_serderkeri_rot():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1097,6 +1105,7 @@ def test_serderkeri_ixn():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1129,6 +1138,7 @@ def test_serderkeri_ixn():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1234,6 +1244,7 @@ def test_serderkeri_dip():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -1368,6 +1379,7 @@ def test_serderkeri_dip():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == []
     assert [verfer.qb64 for verfer in serder.berfers] == []
     assert serder.prior == None
     assert serder.priorb == None
@@ -1452,6 +1464,7 @@ def test_serderkeri_drt():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1486,6 +1499,7 @@ def test_serderkeri_drt():
     assert [diger.qb64 for diger in serder.ndigers] == []
     assert serder.bner.num == 0
     assert serder.bn == 0
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.prior == ""
     assert serder.priorb == b""
@@ -1589,6 +1603,7 @@ def test_serderkeri_rct():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1658,6 +1673,7 @@ def test_serderkeri_qry():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1688,6 +1704,7 @@ def test_serderkeri_qry():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1789,6 +1806,7 @@ def test_serderkeri_rpy():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1859,6 +1877,7 @@ def test_serderkeri_pro():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1889,6 +1908,7 @@ def test_serderkeri_pro():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1959,6 +1979,7 @@ def test_serderkeri_bar():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -1989,6 +2010,7 @@ def test_serderkeri_bar():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -2062,6 +2084,7 @@ def test_serderkeri_exn():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None
@@ -2092,6 +2115,7 @@ def test_serderkeri_exn():
     assert serder.ndigers == None
     assert serder.bner == None
     assert serder.bn == None
+    assert serder.backs == None
     assert serder.berfers == None
     assert serder.delpre == None
     assert serder.delpreb == None

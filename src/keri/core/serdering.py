@@ -1297,16 +1297,16 @@ class SerderKERI(Serder):
 
     # properties for incentive Serders like icp, dip
     @property
-    def backers(self):
+    def backs(self):
         """Backers property getter
 
         Returns:
-            backers (list[str]): aids qb64 from ._sad['b'].
+            backs (list[str]): aids qb64 from ._sad['b'].
                            One for each backer (witness).
 
         """
-        baks = self._sad.get("b")
-        return baks if baks is not None else None
+        backs = self._sad.get("b")
+        return backs if backs is not None else None
 
 
     @property
