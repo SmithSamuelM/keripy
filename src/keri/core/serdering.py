@@ -234,8 +234,8 @@ class Serder:
                         Ilks.drt: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
                                 kt='0',k=[], nt='0', n=[], bt='0', br=[],
-                                ba=[], a=[], di='')),
-                        Ilks.rct: Fieldage(saids={Saids.d: DigDex.Blake3_256},
+                                ba=[], a=[])),
+                        Ilks.rct: Fieldage(saids={},
                             alls=dict(v='', t='',d='', i='', s='0')),
                         Ilks.qry: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', dt='', r='', rr='',
@@ -290,8 +290,8 @@ class Serder:
                         Ilks.drt: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', s='0', p='',
                                 kt='0',k=[], nt='0', n=[], bt='0', br=[],
-                                ba=[], a=[], di='')),
-                        Ilks.rct: Fieldage(saids={Saids.d: DigDex.Blake3_256},
+                                ba=[], a=[])),
+                        Ilks.rct: Fieldage(saids={},
                             alls=dict(v='', t='',d='', i='', s='0')),
                         Ilks.qry: Fieldage(saids={Saids.d: DigDex.Blake3_256},
                             alls=dict(v='', t='',d='', i='', dt='', r='', rr='',
@@ -1137,7 +1137,7 @@ class SerderKERI(Serder):
                     raise ValidationError("Non-transferable code = {code} with"
                                           f" non-empty seals = {self.seals}.")
 
-        if self.ilk in (Ilks.dip, Ilks.drt):  # validate delpre
+        if self.ilk in (Ilks.dip):  # validate delpre
             try:
                 code = Matter(qb64=self.delpre).code
             except Exception as ex:
