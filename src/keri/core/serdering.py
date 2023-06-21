@@ -1108,7 +1108,7 @@ class SerderKERI(Serder):
         if (self.vrsn.major < 2 and self.vrsn.minor < 1 and
             self.ilk in (Ilks.qry, Ilks.rpy, Ilks.pro, Ilks.bar, Ilks.exn)):
                 pass
-        else:
+        else:  # verify pre
             try:
                 code = Matter(qb64=self.pre).code
             except Exception as ex:
@@ -1116,21 +1116,35 @@ class SerderKERI(Serder):
                                       f"{self.pre}.") from ex
 
             if self.ilk in (Ilks.dip, Ilks.drt):
-                idex = DigDex  # delegatee must be digest said
+                idex = DigDex  # delegatee must be digestive prefix
             else:
                 idex = PreDex  # non delegatee may be non digest
 
             if code not in idex:
                 raise ValidationError(f"Invalid identifier prefix code = {code}.")
 
-        if self.ilk in (Ilks.dip, Ilks.drt):
+            # non-transferable pre validations
+            if code in [PreDex.Ed25519N, PreDex.ECDSA_256r1N, PreDex.ECDSA_256k1N]:
+                if self.ndigs:
+                    raise ValidationError(f"Non-transferable code = {code} with"
+                                          f" non-empty nxt = {self.ndigs}.")
+
+                if self.backs:
+                    raise ValidationError("Non-transferable code = {code} with"
+                                          f" non-empty backers = {self.backs}.")
+
+                if self.seals:
+                    raise ValidationError("Non-transferable code = {code} with"
+                                          f" non-empty seals = {self.seals}.")
+
+        if self.ilk in (Ilks.dip, Ilks.drt):  # validate delpre
             try:
                 code = Matter(qb64=self.delpre).code
             except Exception as ex:
                 raise ValidationError(f"Invalid delegator prefix = "
                                       f"{self.delpre}.") from ex
 
-            if code not in PreDex:  # delegator must be digest said
+            if code not in PreDex:  # delegator must be valid prefix code
                 raise ValidationError(f"Invalid delegator prefix code = {code}.")
 
 

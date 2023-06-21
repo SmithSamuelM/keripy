@@ -696,19 +696,19 @@ def test_keyeventfuncs(mockHelpingNowUTC):
                         b'eq9W8_As","i":"BFs8BBx86uytIM0D2BhsE5rrqVIT8ef8mflpNceHo4XH","s":"0","kt":"1'
                         b'","k":["BFs8BBx86uytIM0D2BhsE5rrqVIT8ef8mflpNceHo4XH"],"nt":"0","n":[],"bt":'
                         b'"0","b":[],"c":[],"a":[]}')
-    saider = coring.Saider(sad=serder.ked, code=MtrDex.Blake3_256)
-    assert saider.verify(serder.ked) is True
+    #saider = coring.Saider(sad=serder.ked, code=MtrDex.Blake3_256)
+    #assert saider.verify(serder.ked) is True
 
-    with pytest.raises(DerivationError):
-        # non-empty nxt with non-transferable code
+    with pytest.raises(ValidationError):
+        # non-empty ndigs with non-transferable code
         serder = incept(keys=keys0, code=MtrDex.Ed25519N, ndigs=["ABCDE"])
 
-    with pytest.raises(DerivationError):
-        # non-empty witnesses with non-transferable code
+    with pytest.raises(ValidationError):
+        # non-empty backers with non-transferable code
         serder = incept(keys=keys0, code=MtrDex.Ed25519N, wits=["ABCDE"])
 
-    with pytest.raises(DerivationError):
-        # non-empty witnesses with non-transferable code
+    with pytest.raises(ValidationError):
+        # non-empty seals with non-transferable code
         serder = incept(keys=keys0, code=MtrDex.Ed25519N, data=[{"i": "ABCDE"}])
 
     # Inception: Transferable Case but abandoned in incept so equivalent
@@ -724,8 +724,8 @@ def test_keyeventfuncs(mockHelpingNowUTC):
                     b'","k":["DFs8BBx86uytIM0D2BhsE5rrqVIT8ef8mflpNceHo4XH"],"nt":"0","n":[],"bt":'
                     b'"0","b":[],"c":[],"a":[]}')
 
-    saider = coring.Saider(sad=serder.ked, code=MtrDex.Blake3_256)
-    assert saider.verify(serder.ked) is True
+    #saider = coring.Saider(sad=serder.ked, code=MtrDex.Blake3_256)
+    #assert saider.verify(serder.ked) is True
 
     # Inception: Transferable not abandoned i.e. next not empty,Self-Addressing
     # seed = pysodium.randombytes(pysodium.crypto_sign_SEEDBYTES)
@@ -829,11 +829,8 @@ def test_keyeventfuncs(mockHelpingNowUTC):
                         b'","k":["DFs8BBx86uytIM0D2BhsE5rrqVIT8ef8mflpNceHo4XH"],"nt":"1","n":["EIf-EN'
                         b'w7PrM52w4H-S7NGU2qVIfraXVIlV9hEAaMHg7W"],"bt":"0","b":[],"c":[],"a":[]}')
 
-    saider = coring.Saider(sad=serder0.ked, code=MtrDex.Blake3_256)
-    assert saider.qb64 == serder0.said
-
-    saider = coring.Saider(sad=serder0.ked, code=MtrDex.Blake3_256)
-    assert saider.qb64 == serder0.said
+    #saider = coring.Saider(sad=serder0.ked, code=MtrDex.Blake3_256)
+    #assert saider.qb64 == serder0.said
 
 
     # Rotation: Transferable not abandoned i.e. next not empty

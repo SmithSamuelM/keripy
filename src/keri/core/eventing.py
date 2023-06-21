@@ -14,7 +14,8 @@ from ordered_set import OrderedSet as oset
 from hio.help import decking
 
 from . import coring
-from .coring import (versify, Serials, Ilks, MtrDex, NonTransDex, CtrDex, Counter,
+from .coring import (versify, Serials, Ilks, MtrDex, PreDex, DigDex,
+                     NonTransDex, CtrDex, Counter,
                      Number, Seqner, Siger, Cigar, Dater, Indexer, IdrDex,
                      Verfer, Diger, Prefixer, Serder, Tholder, Saider)
 from . import serdering
@@ -25,7 +26,7 @@ from ..db.basing import KeyStateRecord, StateEERecord
 from ..db.dbing import dgKey, snKey, fnKey, splitKeySN, splitKey
 
 from ..kering import (MissingEntryError,
-                      ValidationError, MissingSignatureError,
+                      ValidationError, DerivationError, MissingSignatureError,
                       MissingWitnessSignatureError, UnverifiedReplyError,
                       MissingDelegationError, OutOfOrderError,
                       LikelyDuplicitousError, UnverifiedWitnessReceiptError,
@@ -677,33 +678,47 @@ def incept(keys,
                a=data,  # list of seal dicts
                )
 
+    pre = ""
+    saids = None
     if delpre is not None:  # delegated inception with ilk = dip
-        ked['di'] = delpre
-        if code is None:
-            code = MtrDex.Blake3_256  # Defaults to self addressing digest
+        ked['di'] = delpre  # SerderKERI .verify will ensure valid prefix
+    else:  # non delegated
+        if code is None and len(keys) == 1:  # use key[0] as default
+            ked["i"] = keys[0]  # SerderKERI .verify will ensure valid prefix
 
+    if code is not None and code in PreDex:  # use code to override all else
+        saids = {'i': code}
 
-    if delpre is None and code is None and len(keys) == 1:
-        prefixer = Prefixer(qb64=keys[0])  # defaults to not digestive code
-        if prefixer.digestive:
-            raise ValueError("Invalid code, digestive={}, must be derived from"
-                             " ked.".format(prefixer.code))
-    else:  # digestive
-        # raises derivation error if non-empty nxt but ephemeral code
-        prefixer = Prefixer(ked=ked, code=code)  # Derive AID from ked and code
+    serder = serdering.SerderKERI(sad=ked, makify=True, saids=saids)
+    serder._verify()  # raises error if fails verifications
+    return serder
 
-        if delpre is not None:
-            if not prefixer.digestive:
-                raise ValueError(f"Invalid derivation code = {prefixer.code} "
-                                 f"for delegation. Must be digestive")
+    #if delpre is not None:  # delegated inception with ilk = dip
+        #ked['di'] = delpre
+        #if code is None:
+            #code = MtrDex.Blake3_256  # force digestive
 
-    ked["i"] = prefixer.qb64  # update pre element in ked with pre qb64
-    if prefixer.digestive:
-        ked["d"] = prefixer.qb64
-    else:
-        _, ked = coring.Saider.saidify(sad=ked)
+    #if delpre is None and code is None and len(keys) == 1:
+        #prefixer = Prefixer(qb64=keys[0])  # defaults to not digestive code
+        #if prefixer.digestive:
+            #raise ValueError("Invalid code, digestive={}, must be derived from"
+                             #" ked.".format(prefixer.code))
+    #else:  # digestive
+        ## raises derivation error if non-empty nxt but ephemeral code
+        #prefixer = Prefixer(ked=ked, code=code)  # Derive AID from ked and code
 
-    return Serder(ked=ked)  # return serialized ked
+        #if delpre is not None:
+            #if not prefixer.digestive:
+                #raise ValueError(f"Invalid derivation code = {prefixer.code} "
+                                 #f"for delegation. Must be digestive")
+
+    #ked["i"] = prefixer.qb64  # update pre element in ked with pre qb64
+    #if prefixer.digestive:
+        #ked["d"] = prefixer.qb64
+    #else:
+        #_, ked = coring.Saider.saidify(sad=ked)
+
+    #return Serder(ked=ked)  # return serialized ked
 
 def delcept(keys, delpre, **kwa):
     """
