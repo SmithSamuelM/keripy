@@ -27,6 +27,8 @@ from keri.core.eventing import (deWitnessCouple, deReceiptCouple, deSourceCouple
                                 deTransReceiptQuadruple, deTransReceiptQuintuple)
 from keri.core.eventing import (incept, rotate, interact, receipt, query,
                                 delcept, deltate, state, messagize)
+from keri.core import serdering
+
 from keri.db import dbing, basing
 from keri.db.basing import openDB
 from keri.db.dbing import dgKey, snKey
@@ -2112,7 +2114,7 @@ def test_kever(mockHelpingNowUTC):
         #'EOf7EL5i19TNSE-n9jgceVXUQKXUa7F5EZcndLHPWUmM'
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
@@ -2261,7 +2263,7 @@ def test_kever(mockHelpingNowUTC):
         ked0["i"] = skp0.verfer.qb64
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
@@ -2304,7 +2306,7 @@ def test_kever(mockHelpingNowUTC):
         _, ked0 = coring.Saider.saidify(sad=ked0)
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
@@ -2361,7 +2363,7 @@ def test_kever(mockHelpingNowUTC):
         _, ked0 = coring.Saider.saidify(sad=ked0)
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
@@ -2404,7 +2406,7 @@ def test_kever(mockHelpingNowUTC):
         _, ked0 = coring.Saider.saidify(sad=ked0)
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
@@ -2448,7 +2450,7 @@ def test_kever(mockHelpingNowUTC):
         _, ked0 = coring.Saider.saidify(sad=ked0)
 
         # Serialize ked0
-        tser0 = Serder(ked=ked0)
+        tser0 = serdering.SerderKERI(sad=ked0)
 
         # sign serialization
         tsig0 = skp0.sign(tser0.raw, index=0)
