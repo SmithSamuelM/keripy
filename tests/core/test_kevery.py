@@ -59,7 +59,7 @@ def test_kevery():
         # Event 1 Rotation Transferable
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[1].verfer.qb64],
-                        dig=kever.serder.saider.qb64,
+                        dig=kever.serder.said,
                         ndigs=[coring.Diger(ser=signers[2].verfer.qb64b).qb64],
                         sn=1)
         event_digs.append(serder.said)
@@ -77,7 +77,7 @@ def test_kevery():
         # Event 2 Rotation Transferable
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[2].verfer.qb64],
-                        dig=kever.serder.saider.qb64,
+                        dig=kever.serder.said,
                         ndigs=[coring.Diger(ser=signers[3].verfer.qb64b).qb64],
                         sn=2)
         event_digs.append(serder.said)
@@ -94,7 +94,7 @@ def test_kevery():
 
         # Event 3 Interaction
         serder = interact(pre=kever.prefixer.qb64,
-                          dig=kever.serder.saider.qb64,
+                          dig=kever.serder.said,
                           sn=3)
         event_digs.append(serder.said)
         # create sig counter
@@ -110,7 +110,7 @@ def test_kevery():
 
         # Event 4 Interaction
         serder = interact(pre=kever.prefixer.qb64,
-                          dig=kever.serder.saider.qb64,
+                          dig=kever.serder.said,
                           sn=4)
         event_digs.append(serder.said)
         # create sig counter
@@ -127,7 +127,7 @@ def test_kevery():
         # Event 5 Rotation Transferable
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[3].verfer.qb64],
-                        dig=kever.serder.saider.qb64,
+                        dig=kever.serder.said,
                         ndigs=[coring.Diger(ser=signers[4].verfer.qb64b).qb64],
                         sn=5)
         event_digs.append(serder.said)
@@ -144,7 +144,7 @@ def test_kevery():
 
         # Event 6 Interaction
         serder = interact(pre=kever.prefixer.qb64,
-                          dig=kever.serder.saider.qb64,
+                          dig=kever.serder.said,
                           sn=6)
         event_digs.append(serder.said)
         # create sig counter
@@ -162,7 +162,7 @@ def test_kevery():
         # nxt digest is empty
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[4].verfer.qb64],
-                        dig=kever.serder.saider.qb64,
+                        dig=kever.serder.said,
                         sn=7)
         event_digs.append(serder.said)
         # create sig counter
@@ -178,7 +178,7 @@ def test_kevery():
 
         # Event 8 Interaction
         serder = interact(pre=kever.prefixer.qb64,
-                          dig=kever.serder.saider.qb64,
+                          dig=kever.serder.said,
                           sn=8)
         # create sig counter
         counter = Counter(CtrDex.ControllerIdxSigs)  # default is count = 1
@@ -195,7 +195,7 @@ def test_kevery():
         # Event 8 Rotation override interaction
         serder = rotate(pre=kever.prefixer.qb64,
                         keys=[signers[4].verfer.qb64],
-                        dig=kever.serder.saider.qb64,
+                        dig=kever.serder.said,
                         ndigs=[coring.Diger(ser=signers[5].verfer.qb64b).qb64],
                         sn=8)
         # create sig counter

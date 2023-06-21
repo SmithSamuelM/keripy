@@ -1178,7 +1178,7 @@ class BaseHab:
         if kever.delegator is not None:  # delegator only shows up in delcept
             serder = eventing.deltate(pre=kever.prefixer.qb64,
                                       keys=keys,
-                                      dig=kever.serder.saider.qb64,
+                                      dig=kever.serder.said,
                                       sn=kever.sner.num + 1,
                                       isith=cst,
                                       nsith=nst,
@@ -1191,7 +1191,7 @@ class BaseHab:
         else:
             serder = eventing.rotate(pre=kever.prefixer.qb64,
                                      keys=keys,
-                                     dig=kever.serder.saider.qb64,
+                                     dig=kever.serder.said,
                                      sn=kever.sner.num + 1,
                                      isith=cst,
                                      nsith=nst,
@@ -1225,7 +1225,7 @@ class BaseHab:
         """
         kever = self.kever
         serder = eventing.interact(pre=kever.prefixer.qb64,
-                                   dig=kever.serder.saider.qb64,
+                                   dig=kever.serder.said,
                                    sn=kever.sner.num + 1,
                                    data=data)
 
@@ -1242,6 +1242,7 @@ class BaseHab:
                                          "pre={}.".format(self.pre)) from ex
 
         return msg
+
 
     def sign(self, ser, verfers=None, indexed=True, indices=None, ondices=None, **kwa):
         """Sign given serialization ser using appropriate keys.

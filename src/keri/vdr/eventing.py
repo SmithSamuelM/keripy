@@ -1004,7 +1004,7 @@ class Tever:
         if not self.serder.compare(said=dig):  # prior event dig not match
             raise ValidationError("Mismatch event dig = {} with state dig"
                                   " = {} for evt = {}.".format(ked["p"],
-                                                               self.serder.saider.qb64,
+                                                               self.serder.said,
                                                                ked))
 
         witset = oset(self.baks)
@@ -1162,7 +1162,7 @@ class Tever:
         if not iserder.compare(said=ked["p"]):  # prior event dig not match
             raise ValidationError("Mismatch event dig = {} with state dig"
                                   " = {} for evt = {}.".format(ked["p"],
-                                                               self.serder.saider.qb64,
+                                                               self.serder.said,
                                                                ked))
 
         if ilk in (Ilks.rev,):  # simple revoke
@@ -1279,7 +1279,7 @@ class Tever:
         if hasattr(pre, "encode"):
             pre = pre.encode("utf-8")  # convert str to bytes
 
-        dig = serder.saider.qb64b
+        dig = serder.saidb
         key = dgKey(pre, dig)
         sealet = seqner.qb64b + saider.qb64b
         self.reger.putAnc(key, sealet)

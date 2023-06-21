@@ -66,7 +66,7 @@ def test_remote_salty_hab():
         kever = hab.kever
         assert kever.prefixer.qb64 == lhab.pre  # we have recreated the local hab with the remote hab
         assert kever.sn == 0
-        assert kever.serder.saider.qb64 == lhab.kever.serder.saider.qb64
+        assert kever.serder.said == lhab.kever.serder.said
         assert kever.ilk == coring.Ilks.icp
         assert [verfer.qb64 for verfer in kever.verfers] == keys
         assert [diger.qb64 for diger in kever.digers] == nxt
@@ -108,7 +108,7 @@ def test_remote_salty_hab():
         kever = hab.kever
         assert kever.prefixer.qb64 == lhab.pre
         assert kever.sn == 1
-        assert kever.serder.saider.qb64 == lhab.kever.serder.saider.qb64
+        assert kever.serder.said == lhab.kever.serder.said
         assert kever.ilk == coring.Ilks.rot
         assert [verfer.qb64 for verfer in kever.verfers] == keys1
         assert [diger.qb64 for diger in kever.digers] == nxt1

@@ -68,8 +68,8 @@ def test_delegation():
         # bobKvy.process(ims=bytearray(msg))  # process local copy of msg
         bobK = bobKvy.kevers[bob]
         assert bobK.prefixer.qb64 == bob
-        assert bobK.serder.saider.qb64 == bobSrdr.said
-        assert bobK.serder.saider.qb64 == 'EA_SbBUZYwqLVlAAn14d6QUBQCSReJlZ755JqTgmRhXH'
+        assert bobK.serder.said == bobSrdr.said
+        assert bobK.serder.said == 'EA_SbBUZYwqLVlAAn14d6QUBQCSReJlZ755JqTgmRhXH'
 
         # apply msg to del's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=delKvy)
@@ -94,7 +94,7 @@ def test_delegation():
                                   s=delSrdr.ked["s"],
                                   d=delSrdr.said)
         bobSrdr = eventing.interact(pre=bobK.prefixer.qb64,
-                                    dig=bobK.serder.saider.qb64,
+                                    dig=bobK.serder.said,
                                     sn=bobK.sn + 1,
                                     data=[seal._asdict()])
 
@@ -119,12 +119,12 @@ def test_delegation():
         # apply msg to bob's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=bobKvy)
         # bobKvy.process(ims=bytearray(msg))  # process local copy of msg
-        assert bobK.serder.saider.qb64 == bobSrdr.said  # key state updated so event was validated
+        assert bobK.serder.said == bobSrdr.said  # key state updated so event was validated
 
         # apply msg to del's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=delKvy)
         # delKvy.process(ims=bytearray(msg))  # process remote copy of msg
-        assert delKvy.kevers[bob].serder.saider.qb64 == bobSrdr.said
+        assert delKvy.kevers[bob].serder.said == bobSrdr.said
 
         # now create msg with Del's delegated inception event
         sigers = delMgr.sign(ser=delSrdr.raw, verfers=verfers)
@@ -159,7 +159,7 @@ def test_delegation():
         assert delPre in delKvy.kevers
         delK = delKvy.kevers[delPre]
         assert delK.delegated
-        assert delK.serder.saider.qb64 == delSrdr.said
+        assert delK.serder.said == delSrdr.said
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
         assert couple == seqner.qb64b + bobSrdr.saider.qb64b
 
@@ -169,7 +169,7 @@ def test_delegation():
         assert delPre in bobKvy.kevers  # successfully validated
         bobDelK = bobKvy.kevers[delPre]
         assert bobDelK.delegated
-        assert bobDelK.serder.saider.qb64 == delSrdr.said  # key state updated so event was validated
+        assert bobDelK.serder.said == delSrdr.said  # key state updated so event was validated
         couple = bobKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
         assert couple == seqner.qb64b + bobSrdr.saider.qb64b
 
@@ -178,7 +178,7 @@ def test_delegation():
 
         delSrdr = eventing.deltate(pre=bobDelK.prefixer.qb64,
                                    keys=[verfer.qb64 for verfer in verfers],
-                                   dig=bobDelK.serder.saider.qb64,
+                                   dig=bobDelK.serder.said,
                                    sn=bobDelK.sn + 1,
                                    ndigs=[diger.qb64 for diger in digers])
 
@@ -189,7 +189,7 @@ def test_delegation():
                                   s=delSrdr.ked["s"],
                                   d=delSrdr.said)
         bobSrdr = eventing.interact(pre=bobK.prefixer.qb64,
-                                    dig=bobK.serder.saider.qb64,
+                                    dig=bobK.serder.said,
                                     sn=bobK.sn + 1,
                                     data=[seal._asdict()])
 
@@ -213,12 +213,12 @@ def test_delegation():
         # apply msg to bob's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=bobKvy)
         # bobKvy.process(ims=bytearray(msg))  # process local copy of msg
-        assert bobK.serder.saider.qb64 == bobSrdr.said  # key state updated so event was validated
+        assert bobK.serder.said == bobSrdr.said  # key state updated so event was validated
 
         # apply msg to del's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=delKvy)
         # delKvy.process(ims=bytearray(msg))  # process remote copy of msg
-        assert delKvy.kevers[bob].serder.saider.qb64 == bobSrdr.said
+        assert delKvy.kevers[bob].serder.said == bobSrdr.said
 
         # now create msg from Del's delegated rotation event
         sigers = delMgr.sign(ser=delSrdr.raw, verfers=verfers)
@@ -250,7 +250,7 @@ def test_delegation():
         parsing.Parser().parse(ims=bytearray(msg), kvy=delKvy)
         # delKvy.process(ims=bytearray(msg))  # process remote copy of msg
         assert bobDelK.delegated
-        assert delK.serder.saider.qb64 == delSrdr.said
+        assert delK.serder.said == delSrdr.said
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
         assert couple == seqner.qb64b + bobSrdr.saider.qb64b
 
@@ -258,7 +258,7 @@ def test_delegation():
         parsing.Parser().parse(ims=bytearray(msg), kvy=bobKvy)
         # bobKvy.process(ims=bytearray(msg))  # process local copy of msg
         assert bobDelK.delegated
-        assert bobDelK.serder.saider.qb64 == delSrdr.said  # key state updated so event was validated
+        assert bobDelK.serder.said == delSrdr.said  # key state updated so event was validated
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
         assert couple == seqner.qb64b + bobSrdr.saider.qb64b
 

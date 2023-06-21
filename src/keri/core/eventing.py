@@ -871,7 +871,7 @@ def incept(keys,
     if delpre is not None:  # delegated inception with ilk = dip
         ked['di'] = delpre  # SerderKERI .verify will ensure valid prefix
     else:  # non delegated
-        if code is None and len(keys) == 1:  # use key[0] as default
+        if (code is None or code not in DigDex) and len(keys) == 1:  # use key[0] as default
             ked["i"] = keys[0]  # SerderKERI .verify will ensure valid prefix
 
     if code is not None and code in PreDex:  # use code to override all else
@@ -1140,7 +1140,7 @@ def interact(pre,
 
     data = data if data is not None else []
 
-    ked = dict(v=vs,  # version string
+    sad = dict(v=vs,  # version string
                t=ilk,
                d="",
                i=pre,  # qb64 prefix
@@ -1149,7 +1149,7 @@ def interact(pre,
                a=data,  # list of seals
                )
 
-    serder = serdering.SerderKERI(sad=ked, makify=True)
+    serder = serdering.SerderKERI(sad=sad, makify=True)
     serder._verify()  # raises error if fails verifications
     return serder
 
@@ -1185,14 +1185,14 @@ def receipt(pre,
     if sner.num < 0:  # sn for receipt must be >= 1
         raise ValueError(f"Invalid sn = 0x{sner.numh} for rect.")
 
-    ked = dict(v=vs,  # version string
+    sad = dict(v=vs,  # version string
                t=ilk,  # Ilks.rct
                d=said,  # qb64 digest of receipted event
                i=pre,  # qb64 prefix
                s=sner.numh,  # hex string no leading zeros lowercase
                )
 
-    serder = serdering.SerderKERI(sad=ked, makify=True)
+    serder = serdering.SerderKERI(sad=sad, makify=True)
     serder._verify()  # raises error if fails verifications
     return serder
 
@@ -1241,7 +1241,7 @@ def query(route="",
     vs = versify(version=version, kind=kind, size=0)
     ilk = Ilks.qry
 
-    ked = dict(v=vs,  # version string
+    sad = dict(v=vs,  # version string
                t=ilk,
                d="",
                dt=stamp if stamp is not None else helping.nowIso8601(),
@@ -1249,9 +1249,14 @@ def query(route="",
                rr=replyRoute,
                q=query,
                )
-    _, ked = coring.Saider.saidify(sad=ked)
 
-    return Serder(ked=ked)  # return serialized ked
+    serder = serdering.SerderKERI(sad=sad, makify=True)
+    serder._verify()  # raises error if fails verifications
+    return serder
+
+    #_, ked = coring.Saider.saidify(sad=ked)
+
+    #return Serder(ked=ked)  # return serialized ked
 
 
 def reply(route="",
@@ -1302,14 +1307,18 @@ def reply(route="",
                a=data if data else {},  # attributes
                )
 
-    _, sad = coring.Saider.saidify(sad=sad, kind=kind, label=label)
+    serder = serdering.SerderKERI(sad=sad, makify=True)
+    serder._verify()  # raises error if fails verifications
+    return serder
 
-    saider = coring.Saider(qb64=sad[label])
-    if not saider.verify(sad=sad, kind=kind, label=label, prefixed=True):
-        raise ValidationError("Invalid said = {} for reply msg={}."
-                              "".format(saider.qb64, sad))
+    #_, sad = coring.Saider.saidify(sad=sad, kind=kind, label=label)
 
-    return Serder(ked=sad)  # return serialized Self-Addressed Data (SAD)
+    #saider = coring.Saider(qb64=sad[label])
+    #if not saider.verify(sad=sad, kind=kind, label=label, prefixed=True):
+        #raise ValidationError("Invalid said = {} for reply msg={}."
+                              #"".format(saider.qb64, sad))
+
+    #return Serder(ked=sad)  # return serialized Self-Addressed Data (SAD)
 
 
 def prod(route="",
@@ -1340,7 +1349,7 @@ def prod(route="",
     vs = versify(version=version, kind=kind, size=0)
     ilk = Ilks.pro
 
-    ked = dict(v=vs,  # version string
+    sad = dict(v=vs,  # version string
                t=ilk,
                d="",
                dt=stamp if stamp is not None else helping.nowIso8601(),
@@ -1348,9 +1357,14 @@ def prod(route="",
                rr=replyRoute,
                q=query,
                )
-    _, ked = coring.Saider.saidify(sad=ked)
 
-    return Serder(ked=ked)  # return serialized ked
+    serder = serdering.SerderKERI(sad=sad, makify=True)
+    serder._verify()  # raises error if fails verifications
+    return serder
+
+    #_, ked = coring.Saider.saidify(sad=ked)
+
+    #return Serder(ked=ked)  # return serialized ked
 
 def bare(route="",
            data=None,
@@ -1398,9 +1412,13 @@ def bare(route="",
                a=data if data else {},  # dict of SADs
                )
 
-    _, sad = coring.Saider.saidify(sad=sad)
+    serder = serdering.SerderKERI(sad=sad, makify=True)
+    serder._verify()  # raises error if fails verifications
+    return serder
 
-    return Serder(ked=sad)  # return serialized Self-Addressed Data (SAD)
+    #_, sad = coring.Saider.saidify(sad=sad)
+
+    #return Serder(ked=sad)  # return serialized Self-Addressed Data (SAD)
 
 
 
@@ -2066,7 +2084,7 @@ class Kever:
             if not self.serder.compare(said=ked["p"]):  # prior event dig not match
                 raise ValidationError("Mismatch event dig = {} with state dig"
                                       " = {} for evt = {}.".format(ked["p"],
-                                                                   self.serder.saider.qb64,
+                                                                   self.serder.said,
                                                                    ked))
 
             # interaction event use keys, sith, toad, and wits from pre-existing Kever state
