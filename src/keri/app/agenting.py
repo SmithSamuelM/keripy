@@ -15,7 +15,7 @@ from hio.help import decking
 from . import httping, forwarding
 from .. import help
 from .. import kering
-from ..core import eventing, parsing, coring
+from ..core import eventing, parsing, coring, serdering
 from ..core.coring import CtrDex
 from ..db import dbing
 from ..kering import Roles
@@ -39,9 +39,9 @@ class Receiptor(doing.DoDoer):
 
     def receipt(self, pre, sn=None):
         """ Returns a generator for witness receipting
-        
-        The returns a generator that will submit the designated event to witnesses for receipts using 
-        the synchronous witness API, the propogate the receipts to each of the other witnesses.  
+
+        The returns a generator that will submit the designated event to witnesses for receipts using
+        the synchronous witness API, the propogate the receipts to each of the other witnesses.
 
 
         Parameters:
@@ -63,7 +63,7 @@ class Receiptor(doing.DoDoer):
             return
 
         msg = hab.makeOwnEvent(sn=sn)
-        ser = coring.Serder(raw=msg)
+        ser = serdering.SerderKERI(raw=msg)
 
         # If we are a rotation event, may need to catch new witnesses up to current key state
         if ser.ked['t'] in (coring.Ilks.rot,):
@@ -316,7 +316,7 @@ class WitnessReceiptor(doing.DoDoer):
                     continue
 
                 msg = hab.makeOwnEvent(sn=sn)
-                ser = coring.Serder(raw=msg)
+                ser = serdering.SerderKERI(raw=msg)
 
                 dgkey = dbing.dgKey(ser.preb, ser.saidb)
 

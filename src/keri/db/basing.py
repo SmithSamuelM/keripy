@@ -36,7 +36,7 @@ from hio.base import doing
 from . import dbing, koming, subing
 from .. import kering
 
-from ..core import coring, eventing, parsing
+from ..core import coring, eventing, parsing, serdering
 
 from .. import help
 from ..help import helping
@@ -1317,7 +1317,7 @@ class Baser(dbing.LMDBer):
 
         """
         for evt in self.clonePreIter(pre=pre):
-            srdr = coring.Serder(raw=evt)
+            srdr = serdering.SerderKERI(raw=evt)
             if "a" in srdr.ked:
                 ancs = srdr.ked["a"]
                 for anc in ancs:
@@ -1432,7 +1432,7 @@ class Baser(dbing.LMDBer):
             # retrieve last event itself of receipter est evt from sdig
             sraw = self.getEvt(key=dbing.dgKey(pre=prefixer.qb64b, dig=bytes(sdig)))
             # assumes db ensures that sraw must not be none because sdig was in KE
-            sserder = coring.Serder(raw=bytes(sraw))
+            sserder = serdering.SerderKERI(raw=bytes(sraw))
             if dig is not None and not sserder.compare(said=dig):  # endorser's dig not match event
                 raise kering.ValidationError("Bad proof sig group at sn = {}"
                                              " for ksn = {}."

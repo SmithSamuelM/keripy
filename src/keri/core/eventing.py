@@ -13,7 +13,7 @@ from math import ceil
 from ordered_set import OrderedSet as oset
 from hio.help import decking
 
-from . import coring
+from . import coring, serdering
 from .coring import (versify, Serials, Ilks, MtrDex, PreDex, DigDex,
                      NonTransDex, CtrDex, Counter,
                      Number, Seqner, Siger, Cigar, Dater, Indexer, IdrDex,

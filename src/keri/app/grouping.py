@@ -12,7 +12,7 @@ from hio.help import decking
 
 from keri import kering
 from keri.app import delegating, agenting
-from keri.core import coring
+from keri.core import coring, serdering
 from keri.db import dbing
 from keri.db.dbing import snKey
 from keri.peer import exchanging
@@ -48,7 +48,7 @@ class Counselor(doing.DoDoer):
 
         """
         evt = ghab.makeOwnEvent(sn=seqner.sn, allowPartiallySigned=True)
-        serder = coring.Serder(raw=evt)
+        serder = serdering.SerderKERI(raw=evt)
         del evt[:serder.size]
 
         print(f"Waiting for other signatures for {serder.pre}:{seqner.sn}...")
@@ -631,7 +631,7 @@ def getEscrowedEvent(db, pre, sn):
     dig = bytes(dig)
     key = dbing.dgKey(pre, dig)  # digest key
     msg = db.getEvt(key)
-    serder = coring.Serder(raw=bytes(msg))
+    serder = serdering.SerderKERI(raw=bytes(msg))
 
     sigs = []
     for sig in db.getSigsIter(key):

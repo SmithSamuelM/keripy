@@ -11,7 +11,7 @@ from hio import help
 from hio.base import doing
 
 from keri.app.cli.common import existing
-from keri.core import eventing, coring
+from keri.core import eventing, coring, serdering
 from keri.vdr import credentialing
 
 logger = help.ogler.getLogger()

@@ -13,7 +13,7 @@ from hio.help import decking
 from . import agenting, forwarding
 from .habbing import GroupHab
 from .. import kering
-from ..core import coring
+from ..core import coring, serdering
 from ..db import dbing
 from ..peer import exchanging
 
@@ -64,7 +64,7 @@ class Boatswain(doing.DoDoer):
 
         # load the event and signatures
         evt = hab.makeOwnEvent(sn=sn)
-        srdr = coring.Serder(raw=evt)
+        srdr = serdering.SerderKERI(raw=evt)
         del evt[:srdr.size]
 
         smids = []

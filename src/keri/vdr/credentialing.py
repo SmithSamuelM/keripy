@@ -14,7 +14,7 @@ from keri.vdr import viring
 from .. import kering, help
 from ..app import agenting, signing, forwarding
 from ..app.habbing import GroupHab
-from ..core import parsing, coring, scheming
+from ..core import parsing, coring, scheming, serdering
 from ..core.coring import Seqner, MtrDex, Serder
 from ..core.eventing import SealEvent, TraitDex
 from ..db import dbing

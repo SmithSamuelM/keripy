@@ -10,7 +10,7 @@ from hio.base import doing
 from hio.help import decking
 
 from .. import help
-from ..core import eventing, coring
+from ..core import eventing, coring, serdering
 from ..help import helping
 from ..kering import ValidationError, MissingSignatureError
 
@@ -262,4 +262,4 @@ def exchange(route, payload, date=None, modifiers=None, version=coring.Version,
     #if modifiers is None:
         #del ked["q"]
 
-    return eventing.Serder(ked=ked)  # return serialized ked
+    return serdering.SerderKERI(ked=ked)  # return serialized ked

@@ -140,7 +140,7 @@ def test_delegation():
         msg.extend(counter.qb64b)
         seqner = coring.Seqner(sn=bobK.sn)
         msg.extend(seqner.qb64b)
-        msg.extend(bobSrdr.saider.qb64b)
+        msg.extend(bobSrdr.saidb)
 
         assert msg == (b'{"v":"KERI10JSON00015f_","t":"dip","d":"EHng2fV42DdKb5TLMIs6bbjF'
                     b'kPNmIdQ5mSFn6BTnySJj","i":"EHng2fV42DdKb5TLMIs6bbjFkPNmIdQ5mSFn6'
@@ -161,7 +161,7 @@ def test_delegation():
         assert delK.delegated
         assert delK.serder.said == delSrdr.said
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
-        assert couple == seqner.qb64b + bobSrdr.saider.qb64b
+        assert couple == seqner.qb64b + bobSrdr.saidb
 
         # apply Del's delegated inception event message to bob's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=bobKvy)
@@ -171,7 +171,7 @@ def test_delegation():
         assert bobDelK.delegated
         assert bobDelK.serder.said == delSrdr.said  # key state updated so event was validated
         couple = bobKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
-        assert couple == seqner.qb64b + bobSrdr.saider.qb64b
+        assert couple == seqner.qb64b + bobSrdr.saidb
 
         # Setup Del rotation event assuming that Bob's next event will be an ixn delegating event
         verfers, digers = delMgr.rotate(pre=delPre, temp=True)
@@ -234,7 +234,7 @@ def test_delegation():
         msg.extend(counter.qb64b)
         seqner = coring.Seqner(sn=bobK.sn)
         msg.extend(seqner.qb64b)
-        msg.extend(bobSrdr.saider.qb64b)
+        msg.extend(bobSrdr.saidb)
 
         assert msg ==(b'{"v":"KERI10JSON000160_","t":"drt","d":"EM5fj7YtOQYH3iLyWJr6HZVV'
                     b'xrY5t46LRL2vkNpdnPi0","i":"EHng2fV42DdKb5TLMIs6bbjFkPNmIdQ5mSFn6'
@@ -252,7 +252,7 @@ def test_delegation():
         assert bobDelK.delegated
         assert delK.serder.said == delSrdr.said
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
-        assert couple == seqner.qb64b + bobSrdr.saider.qb64b
+        assert couple == seqner.qb64b + bobSrdr.saidb
 
         # apply Del's delegated inception event message to bob's Kevery
         parsing.Parser().parse(ims=bytearray(msg), kvy=bobKvy)
@@ -260,7 +260,7 @@ def test_delegation():
         assert bobDelK.delegated
         assert bobDelK.serder.said == delSrdr.said  # key state updated so event was validated
         couple = delKvy.db.getAes(dbing.dgKey(delPre, delSrdr.said))
-        assert couple == seqner.qb64b + bobSrdr.saider.qb64b
+        assert couple == seqner.qb64b + bobSrdr.saidb
 
         # test replay
         msgs = bytearray()

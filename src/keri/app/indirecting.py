@@ -22,7 +22,7 @@ import keri.app.oobiing
 from . import directing, storing, httping, forwarding, agenting, oobiing
 from .habbing import GroupHab
 from .. import help, kering
-from ..core import eventing, parsing, routing, coring
+from ..core import eventing, parsing, routing, coring, serdering
 from ..core.coring import Ilks
 from ..db import basing, dbing
 from ..end import ending
@@ -912,7 +912,7 @@ class HttpEnd:
         rep.set_header('connection', "close")
 
         cr = httping.parseCesrHttpRequest(req=req)
-        serder = eventing.Serder(ked=cr.payload, kind=eventing.Serials.json)
+        serder = serdering.SerderKERI(ked=cr.payload, kind=eventing.Serials.json)
         msg = bytearray(serder.raw)
         msg.extend(cr.attachments.encode("utf-8"))
 
@@ -1039,7 +1039,7 @@ class ReceiptEnd(doing.DoDoer):
         rep.set_header('connection', "close")
 
         cr = httping.parseCesrHttpRequest(req=req)
-        serder = eventing.Serder(ked=cr.payload, kind=eventing.Serials.json)
+        serder = serdering.SerderKERI(ked=cr.payload, kind=eventing.Serials.json)
 
         pre = serder.ked["i"]
         ilk = serder.ked["t"]
@@ -1101,7 +1101,7 @@ class ReceiptEnd(doing.DoDoer):
         if not (raw := self.hab.db.getEvt(key=dgkey)):
             raise falcon.HTTPNotFound(description="Missing event for dig={}.".format(said))
 
-        serder = coring.Serder(raw=bytes(raw))
+        serder = serdering.SerderKERI(raw=bytes(raw))
         if serder.sn > 0:
             wits = [wit.qb64 for wit in self.hab.kvy.fetchWitnessState(pre, serder.sn)]
         else:

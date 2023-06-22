@@ -13,7 +13,7 @@ from hio.base import doing
 from keri import kering
 from keri.app import grouping, indirecting, habbing, forwarding
 from keri.app.cli.common import existing, displaying, config
-from keri.core import coring
+from keri.core import coring, serdering
 
 logger = help.ogler.getLogger()
 
@@ -109,7 +109,7 @@ class GroupMultisigInteract(doing.DoDoer):
         aids = self.aids if self.aids is not None else ghab.smids
 
         ixn = ghab.interact(data=self.data)
-        serder = coring.Serder(raw=ixn)
+        serder = serdering.SerderKERI(raw=ixn)
         del ixn[:serder.size]
 
         exn, atc = grouping.multisigInteractExn(ghab, aids, self.data)

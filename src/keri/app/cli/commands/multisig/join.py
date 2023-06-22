@@ -13,7 +13,7 @@ from prettytable import PrettyTable
 from keri import help
 from keri.app import habbing, indirecting, agenting, notifying, grouping, connecting
 from keri.app.cli.common import existing, displaying
-from keri.core import coring, eventing
+from keri.core import coring, eventing, serdering
 from keri.peer import exchanging
 
 logger = help.ogler.getLogger()
@@ -233,7 +233,7 @@ class ConfirmDoer(doing.DoDoer):
 
         if approve:
             ixn = ghab.interact(data=data)
-            serder = coring.Serder(raw=ixn)
+            serder = serdering.SerderKERI(raw=ixn)
             prefixer = coring.Prefixer(qb64=ghab.pre)
             seqner = coring.Seqner(sn=serder.sn)
             saider = coring.Saider(qb64b=serder.saidb)
@@ -324,13 +324,13 @@ class ConfirmDoer(doing.DoDoer):
                 ghab = self.hby.joinGroupHab(pre, group=alias, mhab=mhab, smids=smids, rmids=rmids)
 
             try:
-                serder = coring.Serder(ked=ked)
+                serder = serdering.SerderKERI(ked=ked)
                 rot = ghab.rotate(serder=serder)
             except ValueError as e:
                 print(f"{e.args[0]}")
                 return False
 
-            serder = coring.Serder(raw=rot)
+            serder = serdering.SerderKERI(raw=rot)
             prefixer = coring.Prefixer(qb64=ghab.pre)
             seqner = coring.Seqner(sn=serder.sn)
 

@@ -16,7 +16,7 @@ from keri.peer import exchanging
 from . import keeping, configing
 from .. import help
 from .. import kering
-from ..core import coring, eventing, parsing, routing
+from ..core import coring, eventing, parsing, routing, serdering
 from ..core.coring import Serder
 from ..db import dbing, basing
 from ..kering import MissingSignatureError, Roles
@@ -1095,7 +1095,7 @@ class BaseHab:
         if (raw := self.db.getEvt(eventing.dgKey(pre=self.pre, dig=bytes(dig)))) is None:
             raise kering.ConfigurationError("Missing inception event for "
                                             "Habitat pre={}.".format(self.pre))
-        return coring.Serder(raw=bytes(raw))
+        return serdering.SerderKERI(raw=bytes(raw))
 
     @property
     def kevers(self):
@@ -1918,7 +1918,7 @@ class BaseHab:
         dig = bytes(dig)
         key = dbing.dgKey(self.pre, dig)  # digest key
         msg = self.db.getEvt(key)
-        serder = coring.Serder(raw=bytes(msg))
+        serder = serdering.SerderKERI(raw=bytes(msg))
 
         sigs = []
         for sig in self.db.getSigsIter(key):

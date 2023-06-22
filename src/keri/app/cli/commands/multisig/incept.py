@@ -16,7 +16,7 @@ from hio.base import doing
 from keri import help, kering
 from keri.app import indirecting, grouping, habbing, forwarding
 from keri.app.cli.common import existing, displaying
-from keri.core import coring
+from keri.core import coring, serdering
 
 logger = help.ogler.getLogger()
 
@@ -132,7 +132,7 @@ class GroupMultisigIncept(doing.DoDoer):
                                          rmids=rmids, **self.inits)
 
             evt = ghab.makeOwnInception(allowPartiallySigned=True)
-            serder = coring.Serder(raw=evt)
+            serder = serdering.SerderKERI(raw=evt)
             del evt[:serder.size]
 
             # Create a notification EXN message to send to the other agents

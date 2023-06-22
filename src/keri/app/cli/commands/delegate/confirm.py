@@ -13,7 +13,7 @@ from keri import help
 from keri.app import habbing, indirecting, agenting, grouping, forwarding
 from keri.app.cli.common import existing
 from keri.app.habbing import GroupHab
-from keri.core import coring
+from keri.core import coring, serdering
 from keri.db import dbing
 
 logger = help.ogler.getLogger()
@@ -92,7 +92,7 @@ class ConfirmDoer(doing.DoDoer):
                 eraw = self.hby.db.getEvt(dgkey)
                 if eraw is None:
                     continue
-                eserder = coring.Serder(raw=bytes(eraw))  # escrowed event
+                eserder = serdering.SerderKERI(raw=bytes(eraw))  # escrowed event
 
                 ilk = eserder.ked["t"]
                 if ilk in (coring.Ilks.dip,):
@@ -129,7 +129,7 @@ class ConfirmDoer(doing.DoDoer):
                             print("Confirm does not support rotation for delegation approval with group multisig")
                             continue
 
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         del msg[:serder.size]
 
                         exn, atc = grouping.multisigInteractExn(hab, aids, [anchor])

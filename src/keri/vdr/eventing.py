@@ -17,6 +17,7 @@ from keri import kering
 from keri.core import coring
 from .. import core
 from .. import help
+from ..core import serdering
 from ..core.coring import (MtrDex, Serder, Serials, versify, Prefixer,
                            Ilks, Seqner, Verfer)
 from ..core.eventing import SealEvent, ample, TraitDex, verifySigs, validateSN
