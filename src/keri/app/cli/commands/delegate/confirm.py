@@ -183,7 +183,7 @@ class ConfirmDoer(doing.DoDoer):
                         print(f'\tDelegate {eserder.pre} {typ} Anchored at Seq. No.  {hab.kever.sner.num}')
 
                         # wait for confirmation of fully commited event
-                        wits = [werfer.qb64 for werfer in eserder.werfers]
+                        wits = [werfer.qb64 for werfer in eserder.berfers]
                         self.witq.query(src=hab.pre, pre=eserder.pre, sn=eserder.sn, wits=wits)
 
                         while eserder.pre not in self.hby.kevers:

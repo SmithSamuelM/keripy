@@ -17,8 +17,8 @@ from keri import kering
 from keri.core import coring
 from .. import core
 from .. import help
-from ..core import serdering
-from ..core.coring import (MtrDex, Serder, Serials, versify, Prefixer,
+from ..core import serdering, coring
+from ..core.coring import (MtrDex, Serials, versify, Prefixer,
                            Ilks, Seqner, Verfer)
 from ..core.eventing import SealEvent, ample, TraitDex, verifySigs, validateSN
 from ..db import basing, dbing
@@ -110,7 +110,7 @@ def incept(
     ked["i"] = prefixer.qb64  # update pre element in ked with pre qb64
     ked["d"] = prefixer.qb64
 
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def rotate(
@@ -210,7 +210,7 @@ def rotate(
                )
     _, ked = coring.Saider.saidify(sad=ked)
 
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def issue(
@@ -250,7 +250,7 @@ def issue(
         ked["dt"] = dt
 
     _, ked = coring.Saider.saidify(sad=ked)
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def revoke(
@@ -297,7 +297,7 @@ def revoke(
     if dt is not None:
         ked["dt"] = dt
 
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def backerIssue(
@@ -348,7 +348,7 @@ def backerIssue(
     if dt is not None:
         ked["dt"] = dt
 
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def backerRevoke(
@@ -401,7 +401,7 @@ def backerRevoke(
     if dt is not None:
         ked["dt"] = dt
 
-    return Serder(ked=ked)  # return serialized ked
+    return coring.Serder(ked=ked)  # return serialized ked
 
 
 def state(pre,
@@ -520,7 +520,7 @@ def state(pre,
                c=cnfg,  # list of config ordered mappings may be empty
                )
 
-    return Serder(ked=ksd)  # return serialized ksd
+    return coring.Serder(ked=ksd)  # return serialized ksd
 
 
 def vcstate(vcpre,
@@ -592,7 +592,7 @@ def vcstate(vcpre,
                et=eilk,
                )
 
-    return Serder(ked=ksd)  # return serialized ksd
+    return coring.Serder(ked=ksd)  # return serialized ksd
 
 
 def query(regk,
@@ -789,7 +789,7 @@ class Tever:
                                                dig=ksn.ked['d']))) is None:
             raise kering.MissingEntryError("Corresponding event for state={} not found."
                                            "".format(ksn.pretty()))
-        self.serder = Serder(raw=bytes(raw))
+        self.serder = coring.Serder(raw=bytes(raw))
 
     def state(self, kind=Serials.json):
         """ Returns Serder instance of current transaction state notification message
@@ -1159,7 +1159,7 @@ class Tever:
             raise ValidationError("revoke without issue... probably have to escrow")
 
         ievt = bytes(ievt)
-        iserder = Serder(raw=ievt)
+        iserder = coring.Serder(raw=ievt)
         if not iserder.compare(said=ked["p"]):  # prior event dig not match
             raise ValidationError("Mismatch event dig = {} with state dig"
                                   " = {} for evt = {}.".format(ked["p"],
@@ -1385,7 +1385,7 @@ class Tever:
         else:
             raw = bytes(raw)
 
-        eserder = Serder(raw=raw)  # deserialize event raw
+        eserder = coring.Serder(raw=raw)  # deserialize event raw
 
         if eserder.said != saider.qb64:
             return False
@@ -1478,7 +1478,7 @@ class Tever:
         if revt is None:
             raise ValidationError("have to escrow this somewhere")
 
-        rserder = Serder(raw=bytes(revt))
+        rserder = coring.Serder(raw=bytes(revt))
         # the backer threshold at this event in mgmt TEL
         rtoad = rserder.ked["bt"]
 
@@ -1841,7 +1841,7 @@ class Tevery:
         # retrieve last event itself of signer given sdig
         sraw = self.reger.getTvt(key=dgKey(pre=regk, dig=ldig))
         # assumes db ensures that sraw must not be none because sdig was in KE
-        sserder = Serder(raw=bytes(sraw))
+        sserder = coring.Serder(raw=bytes(sraw))
 
         if sserder.said != tsaider.qb64:  # mismatch events problem with replay
             raise ValidationError("Mismatch keystate at sn = {} with db."
@@ -1987,7 +1987,7 @@ class Tevery:
         # retrieve last event itself of signer given sdig
         sraw = self.reger.getTvt(key=dgKey(pre=vci, dig=ldig))
         # assumes db ensures that sraw must not be none because sdig was in KE
-        sserder = Serder(raw=bytes(sraw))
+        sserder = coring.Serder(raw=bytes(sraw))
 
         if sn < sserder.sn:
             raise ValidationError("Stale txn state at sn = {} with db."
@@ -2094,7 +2094,7 @@ class Tevery:
                     raise ValidationError("Missing escrowed evt at dig = {}."
                                           "".format(bytes(digb)))
 
-                tserder = Serder(raw=bytes(traw))  # escrowed event
+                tserder = coring.Serder(raw=bytes(traw))  # escrowed event
 
                 bigers = None
                 if tibs := self.reger.getTibs(key=dgkey):
@@ -2161,7 +2161,7 @@ class Tevery:
                     raise ValidationError("Missing escrowed evt at dig = {}."
                                           "".format(bytes(digb)))
 
-                tserder = Serder(raw=bytes(traw))  # escrowed event
+                tserder = coring.Serder(raw=bytes(traw))  # escrowed event
 
                 bigers = None
                 if tibs := self.reger.getTibs(key=dgkey):

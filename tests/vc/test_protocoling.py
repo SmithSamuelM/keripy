@@ -65,7 +65,10 @@ def test_issuing(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         sidHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=sidHab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=sidHab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=sidHab.kever.serder.said))
         sidRgy.processEscrows()
 
         # Create Red's wallet and Issue Handler for receiving the credential
@@ -94,7 +97,10 @@ def test_issuing(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         sidHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=sidHab.kever.sn)
-        issuer.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=sidHab.kever.serder.saider)
+        issuer.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=sidHab.kever.serder.said))
         sidRgy.processEscrows()
 
         msg = signing.ratify(sidHab, serder=creder, pipelined=True)
@@ -197,7 +203,10 @@ def test_proving(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hanHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hanHab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hanHab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hanHab.kever.serder.said))
         hanReg.processEscrows()
 
         verifier = verifying.Verifier(hby=hanHby, reger=hanReg.reger)
@@ -218,7 +227,10 @@ def test_proving(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         hanHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hanHab.kever.sn)
-        issuer.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=hanHab.kever.serder.saider)
+        issuer.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hanHab.kever.serder.said))
         hanReg.processEscrows()
 
         parsing.Parser().parse(ims=msg, vry=verifier)

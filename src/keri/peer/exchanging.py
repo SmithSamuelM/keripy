@@ -262,4 +262,4 @@ def exchange(route, payload, date=None, modifiers=None, version=coring.Version,
     #if modifiers is None:
         #del ked["q"]
 
-    return serdering.SerderKERI(ked=ked)  # return serialized ked
+    return serdering.SerderKERI(sad=ked)  # return serialized ked

@@ -107,7 +107,7 @@ def test_keystate(mockHelpingNowUTC):
         assert len(bamKvy.cues) == 1
         cue = bamKvy.cues.popleft()
         assert cue["kin"] == "keyStateSaved"
-        assert cue["serder"].ked['a']["i"] == bobHab.pre
+        assert cue["ksn"]["i"] == bobHab.pre
 
         msgs = bytearray()  # outgoing messages
         for msg in wesHby.db.clonePreIter(pre=bobHab.pre, fn=0):
@@ -177,7 +177,7 @@ def test_keystate(mockHelpingNowUTC):
         assert len(bamKvy.cues) == 1
         cue = bamKvy.cues.popleft()
         assert cue["kin"] == "keyStateSaved"
-        assert cue["serder"].ked["a"]["i"] == bobHab.pre
+        assert cue["ksn"]["i"] == bobHab.pre
 
         msgs = bytearray()  # outgoing messages
         for msg in wesHby.db.clonePreIter(pre=bobHab.pre, fn=0):

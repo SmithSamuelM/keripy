@@ -5,7 +5,7 @@ tests.db.escrowing module
 """
 from keri import kering
 from keri.app import habbing
-from keri.core import coring, eventing
+from keri.core import coring, eventing, serdering
 from keri.core.eventing import SealEvent
 from keri.db import escrowing, dbing, subing
 from keri.help import helping
@@ -40,7 +40,10 @@ def test_broker_nontrans():
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
         stn = issuer.tever.state()
         rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=stn.ked)
@@ -54,8 +57,8 @@ def test_broker_nontrans():
         ked = rpy.ked
         pre = ked['a']['i']
         aid = "EBWY7LU2xwp0d4IhCvz1etbuv2iwcgBEigKJWnd-0Whs"
-        serder = coring.Serder(ked=ked)
-        tserder = coring.Serder(ked=ked["a"])
+        serder = serdering.SerderKERI(sad=ked)
+        tserder = serdering.SerderKERI(sad=ked["a"])
         saider, _ = coring.Saider.saidify(sad=ked, kind=coring.Serials.json, label=coring.Saids.d)
         dater = coring.Dater(dts=dts)
 
@@ -103,7 +106,10 @@ def test_broker_trans():
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
         stn = issuer.tever.state()
         rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=stn.ked)
@@ -116,8 +122,8 @@ def test_broker_trans():
 
         pre = issuer.regk
         aid = "EwWY7LU2xwp0d4IhCvz1etbuv2iwcgBEigKJWnd-0Whs"
-        serder = coring.Serder(ked=ked)
-        tserder = coring.Serder(ked=ked["a"])
+        serder = serdering.SerderKERI(sad=ked)
+        tserder = serdering.SerderKERI(sad=ked["a"])
         saider, _ = coring.Saider.saidify(sad=ked, kind=coring.Serials.json, label=coring.Saids.d)
         dater = coring.Dater(dts=dts)
 

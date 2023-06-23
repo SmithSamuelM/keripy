@@ -14,10 +14,10 @@ from hio.base import doing
 from tests.app import openMultiSig
 from keri.kering import Versionage
 from keri.app import habbing
-from keri.core import coring, eventing
+from keri.core import coring, eventing, serdering
 from keri.core.coring import MtrDex
 from keri.core.coring import Serials, versify
-from keri.core.coring import Salter, Serder
+from keri.core.coring import Salter
 from keri.core.eventing import incept, rotate, interact, Kever
 from keri.db import basing
 from keri.db import dbing
@@ -1715,7 +1715,7 @@ def test_clean_baser():
         assert natHab.kever.serder.said == natsaid
         ldig = bytes(natHab.db.getKeLast(dbing.snKey(natHab.pre, natHab.kever.sn)))
         assert ldig == natHab.kever.serder.saidb
-        serder = coring.Serder(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
+        serder = serdering.SerderKERI(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
         assert serder.said == natHab.kever.serder.said
         state = natHab.db.states.get(keys=natHab.pre)  # Serder instance
         assert state.s == '6'
@@ -1727,7 +1727,7 @@ def test_clean_baser():
             assert natHab.db.path == path
             ldig = bytes(natHab.db.getKeLast(dbing.snKey(natHab.pre, natHab.kever.sn)))
             assert ldig == natHab.kever.serder.saidb
-            serder = coring.Serder(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
+            serder = serdering.SerderKERI(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
             assert serder.said == natHab.kever.serder.said
             assert natHab.db.env.stat()['entries'] <= 96 #68
 
@@ -1779,7 +1779,7 @@ def test_clean_baser():
             assert natHab.db.path == path
             ldig = bytes(natHab.db.getKeLast(dbing.snKey(natHab.pre, natHab.kever.sn)))
             assert ldig == natHab.kever.serder.saidb
-            serder = coring.Serder(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
+            serder = serdering.SerderKERI(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre,ldig))))
             assert serder.said == natHab.kever.serder.said
             assert natHab.db.env.stat()['entries'] >= 18
 

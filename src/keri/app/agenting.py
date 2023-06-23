@@ -90,7 +90,7 @@ class Receiptor(doing.DoDoer):
             if rep.status == 200:
                 rct = bytearray(rep.body)
                 hab.psr.parseOne(bytearray(rct))
-                rserder = coring.Serder(raw=rct)
+                rserder = serdering.SerderKERI(raw=rct)
                 del rct[:rserder.size]
 
                 # pull off the count code

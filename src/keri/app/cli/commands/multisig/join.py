@@ -324,7 +324,7 @@ class ConfirmDoer(doing.DoDoer):
                 ghab = self.hby.joinGroupHab(pre, group=alias, mhab=mhab, smids=smids, rmids=rmids)
 
             try:
-                serder = serdering.SerderKERI(ked=ked)
+                serder = serdering.SerderKERI(sad=ked)
                 rot = ghab.rotate(serder=serder)
             except ValueError as e:
                 print(f"{e.args[0]}")

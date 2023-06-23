@@ -69,8 +69,8 @@ def test_indexed_witness_replay():
         csith = '2'  # hex str of threshold int
         camHab = camHby.makeHab(name='cam', isith=csith, icount=3, toad=2, wits=wits,)
         assert camHab.kever.prefixer.transferable
-        assert len(camHab.iserder.werfers) == len(wits)
-        for werfer in camHab.iserder.werfers:
+        assert len(camHab.iserder.berfers) == len(wits)
+        for werfer in camHab.iserder.berfers:
             assert werfer.qb64 in wits
         assert camHab.kever.wits == wits
         assert camHab.kever.toader.num == 2
@@ -333,8 +333,8 @@ def test_nonindexed_witness_receipts():
         csith = '2'  # hex str of threshold int
         camHab = camHby.makeHab(name='cam', isith=csith, icount=3, toad=2, wits=wits,)
         assert camHab.kever.prefixer.transferable
-        assert len(camHab.iserder.werfers) == len(wits)
-        for werfer in camHab.iserder.werfers:
+        assert len(camHab.iserder.berfers) == len(wits)
+        for werfer in camHab.iserder.berfers:
             assert werfer.qb64 in wits
         assert camHab.kever.wits == wits
         assert camHab.kever.toader.num == 2

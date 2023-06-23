@@ -35,7 +35,10 @@ def test_credential_handlers(mockHelpingNowUTC, seeder):
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
         assert issuer.regk in regery.reger.tevers
 
@@ -1125,7 +1128,10 @@ def test_presentation_ends(seeder, mockCoringRandomNonce, mockHelpingNowIso8601)
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         palHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=palHab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=palHab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=palHab.kever.serder.said))
         palReg.processEscrows()
 
         verifier = verifying.Verifier(hby=palHby, reger=palReg.reger)
@@ -1144,7 +1150,10 @@ def test_presentation_ends(seeder, mockCoringRandomNonce, mockHelpingNowIso8601)
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         palHab.interact(data=[rseal])
         seqner = coring.Seqner(sn=palHab.kever.sn)
-        issuer.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=palHab.kever.serder.saider)
+        issuer.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=palHab.kever.serder.said))
         palReg.processEscrows()
 
         parsing.Parser().parse(ims=msg, vry=verifier)

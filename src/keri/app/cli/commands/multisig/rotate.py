@@ -82,7 +82,7 @@ class GroupMultisigRotate(doing.DoDoer):
         self.wits = wits if wits is not None else []
         self.cuts = cuts if cuts is not None else []
         self.adds = adds if adds is not None else []
-        
+
         self.hby = existing.setupHby(name=name, base=base, bran=bran)
         self.hbyDoer = habbing.HaberyDoer(habery=self.hby)  # setup doer
 
@@ -117,7 +117,7 @@ class GroupMultisigRotate(doing.DoDoer):
 
         if self.smids is None:
             self.smids = ghab.smids
-            
+
         if self.rmids is None:
             self.rmids = self.smids
 
@@ -152,7 +152,7 @@ class GroupMultisigRotate(doing.DoDoer):
 
                     evt = self.hby.db.getEvt(dbing.dgKey(mid, bytes(dig)))
                     serder = coring.Serder(raw=bytes(evt))
-                    if not serder.est:
+                    if not serder.estive:
                         raise kering.ConfigurationError(f"invalid event {sn} for signing member {mid}")
 
                     merfers.append(serder.verfers[0])
@@ -183,7 +183,7 @@ class GroupMultisigRotate(doing.DoDoer):
 
                     evt = self.hby.db.getEvt(dbing.dgKey(mid, bytes(dig)))
                     serder = coring.Serder(raw=evt)
-                    if not serder.est:
+                    if not serder.estive:
                         raise kering.ConfigurationError(f"invalid event {sn} for rotation member {mid}")
 
                     migers.append(serder.digers[0])

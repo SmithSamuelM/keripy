@@ -110,8 +110,8 @@ def test_reply(mockHelpingNowUTC):
         #assert tamHab.ks == tamKS
         #assert tamHab.db == tamDB
         assert tamHab.kever.prefixer.transferable
-        assert len(tamHab.iserder.werfers) == len(wits)
-        for werfer in tamHab.iserder.werfers:
+        assert len(tamHab.iserder.berfers) == len(wits)
+        for werfer in tamHab.iserder.berfers:
             assert werfer.qb64 in wits
         assert tamHab.kever.wits == wits
         assert tamHab.kever.toader.num == 2

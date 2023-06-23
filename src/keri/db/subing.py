@@ -43,7 +43,7 @@ from collections.abc import Iterable, Iterator
 
 from .. import help
 from ..help.helping import nonStringIterable
-from ..core import coring, scheming
+from ..core import coring, scheming, serdering
 from . import dbing
 
 logger = help.ogler.getLogger()
@@ -1055,7 +1055,7 @@ class SerderSuber(Suber):
         super(SerderSuber, self).__init__(*pa, **kwa)
 
 
-    def put(self, keys: Union[str, Iterable], val: coring.Serder):
+    def put(self, keys: Union[str, Iterable], val: serdering.SerderKERI):
         """
         Puts val at key made from keys. Does not overwrite
 
@@ -1072,7 +1072,7 @@ class SerderSuber(Suber):
                                val=val.raw))
 
 
-    def pin(self, keys: Union[str, Iterable], val: coring.Serder):
+    def pin(self, keys: Union[str, Iterable], val: serdering.SerderKERI):
         """
         Pins (sets) val at key made from keys. Overwrites.
 
@@ -1107,7 +1107,7 @@ class SerderSuber(Suber):
 
         """
         val = self.db.getVal(db=self.sdb, key=self._tokey(keys))
-        return coring.Serder(raw=bytes(val)) if val is not None else None
+        return serdering.SerderKERI(raw=bytes(val)) if val is not None else None
 
 
     def rem(self, keys: Union[str, Iterable]):
@@ -1139,7 +1139,7 @@ class SerderSuber(Suber):
 
         """
         for iokey, val in self.db.getTopItemIter(db=self.sdb, key=self._tokey(keys)):
-            yield self._tokeys(iokey), coring.Serder(raw=bytes(val))
+            yield self._tokeys(iokey), serdering.SerderKERI(raw=bytes(val))
 
 
 class SchemerSuber(Suber):

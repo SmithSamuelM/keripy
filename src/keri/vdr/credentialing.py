@@ -515,8 +515,11 @@ class Registrar(doing.DoDoer):
                 hab.interact(data=[rseal])
 
             seqner = coring.Seqner(sn=hab.kever.sner.num)
-            saider = hab.kever.serder.saider
-            registry.anchorMsg(pre=registry.regk, regd=registry.regd, seqner=seqner, saider=saider)
+            saider = coring.Saider(qb64=hab.kever.serder.said)
+            registry.anchorMsg(pre=registry.regk,
+                               regd=registry.regd,
+                               seqner=seqner,
+                               saider=saider)
 
             print("Waiting for TEL event witness receipts")
             self.witDoer.msgs.append(dict(pre=pre, sn=seqner.sn))
@@ -562,7 +565,7 @@ class Registrar(doing.DoDoer):
                 hab.interact(data=[rseal])
 
             seqner = coring.Seqner(sn=hab.kever.sner.num)
-            saider = hab.kever.serder.saider
+            saider = coring.Saider(qb64=hab.kever.serder.said)
             registry.anchorMsg(pre=vcid, regd=iserder.said, seqner=seqner, saider=saider)
 
             print("Waiting for TEL event witness receipts")
@@ -613,7 +616,7 @@ class Registrar(doing.DoDoer):
                 hab.interact(data=[rseal])
 
             seqner = coring.Seqner(sn=hab.kever.sner.num)
-            saider = hab.kever.serder.saider
+            saider = coring.Saider(qb64=hab.kever.serder.said)
             registry.anchorMsg(pre=vcid, regd=rserder.said, seqner=seqner, saider=saider)
 
             print("Waiting for TEL event witness receipts")

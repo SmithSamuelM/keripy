@@ -89,7 +89,7 @@ def test_remote_salty_hab():
         nxt1 = [ndiger1.qb64]
         assert nxt1 == ['EKNg5bhKpDTv_DixBKYfOHHl1omtvQ06UD3Nf40JUsQ-']
 
-        rot = eventing.rotate(pre=hab.pre, keys=keys1, dig=icp.saider.qb64, sn=1, isith=sith, ndigs=nxt1, toad=toad)
+        rot = eventing.rotate(pre=hab.pre, keys=keys1, dig=icp.said, sn=1, isith=sith, ndigs=nxt1, toad=toad)
         assert rot.raw == lhab.kever.serder.raw
 
         tsig1 = skp1.sign(rot.raw, index=0)

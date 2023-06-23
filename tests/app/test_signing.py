@@ -144,7 +144,10 @@ def test_sad_signature(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
 
         cred = proving.credential(schema="EMQWEcCnVRk1hatTNyK3sIykYSrrFvafX3bHQ9Gkk1kC",
@@ -169,7 +172,10 @@ def test_sad_signature(seeder, mockCoringRandomNonce, mockHelpingNowIso8601):
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
 
         parsing.Parser().parse(ims=sig1, vry=verifier)
@@ -207,7 +213,10 @@ def test_signature_transposition(seeder, mockCoringRandomNonce, mockHelpingNowIs
         rseal = SealEvent(issuer.regk, "0", issuer.regd)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=issuer.regk, regd=issuer.regd, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=issuer.regk,
+                         regd=issuer.regd,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
 
         cred = proving.credential(schema="EMQWEcCnVRk1hatTNyK3sIykYSrrFvafX3bHQ9Gkk1kC",
@@ -230,7 +239,10 @@ def test_signature_transposition(seeder, mockCoringRandomNonce, mockHelpingNowIs
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         hab.interact(data=[rseal])
         seqner = coring.Seqner(sn=hab.kever.sn)
-        issuer.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=hab.kever.serder.saider)
+        issuer.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
 
         parsing.Parser().parse(ims=sig0, vry=verifier)
