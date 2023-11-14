@@ -589,7 +589,7 @@ class MultisigIssueHandler(doing.DoDoer):
                 pl = msg["payload"]
 
                 try:
-                    creder = proving.Creder(ked=pl)
+                    creder = serdering.SerderACDC(sad=pl) # proving.Creder(ked=pl)
                     data = dict(
                         r="/multisig/issue",
                         ked=creder.ked

@@ -12,7 +12,7 @@ from hio.base import doing
 
 from keri import kering
 from keri.app import habbing, kiwiing, grouping, indirecting, directing, booting, notifying
-from keri.core import scheming, coring, eventing, parsing
+from keri.core import scheming, coring, eventing, parsing, serdering
 from keri.db import basing
 from keri.vc import proving
 from keri.vdr import credentialing, verifying
@@ -206,7 +206,7 @@ class TestDoer(doing.DoDoer):
         response = client3.simulate_put(f"/groups/{self.hab3.name}/credentials", body=b)
         assert response.status == falcon.HTTP_200
 
-        creder = proving.Creder(ked=credential)
+        creder = serdering.SerderACDC(sad=credential) # proving.Creder(ked=credential)
         while not self.rgy1.reger.saved.get(creder.said):
             yield tock
 

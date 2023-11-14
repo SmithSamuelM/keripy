@@ -12,7 +12,7 @@ import pytest
 
 from keri.app import habbing, keeping
 from keri.app.keeping import openKS, Manager
-from keri.core import coring, eventing, parsing
+from keri.core import coring, eventing, parsing, serdering
 from keri.core.coring import (Ilks, Diger, MtrDex, Matter, IdrDex, Indexer,
                               CtrDex, Counter, Salter, Serder, Siger, Cigar,
                               Seqner, Verfer, Signer, Prefixer,
@@ -3328,8 +3328,8 @@ def test_receipt():
         res.extend(valPrefixer.qb64b)
         res.extend(valCigar.qb64b)
 
+        #  coe process the escrow receipt from val
         parsing.Parser().parse(ims=res, kvy=coeKevery)
-        # coeKevery.process(ims=res)  #  coe process the escrow receipt from val
         #  check if in escrow database
         result = coeKevery.db.getUres(key=snKey(pre=coeKever.prefixer.qb64,
                                                 sn=2))
@@ -4784,7 +4784,7 @@ def test_reload_kever(mockHelpingNowUTC):
         assert natHab.kever.serder.said == 'EA3QbTpV15MvLSXHSedm4lRYdQhmYXqXafsD4i75B_yo'
         ldig = bytes(natHab.db.getKeLast(dbing.snKey(natHab.pre, natHab.kever.sn)))
         assert ldig == natHab.kever.serder.saidb
-        serder = coring.Serder(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre, ldig))))
+        serder = serdering.SerderKERI(raw=bytes(natHab.db.getEvt(dbing.dgKey(natHab.pre, ldig))))
         assert serder.said == natHab.kever.serder.said
         nstate = natHab.kever.state()
 

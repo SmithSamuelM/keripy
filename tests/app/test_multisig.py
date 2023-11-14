@@ -12,7 +12,7 @@ from hio.base import doing
 from keri import kering
 from keri.app import (habbing, storing, kiwiing, grouping, indirecting,
                       directing, agenting, booting, notifying)
-from keri.core import coring, eventing, parsing
+from keri.core import coring, eventing, parsing, serdering
 from keri.vdr import credentialing
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -96,12 +96,12 @@ class TestDoer(doing.DoDoer):
         b = json.dumps(icpd).encode("utf-8")
         response = client1.simulate_post("/groups/group1/icp", body=b)
         assert response.status == falcon.HTTP_200
-        serder = coring.Serder(ked=response.json)
+        serder = serdering.SerderKERI(ked=response.json)
         assert serder.pre == serder.said == "EDZc_n-rSd4uhiZJGozouT45PxSr2NTYo3JFdEWE4GIA"
         b = json.dumps(icpd).encode("utf-8")
         response = client2.simulate_put("/groups/group2/icp", body=b)
         assert response.status == falcon.HTTP_200
-        serder = coring.Serder(ked=response.json)
+        serder = serdering.SerderKERI(ked=response.json)
         assert serder.pre == serder.said == "EDZc_n-rSd4uhiZJGozouT45PxSr2NTYo3JFdEWE4GIA"
 
         while not (ghab1 := self.hby1.habByName("group1")):

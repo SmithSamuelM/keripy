@@ -20,7 +20,7 @@ from .habbing import GroupHab
 from .. import help
 from .. import kering
 from ..app import specing, forwarding, agenting, storing, indirecting, httping, habbing, delegating, booting
-from ..core import coring, eventing
+from ..core import coring, eventing, serdering
 from ..db import dbing
 from ..db.dbing import dgKey
 from ..peer import exchanging
@@ -498,7 +498,7 @@ class IdentifierEnd(doing.DoDoer):
         self.cues.append(dict(pre=hab.pre))
 
         icp = hab.makeOwnInception()
-        serder = coring.Serder(raw=icp)
+        serder = serdering.SerderKERI(raw=icp)
 
         rep.status = falcon.HTTP_200
         rep.content_type = "application/json"
@@ -599,7 +599,7 @@ class IdentifierEnd(doing.DoDoer):
             rot = hab.rotate(isith=isith, ncount=count, toad=toad, cuts=list(cuts), adds=list(adds), data=data)
             self.cues.append(dict(pre=hab.pre))
 
-            serder = coring.Serder(raw=rot)
+            serder = serdering.SerderKERI(raw=rot)
             rep.status = falcon.HTTP_200
             rep.content_type = "application/json"
             rep.data = serder.raw
@@ -660,7 +660,7 @@ class IdentifierEnd(doing.DoDoer):
             ixn = hab.interact(data=data)
             self.cues.append(dict(pre=hab.pre))
 
-            serder = coring.Serder(raw=ixn)
+            serder = serdering.SerderKERI(raw=ixn)
             rep.status = falcon.HTTP_200
             rep.content_type = "application/json"
             rep.data = serder.raw
@@ -840,7 +840,7 @@ class KeyStateEnd:
         """
         found = None
         for pre, digb, raw in self.hby.db.getAllItemIter(db=self.hby.db.evts):
-            serder = coring.Serder(raw=bytes(raw))
+            serder = serdering.SerderKERI(raw=bytes(raw))
             if len(serder.ked['k']) == 1 and pubkey in serder.ked['k']:
                 found = serder
 
@@ -1140,7 +1140,7 @@ class CredentialEnd(doing.DoDoer):
     def outputCred(self, hab, said):
         out = bytearray()
         creder, sadsigers, sadcigars = self.rgy.reger.cloneCred(said=said)
-        chains = creder.chains
+        chains = creder.edge
         saids = []
         for key, source in chains.items():
             if key == 'd':
@@ -1449,7 +1449,7 @@ class CredentialEnd(doing.DoDoer):
             return None
 
         data = body["credential"]
-        creder = proving.Creder(ked=data)
+        creder = serdering.SerderACDC(sad=data) # proving.Creder(ked=data)
 
         try:
             self.credentialer.validate(creder=creder)

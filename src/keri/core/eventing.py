@@ -627,40 +627,8 @@ def state(pre,
         intive (bool): True means sith, nsith, and toad are serialized as ints
                        instead of hex str when numeric threshold
 
-    KeyStateDict:
-    {
-        #"v": "KERI10JSON00011c_",
-        "vn": []1,0],
-        "i": "EaU6JR2nmwyZ-i0d8JZAoTNZH3ULvYAfSVPzhzS6b5CM",
-        "s": "2":,
-        "p": "EYAfSVPzhzZ-i0d8JZS6b5CMAoTNZH3ULvaU6JR2nmwy",
-        "d": "EAoTNZH3ULvaU6JR2nmwyYAfSVPzhzZ-i0d8JZS6b5CM",
-        "f": "3",
-        "dt": "2020-08-22T20:35:06.687702+00:00",
-        "et": "rot",
-        "kt": "1",
-        "k": ["DaU6JR2nmwyZ-i0d8JZAoTNZH3ULvYAfSVPzhzS6b5CM"],
-        "nt": "1",
-        "n": "EZ-i0d8JZAoTNZH3ULvaU6JR2nmwyYAfSVPzhzS6b5CM",
-        "bt": "1",
-        "b": ["DnmwyYAfSVPzhzS6b5CMZ-i0d8JZAoTNZH3ULvaU6JR2"],
-        "c": ["eo"],
-        "ee":
-          {
-            "s": "1",
-            "d": "EAoTNZH3ULvaU6JR2nmwyYAfSVPzhzZ-i0d8JZS6b5CM",
-            "br": ["Dd8JZAoTNZH3ULvaU6JR2nmwyYAfSVPzhzS6b5CMZ-i0"],
-            "ba": ["DnmwyYAfSVPzhzS6b5CMZ-i0d8JZAoTNZH3ULvaU6JR2"]
-          },
-        "di": "EYAfSVPzhzS6b5CMaU6JR2nmwyZ-i0d8JZAoTNZH3ULv",
-    }
-
-    "di": "" when not delegated
     """
-    #vs = versify(version=version, kind=kind, size=0)
-
     sner = Number(num=sn)  # raises InvalidValueError if sn < 0
-
     fner = Number(num=fn)  # raises InvalidValueError if fn < 0
 
     if eilk not in (Ilks.icp, Ilks.rot, Ilks.ixn, Ilks.dip, Ilks.drt):
@@ -1368,6 +1336,7 @@ def prod(route="",
 
 def bare(route="",
            data=None,
+           stamp=None,
            version=Version,
            kind=Serials.json):
     """
@@ -1382,13 +1351,17 @@ def bare(route="",
         route is route path string that indicates data flow handler (behavior)
             to processs the exposure
         data is dict of dicts of comitted SADS for SAIDs in seals keyed by SAID
+        stamp (str):  date-time-stamp RFC-3339 profile of ISO-8601 datetime of
+                      creation of message or data
         version is Version instance
         kind is serialization kind
+
 
     {
       "v" : "KERI10JSON00011c_",
       "t" : "bar",
       "d": "EZ-i0d8JZAoTNZH3ULaU6JR2nmwyvYAfSVPzhzS6b5CM",
+      "dt": "2020-08-22T17:50:12.988921+00:00",
       "r" : "sealed/processor",
       "a" :
         {
@@ -1408,6 +1381,7 @@ def bare(route="",
     sad = dict(v=vs,  # version string
                t=Ilks.bar,
                d="",
+               dt=stamp if stamp is not None else helping.nowIso8601(),
                r=route if route is not None else "",  # route
                a=data if data else {},  # dict of SADs
                )

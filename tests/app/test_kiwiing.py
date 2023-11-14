@@ -15,7 +15,7 @@ import keri.app.oobiing
 from keri import kering
 from keri.app import (habbing, kiwiing, grouping, booting, notifying,
                       signing, connecting)
-from keri.core import eventing, parsing, coring, scheming
+from keri.core import eventing, parsing, coring, scheming, serdering
 from keri.core.eventing import SealEvent
 from keri.db import basing, dbing
 from keri.vc import proving
@@ -105,7 +105,7 @@ def test_credential_handlers(mockHelpingNowUTC, seeder):
         b = json.dumps(body).encode("utf-8")
         result = client.simulate_post(path="/credentials/test", body=b)
         assert result.status == falcon.HTTP_200
-        creder = proving.Creder(ked=result.json)
+        creder = serdering.SerderACDC(sad=result.json) # proving.Creder(ked=result.json)
         regery.processEscrows()
         credentialer.processEscrows()
         verifier.processEscrows()

@@ -4,7 +4,7 @@ import pytest
 
 from keri import help
 from keri.app import habbing
-from keri.core import parsing, eventing, coring
+from keri.core import parsing, eventing, coring, serdering
 from keri.core.coring import CtrDex, Counter
 from keri.core.coring import Salter
 from keri.core.eventing import Kever, Kevery
@@ -371,7 +371,7 @@ def test_stale_event_receipts():
             kvy = eventing.Kevery(db=witHab.db, lax=False, local=False)
             parsing.Parser().parse(ims=bytearray(bobIcp), kvy=kvy)
             assert bobHab.pre in witHab.kevers
-            iserder = coring.Serder(raw=bytearray(bobIcp))
+            iserder = serdering.SerderKERI(raw=bytearray(bobIcp))
             msg = witHab.receipt(serder=iserder)
             parsing.Parser().parse(ims=bytearray(msg), kvy=bamKvy)
 
@@ -385,7 +385,7 @@ def test_stale_event_receipts():
         for witHab in [wesHab, wanHab]:
             kvy = eventing.Kevery(db=witHab.db, lax=False, local=False)
             parsing.Parser().parse(ims=bytearray(rot0), kvy=kvy)
-            iserder = coring.Serder(raw=bytearray(rot0))
+            iserder = serdering.SerderKERI(raw=bytearray(rot0))
             msg = witHab.receipt(serder=iserder)
             parsing.Parser().parse(ims=bytearray(msg), kvy=bamKvy)
 
@@ -393,7 +393,7 @@ def test_stale_event_receipts():
         assert bamKvy.kevers[bobHab.pre].sn == 1
 
         # Validate that bam has 2 receipts in DB for event 1
-        ser = coring.Serder(raw=rot0)
+        ser = serdering.SerderKERI(raw=rot0)
         dgkey = dbing.dgKey(ser.preb, ser.saidb)
         wigs = bamHby.db.getWigs(dgkey)
         assert len(wigs) == 2
@@ -405,7 +405,7 @@ def test_stale_event_receipts():
         for witHab in [wesHab, wanHab]:
             kvy = eventing.Kevery(db=witHab.db, lax=False, local=False)
             parsing.Parser().parse(ims=bytearray(rot1), kvy=kvy)
-            iserder = coring.Serder(raw=bytearray(rot1))
+            iserder = serdering.SerderKERI(raw=bytearray(rot1))
             msg = witHab.receipt(serder=iserder)
             parsing.Parser().parse(ims=bytearray(msg), kvy=bamKvy)
 
@@ -416,7 +416,7 @@ def test_stale_event_receipts():
         # Pass receipts from Wil for event 1 to Bam
         kvy = eventing.Kevery(db=wilHab.db, lax=False, local=False)
         parsing.Parser().parse(ims=bytearray(rot0), kvy=kvy)
-        iserder = coring.Serder(raw=bytearray(rot0))
+        iserder = serdering.SerderKERI(raw=bytearray(rot0))
         msg = wilHab.receipt(serder=iserder)
         parsing.Parser().parse(ims=bytearray(msg), kvy=bamKvy)
 

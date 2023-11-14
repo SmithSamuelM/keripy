@@ -94,10 +94,10 @@ class ConfirmDoer(doing.DoDoer):
                     continue
                 eserder = serdering.SerderKERI(raw=bytes(eraw))  # escrowed event
 
-                ilk = eserder.ked["t"]
+                ilk = eserder.sad["t"]
                 if ilk in (coring.Ilks.dip,):
                     typ = "inception"
-                    delpre = eserder.ked["di"]
+                    delpre = eserder.sad["di"]
 
                 elif ilk in (coring.Ilks.drt,):
                     typ = "rotation"

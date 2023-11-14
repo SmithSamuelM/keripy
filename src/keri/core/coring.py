@@ -1862,7 +1862,7 @@ class Pather(Bexter):
         Returns:
             bytes: Value at the end of the path
         """
-        val = self.resolve(sad=serder.ked)
+        val = self.resolve(sad=serder.sad)
         if isinstance(val, str):
             saider = Saider(qb64=val)
             return saider.qb64b

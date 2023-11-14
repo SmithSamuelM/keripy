@@ -8,7 +8,7 @@ from hio.help import decking
 
 from keri import help
 from keri.app import habbing
-from keri.core import parsing, coring
+from keri.core import parsing, coring, serdering
 from keri.peer import exchanging
 
 logger = help.ogler.getLogger()
@@ -32,7 +32,7 @@ def test_pathed_material(mockHelpingNowUTC):
         events = []
         atc = bytearray()
         for i, msg in enumerate(debMsgs):
-            evt = coring.Serder(raw=msg)
+            evt = serdering.SerderKERI(raw=msg)
             events.append(evt.ked)
             pather = coring.Pather(path=["a", i])
             btc = pather.qb64b + msg[evt.size:]

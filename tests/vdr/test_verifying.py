@@ -98,7 +98,7 @@ def test_verifier(seeder):
         assert cue["kin"] == "saved"
         assert cue["creder"].raw == creder.raw
 
-        dcre, sadsigers, sadcigars = regery.reger.cloneCred(said=creder.saider.qb64)
+        dcre, sadsigers, sadcigars = regery.reger.cloneCred(said=creder.said)
 
         assert dcre.raw == creder.raw
         assert len(sadsigers) == 1
@@ -475,7 +475,7 @@ def test_verifier_chained_credential(seeder):
         sig1 = vLeiSadsigers[-1][0]
         assert sig0.qb64b == sig1.qb64b
 
-        dater = ianreg.reger.mce.get(vLeiCreder.saider.qb64b)
+        dater = ianreg.reger.mce.get(vLeiCreder.saidb)
         assert dater is not None
 
         assert len(ianverfer.cues) == 1
@@ -550,7 +550,10 @@ def test_verifier_chained_credential(seeder):
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         ian.interact(data=[rseal])
         seqner = coring.Seqner(sn=ian.kever.sn)
-        ianiss.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=ian.kever.serder.saider)
+        ianiss.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=ian.kever.serder.said))
         ianreg.processEscrows()
 
         # Now that the credential has been issued, process escrows and it will find the TEL event
@@ -597,7 +600,10 @@ def test_verifier_chained_credential(seeder):
         rseal = SealEvent(iss.pre, "0", iss.said)._asdict()
         ian.interact(data=[rseal])
         seqner = coring.Seqner(sn=ian.kever.sn)
-        ianiss.anchorMsg(pre=iss.pre, regd=iss.said, seqner=seqner, saider=ian.kever.serder.saider)
+        ianiss.anchorMsg(pre=iss.pre,
+                         regd=iss.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=ian.kever.serder.said))
         ianreg.processEscrows()
 
         # Ensure that when specifying I2I it is enforced
@@ -648,7 +654,10 @@ def test_verifier_chained_credential(seeder):
         rseal = SealEvent(rev.pre, rseq.snh, rev.said)._asdict()
         ron.interact(data=[rseal])
         seqner = coring.Seqner(sn=ron.kever.sn)
-        roniss.anchorMsg(pre=rev.pre, regd=rev.said, seqner=seqner, saider=ron.kever.serder.saider)
+        roniss.anchorMsg(pre=rev.pre,
+                         regd=rev.said,
+                         seqner=seqner,
+                         saider=coring.Saider(qb64=ron.kever.serder.said))
         ronreg.processEscrows()
 
         for msg in ron.db.clonePreIter(pre=ron.pre):

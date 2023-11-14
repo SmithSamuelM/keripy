@@ -9,7 +9,7 @@ from keri.core import coring, eventing, serdering
 from keri.core.eventing import SealEvent
 from keri.db import escrowing, dbing, subing
 from keri.help import helping
-from keri.vdr import credentialing
+from keri.vdr import credentialing, viring
 
 
 def test_broker():
@@ -45,8 +45,8 @@ def test_broker_nontrans():
                          seqner=seqner,
                          saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
-        stn = issuer.tever.state()
-        rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=stn.ked)
+        rsr = issuer.tever.state()  # registry state RegStateRecord
+        rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=rsr._asdict())
 
         wesHab = wesHby.makeHab(name="wes", isith='1', icount=1, transferable=False)
         bork = escrowing.Broker(db=brokerdb, subkey="test")
@@ -57,8 +57,11 @@ def test_broker_nontrans():
         ked = rpy.ked
         pre = ked['a']['i']
         aid = "EBWY7LU2xwp0d4IhCvz1etbuv2iwcgBEigKJWnd-0Whs"
+
         serder = serdering.SerderKERI(sad=ked)
-        tserder = serdering.SerderKERI(sad=ked["a"])
+        rrsr = viring.RegStateRecord._fromdict(ked["a"])  # reply RegStateRecord
+        #tserder = serdering.SerderKERI(sad=ked["a"])
+
         saider, _ = coring.Saider.saidify(sad=ked, kind=coring.Serials.json, label=coring.Saids.d)
         dater = coring.Dater(dts=dts)
 
@@ -85,13 +88,13 @@ def test_broker_nontrans():
             assert [c.qb64 for c in kwargs["cigars"]] == [c.qb64 for c in cigars]
             assert kwargs["tsgs"] == []
             assert kwargs["aid"] == aid
-            tser = coring.Serder(ked=kwargs["serder"].ked["a"])
-            bork.updateState(aid=aid, serder=tser, saider=kwargs["saider"], dater=dater)
+            #tser = coring.Serder(ked=kwargs["serder"].ked["a"])
+            bork.updateReply(aid=aid, serder=serder, saider=kwargs["saider"], dater=dater)
 
         bork.processEscrowState(typ=typ, processReply=process, extype=kering.OutOfOrderError)
 
         assert bork.escrowdb.get(keys=("test", saider.qb64, aid)) == []
-        assert bork.serderdb.get(keys=(saider.qb64,)).raw == tserder.raw
+        assert bork.serderdb.get(keys=(saider.qb64,)).raw == serder.raw
         assert bork.saiderdb.get(keys=(pre, aid)).qb64 == saider.qb64
 
 
@@ -111,8 +114,8 @@ def test_broker_trans():
                          seqner=seqner,
                          saider=coring.Saider(qb64=hab.kever.serder.said))
         regery.processEscrows()
-        stn = issuer.tever.state()
-        rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=stn.ked)
+        rsr = issuer.tever.state() # registry state RegStateRecord
+        rpy = eventing.reply(route="/tsn/registry/" + issuer.regk, data=rsr._asdict())
         bobHab = bobHby.makeHab(name="bob", isith='1', icount=1, transferable=True)
 
         bork = escrowing.Broker(db=brokerdb, subkey="test")
@@ -123,7 +126,8 @@ def test_broker_trans():
         pre = issuer.regk
         aid = "EwWY7LU2xwp0d4IhCvz1etbuv2iwcgBEigKJWnd-0Whs"
         serder = serdering.SerderKERI(sad=ked)
-        tserder = serdering.SerderKERI(sad=ked["a"])
+        rrsr = viring.RegStateRecord._fromdict(ked["a"])  # reply RegStateRecord
+        #tserder = serdering.SerderKERI(sad=ked["a"])
         saider, _ = coring.Saider.saidify(sad=ked, kind=coring.Serials.json, label=coring.Saids.d)
         dater = coring.Dater(dts=dts)
 
@@ -155,13 +159,13 @@ def test_broker_trans():
             assert [s.qb64 for s in sigs] == [s.qb64 for s in sigers]
             assert kwargs["cigars"] == []
             assert kwargs["aid"] == aid
-            tser = coring.Serder(ked=kwargs["serder"].ked["a"])
-            bork.updateState(aid=aid, serder=tser, saider=kwargs["saider"], dater=dater)
+            #tser = coring.Serder(ked=kwargs["serder"].ked["a"])
+            bork.updateReply(aid=aid, serder=serder, saider=kwargs["saider"], dater=dater)
 
         bork.processEscrowState(typ=typ, processReply=process, extype=kering.OutOfOrderError)
 
         assert bork.escrowdb.get(keys=("test", saider.qb64, aid)) == []
-        assert bork.serderdb.get(keys=(saider.qb64,)).raw == tserder.raw
+        assert bork.serderdb.get(keys=(saider.qb64,)).raw == serder.raw
         assert bork.saiderdb.get(keys=(pre, aid)).qb64 == saider.qb64
 
 

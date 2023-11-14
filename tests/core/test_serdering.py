@@ -42,7 +42,8 @@ def test_serder():
                                          'exn': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'dt': '', 'r': '', 'q': {}, 'a': []}),
                                          'vcp': Fieldage(saids={'d': 'E', 'i': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 'ii': '', 's': '0', 'c': [], 'bt': '0', 'b': [], 'n': ''}),
                                          'vrt': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 'p': '', 's': '0', 'bt': '0', 'br': [], 'ba': []}),
-                                         'iss': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 's': '0', 'ri': '', 'p': '', 'dt': ''}),
+                                         'iss': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 's': '0', 'ri': '', 'dt': ''}),
+                                         'rev': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 's': '0', 'ri': '', 'p': '', 'dt': ''}),
                                          'bis': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 'ii': '', 's': '0', 'ra': {}, 'dt': ''}),
                                          'brv': Fieldage(saids={'d': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 's': '0', 'p': '', 'ra': {}, 'dt': ''})},
                                       Versionage(major=1, minor=1): {'icp': Fieldage(saids={'d': 'E', 'i': 'E'}, alls={'v': '', 't': '', 'd': '', 'i': '', 's': '0', 'kt': '0', 'k': [], 'nt': '0', 'n': [], 'bt': '0', 'b': [], 'c': [], 'a': []}),
@@ -2283,6 +2284,9 @@ def test_serderkeri_vcp():
 def test_serderacdc():
     """Test SerderACDC"""
 
+    with pytest.raises(ValueError):
+        serder = SerderACDC()
+
     serder = SerderACDC(makify=True, proto=kering.Protos.acdc)  # make defaults for ACDC
     assert serder.sad == {'v': 'ACDC10JSON00005a_',
                           'd': 'EMk7BvrqO_2sYjpI_-BmSELOFNie-muw4XTi3iYCz6pT',
@@ -2298,8 +2302,8 @@ def test_serderacdc():
     assert serder.said == 'EMk7BvrqO_2sYjpI_-BmSELOFNie-muw4XTi3iYCz6pT'
     assert serder.ilk == None
 
-    assert serder.isr == serder.sad['i'] == ''
-    assert serder.isrb == serder.isr.encode("utf-8")
+    assert serder.issuer == serder.sad['i'] == ''
+    assert serder.issuerb == serder.issuer.encode("utf-8")
 
     sad = serder.sad
     raw = serder.raw
@@ -2329,7 +2333,7 @@ def test_serderacdc():
     assert serder.kind == kering.Serials.json
     assert serder.said == said
     assert serder.ilk == None
-    assert serder.isr ==  isr
+    assert serder.issuer ==  isr
 
 
     serder = SerderACDC(raw=raw)
@@ -2341,7 +2345,7 @@ def test_serderacdc():
     assert serder.kind == kering.Serials.json
     assert serder.said == said
     assert serder.ilk == None
-    assert serder.isr ==  isr
+    assert serder.issuer ==  isr
 
 
 

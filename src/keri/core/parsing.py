@@ -9,13 +9,11 @@ import logging
 from collections import namedtuple
 from dataclasses import dataclass, astuple
 
-from .coring import (Ilks, CtrDex, Counter, Seqner, Siger, Cigar, IdxSigDex,
-                     Dater, Verfer, Prefixer, Serder, Saider, Pather, Protos,
-                     Sadder, )
+from .coring import (Ilks, CtrDex, Counter, Seqner, Siger, Cigar,
+                     Dater, Verfer, Prefixer, Saider, Pather, Protos )
 from . import serdering
 from .. import help
 from .. import kering
-from ..vc.proving import Creder
 
 logger = help.ogler.getLogger()
 

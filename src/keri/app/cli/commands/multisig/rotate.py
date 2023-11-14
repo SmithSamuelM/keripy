@@ -13,7 +13,7 @@ from hio.base import doing
 from keri import kering
 from keri.app import grouping, indirecting, habbing, forwarding
 from keri.app.cli.common import rotating, existing, displaying, config
-from keri.core import coring
+from keri.core import coring, serdering
 from keri.db import dbing
 
 logger = help.ogler.getLogger()
@@ -151,7 +151,7 @@ class GroupMultisigRotate(doing.DoDoer):
                         raise kering.ConfigurationError(f"non-existant event {sn} for signing member {mid}")
 
                     evt = self.hby.db.getEvt(dbing.dgKey(mid, bytes(dig)))
-                    serder = coring.Serder(raw=bytes(evt))
+                    serder = serdering.SerderKERI(raw=bytes(evt))
                     if not serder.estive:
                         raise kering.ConfigurationError(f"invalid event {sn} for signing member {mid}")
 
@@ -182,7 +182,7 @@ class GroupMultisigRotate(doing.DoDoer):
                         raise kering.ConfigurationError(f"non-existant event {sn} for rotation member {mid}")
 
                     evt = self.hby.db.getEvt(dbing.dgKey(mid, bytes(dig)))
-                    serder = coring.Serder(raw=evt)
+                    serder = serdering.SerderKERI(raw=evt)
                     if not serder.estive:
                         raise kering.ConfigurationError(f"invalid event {sn} for rotation member {mid}")
 
@@ -201,7 +201,7 @@ class GroupMultisigRotate(doing.DoDoer):
         rot = ghab.rotate(isith=self.isith, nsith=self.nsith,
                           toad=self.toad, cuts=list(self.cuts), adds=list(self.adds), data=self.data,
                           verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
         del rot[:rserder.size]
 
 

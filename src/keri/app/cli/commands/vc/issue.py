@@ -5,6 +5,7 @@ from hio import help
 from hio.base import doing
 
 from keri import kering
+from keri.core import serdering
 from keri.app import indirecting, habbing, grouping, connecting
 from keri.app.cli.common import existing
 from keri.vc import proving
@@ -165,7 +166,7 @@ class CredentialIssuer(doing.DoDoer):
                 json.dump(self.creder.crd, f)
                 f.close()
             else:
-                self.creder = proving.Creder(ked=credential)
+                self.creder = serdering.SerderACDC(sad=credential) # proving.Creder(ked=credential)
                 self.credentialer.validate(creder=self.creder)
 
             self.credentialer.issue(creder=self.creder)

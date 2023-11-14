@@ -93,7 +93,7 @@ class RevokeDoer(doing.DoDoer):
             while not self.registrar.complete(creder.said, sn=1):
                 yield self.tock
 
-            recps = [creder.subject['i']] if 'i' in creder.subject else []
+            recps = [creder.attrib['i']] if 'i' in creder.attrib else []
             if self.send is not None:
                 recps.extend(self.send)
 

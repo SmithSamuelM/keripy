@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from hio.base import doing, tyming
 
 from keri.app import habbing, grouping, notifying
-from keri.core import coring, eventing, parsing
+from keri.core import coring, eventing, parsing, serdering
 from keri.db import dbing
 from keri.peer import exchanging
 
@@ -88,9 +88,9 @@ def test_counselor():
         prefixer = coring.Prefixer(qb64=ghab.pre)
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab.rotate(isith="2", nsith="2", toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby1.db.gpse.get(keys=(ghab.pre,))
@@ -106,7 +106,7 @@ def test_counselor():
                               b',"nt":"2","n":["EBOgQ1MOWQ2eWIqDuqjinhh3L3O5qHPEZ08zMICPhPTw","EGyO8jUZpLIlA'
                               b'CoeLmfUzvE3mnxmcU2m_nyKfSDfpxV4"],"bt":"0","br":[],"ba":[],"a":[]}')
 
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab2.mgr.sign(serder.raw, verfers=hab2.kever.verfers, indexed=True, indices=[1], ondices=[1])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg == (b'{"v":"KERI10JSON0001be_","t":"rot","d":"EFWaDXMVIhIMpsXMOcnXhU0t'
@@ -145,9 +145,9 @@ def test_counselor():
         prefixer = coring.Prefixer(qb64=ghab.pre)
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab.rotate(isith="2", nsith="2", toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby1.db.gpse.get(keys=(ghab.pre,))
@@ -164,7 +164,7 @@ def test_counselor():
                               b'4KrWvInrg8gW3KbcYKiGceWFtwDfxmV","EMUrvGYprwKm77Oju22TlcoAEhL9QnnYfOBFPO1IyJ'
                               b'Un"],"bt":"0","br":[],"ba":[],"a":[]}')
 
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab2.mgr.sign(serder.raw, verfers=hab2.kever.verfers, indexed=True, indices=[1])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg == (b'{"v":"KERI10JSON0001ed_","t":"rot","d":"EAFmW50FmBfJXp4sPnYBp51L'
@@ -203,9 +203,9 @@ def test_counselor():
         prefixer = coring.Prefixer(qb64=ghab.pre)
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab.rotate(isith="2", nsith="2", toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby1.db.gpse.get(keys=(ghab.pre,))
@@ -221,7 +221,7 @@ def test_counselor():
                               b',"nt":"2","n":["ELyh1BXGM7C0jfx3x-k8f1GLx9mIRHzFq3tiZgc9N5Vm","EH0h1byPWpTfi'
                               b'MUcnk_nbeS4HEfnS_j0q2TAJAeIkFlu"],"bt":"0","br":[],"ba":[],"a":[]}')
 
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab3.mgr.sign(serder.raw, verfers=hab3.kever.verfers, indexed=True, indices=[1], ondices=[2])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg == (b'{"v":"KERI10JSON0001be_","t":"rot","d":"EEQVk2x7-t_fnYNoOzeZppvI'
@@ -317,7 +317,7 @@ def test_the_seven():
         ghab2 = hby2.makeGroupHab(group=f"{prefix}_group2", mhab=hab2,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab2.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBBAD108k4sWtYRv8jQaRbzX6kDebjdzFNVCh3N9cOAJqXV5IzmKdi60Cr0Eu'
                                    b'MaACskw0FCi73V2VX8BgFlxO8VIK')
         assert serd.raw == raw
@@ -326,7 +326,7 @@ def test_the_seven():
         ghab3 = hby3.makeGroupHab(group=f"{prefix}_group3", mhab=hab3,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab3.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBCD6V2UkAovhY07MrJUNb-ICddDoyLde9i0FWclxfs7jes01YUEihfgbGERF'
                                    b'dKDR4kSr4WF3AskrZOPvMuXipAgP')
         assert serd.raw == raw
@@ -335,7 +335,7 @@ def test_the_seven():
         ghab4 = hby4.makeGroupHab(group=f"{prefix}_group4", mhab=hab4,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab4.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBDBCZuZSFWy0tFshGny1pTR47GphDljd0SShmGRpUSpBX_BeHB1tdIObizaA'
                                    b'4GMoOcZ2sOWIe6muJPF_RaoKedYE')
         assert serd.raw == raw
@@ -344,7 +344,7 @@ def test_the_seven():
         ghab5 = hby5.makeGroupHab(group=f"{prefix}_group5", mhab=hab5,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab5.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBEBsR6_hPId3H8fFG8EfevQVji8MsLAC72MjkkRxJp3h9v1vyFS1hAGGGxno'
                                    b'F5xSHOnpBpPwjMJwOCurAa3VrNAD')
         assert serd.raw == raw
@@ -353,7 +353,7 @@ def test_the_seven():
         ghab6 = hby6.makeGroupHab(group=f"{prefix}_group6", mhab=hab6,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab6.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBFCi5hK6Ax4aBNsdoUkh7Q_CcSWJfpwkeF68aCO34J3BDN7k483lOxiyj6pl'
                                    b'8TQIQ7VJLBkoRscUMi_mls9jbpcD')
         assert serd.raw == raw
@@ -362,7 +362,7 @@ def test_the_seven():
         ghab7 = hby7.makeGroupHab(group=f"{prefix}_group7", mhab=hab7,
                                   smids=smids, rmids=rmids, **inits)
         evt = ghab7.makeOwnInception(allowPartiallySigned=True)
-        serd = coring.Serder(raw=bytearray(evt))
+        serd = serdering.SerderKERI(raw=bytearray(evt))
         assert evt[serd.size:] == (b'-AABBGCtPvRj00vEfT5Po6eH50DWfBWwAcQgvBaJ7LlYT7kQswkl_r-K9Lsxi5tm'
                                    b'Pvsb2xFtcMJkFf-BxamGhFo9OOcD')
         assert serd.raw == raw
@@ -388,9 +388,9 @@ def test_the_seven():
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab.rotate(isith='["1/3", "1/3", "1/3"]', nsith='["1/3", "1/3", "1/3", "1/3", "1/3", "1/3", "1/3"]'
                           , toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby1.db.gpse.get(keys=(ghab.pre,))
@@ -414,7 +414,7 @@ def test_the_seven():
         assert bytes(evt) == raw
 
         # Grab the group ROT event, sign with Hab2 and parse into Kev1
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab2.mgr.sign(serder.raw, verfers=hab2.kever.verfers, indexed=True, indices=[1])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg[serder.size:] == (b'-AABABAzvHN7yC3581dp9DxFXrKuXGP_62r_pzNMXL20T6RaPQASXvnBn6sKJ78z'
@@ -454,9 +454,9 @@ def test_the_seven():
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab.rotate(isith='["1/3", "1/3", "1/3"]', nsith='["1/3", "1/3", "1/3", "1/3", "1/3", "1/3", "1/3"]'
                           , toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor.start(ghab=ghab, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby1.db.gpse.get(keys=(ghab.pre,))
@@ -481,7 +481,7 @@ def test_the_seven():
         assert bytes(evt) == raw
 
         # Grab the group ROT event, sign with Hab2 and parse into Kev1
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab2.mgr.sign(serder.raw, verfers=hab2.kever.verfers, indexed=True, indices=[1])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg[serder.size:] == (b'-AABABC4sYnDXCpO87BMXO21ofqHZKntPSdEXlBPlq1H8NOHD3KV-GHGWrXyrElK'
@@ -535,9 +535,9 @@ def test_the_seven():
         seqner = coring.Seqner(sn=ghab.kever.sn+1)
         rot = ghab4.rotate(isith='["1/3", "1/3", "1/3"]', nsith='["1/3", "1/3", "1/3"]',
                            toad=0, cuts=list(), adds=list(), verfers=merfers, digers=migers)
-        rserder = coring.Serder(raw=rot)
+        rserder = serdering.SerderKERI(raw=rot)
 
-        counselor4.start(ghab=ghab4, prefixer=prefixer, seqner=seqner, saider=rserder.saider)
+        counselor4.start(ghab=ghab4, prefixer=prefixer, seqner=seqner, saider=coring.Saider(qb64=rserder.said))
 
         # partially signed group rotation
         val = hby4.db.gpse.get(keys=(ghab4.pre,))
@@ -558,7 +558,7 @@ def test_the_seven():
         assert bytes(evt) == raw
 
         # Grab the group ROT event, sign with Hab5 and parse into Kev4
-        serder = coring.Serder(raw=bytes(evt))
+        serder = serdering.SerderKERI(raw=bytes(evt))
         sigers = hab5.mgr.sign(serder.raw, verfers=hab5.kever.verfers, indexed=True, indices=[1], ondices=[4])
         msg = eventing.messagize(serder=serder, sigers=sigers)
         assert msg[serder.size:] == (b'-AAB2AABAEDSs99oM-KOhJ8q3H8lqGqPE3EvZxCHvCjZFvWHLzhqm91YlcskGqvK'
@@ -786,7 +786,7 @@ def test_multisig_rotate_handler(mockHelpingNowUTC):
     with openMultiSig(prefix="test") as ((hby1, ghab1), (_, _), (_, _)):
 
         icp = ghab1.makeOwnInception()
-        serder = coring.Serder(raw=icp)
+        serder = serdering.SerderKERI(raw=icp)
         exn, atc = grouping.multisigRotateExn(ghab=ghab1, smids=ghab1.smids, rmids=ghab1.rmids,
                                               ked=serder.ked)
         notifier = notifying.Notifier(hby=hby1)

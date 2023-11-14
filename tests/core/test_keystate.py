@@ -7,7 +7,7 @@ routes: /ksn
 
 """
 from keri.app import habbing
-from keri.core import coring, eventing, parsing, routing
+from keri.core import coring, eventing, parsing, routing, serdering
 
 
 def test_keystate(mockHelpingNowUTC):
@@ -79,7 +79,7 @@ def test_keystate(mockHelpingNowUTC):
         bobIcp = bobHab.makeOwnEvent(sn=0)
         parsing.Parser().parse(ims=bytearray(bobIcp), kvy=wesKvy)
         assert bobHab.pre in wesHab.kevers
-        iserder = coring.Serder(raw=bytearray(bobIcp))
+        iserder = serdering.SerderKERI(raw=bytearray(bobIcp))
         wesHab.receipt(serder=iserder)
 
         # Get key state record (ksr) from Bob and verify

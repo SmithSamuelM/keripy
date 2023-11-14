@@ -46,7 +46,7 @@ def export_credentials(args):
     sigs = args.signatures
     tels = args.tels
     kels = args.kels
-    chains = args.chains
+    chains = args.edge
 
     if args.full:
         sigs = tels = kels = chains = True
@@ -108,12 +108,12 @@ class ExportDoer(doing.DoDoer):
             self.outputKEL(issr)
 
         if self.tels:
-            if creder.status is not None:
-                self.outputTEL(creder.status)
+            if creder.regi is not None:
+                self.outputTEL(creder.regi)
                 self.outputTEL(creder.said)
 
         if self.chains:
-            chains = creder.chains
+            chains = creder.edge
             saids = []
             for key, source in chains.items():
                 if key == 'd':
@@ -150,7 +150,7 @@ class ExportDoer(doing.DoDoer):
             if f is not None:
                 f.write(msg.decode("utf-8"))
             else:
-                serder = coring.Serder(raw=msg)
+                serder = serdering.SerderKERI(raw=msg)
                 atc = msg[serder.size:]
                 sys.stdout.write(serder.raw.decode("utf-8"))
                 sys.stdout.write(atc.decode("utf-8"))
@@ -167,7 +167,7 @@ class ExportDoer(doing.DoDoer):
             if f is not None:
                 f.write(msg.decode("utf-8"))
             else:
-                serder = coring.Serder(raw=msg)
+                serder = serdering.SerderKERI(raw=msg)
                 atc = msg[serder.size:]
                 sys.stdout.write(serder.raw.decode("utf-8"))
                 sys.stdout.write(atc.decode("utf-8"))

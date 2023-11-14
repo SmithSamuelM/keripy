@@ -339,7 +339,10 @@ class Registry(BaseRegistry):
         if self.noBackers:
             serder = eventing.issue(vcdig=said, regk=self.regk, dt=dt)
         else:
-            serder = eventing.backerIssue(vcdig=said, regk=self.regk, regsn=self.regi, regd=self.regser.saider.qb64,
+            serder = eventing.backerIssue(vcdig=said,
+                                          regk=self.regk,
+                                          regsn=self.regi,
+                                          regd=self.regser.said,
                                           dt=dt)
 
         self.processEvent(serder=serder)
@@ -369,7 +372,10 @@ class Registry(BaseRegistry):
         if self.noBackers:
             serder = eventing.revoke(vcdig=vci, regk=self.regk, dig=iserder.said, dt=dt)
         else:
-            serder = eventing.backerRevoke(vcdig=vci, regk=self.regk, regsn=self.regi, regd=self.regser.saider.qb64,
+            serder = eventing.backerRevoke(vcdig=vci,
+                                           regk=self.regk,
+                                           regsn=self.regi,
+                                           regd=self.regser.said,
                                            dig=iserder.said, dt=dt)
 
         self.processEvent(serder=serder)
@@ -636,7 +642,7 @@ class Registrar(doing.DoDoer):
     @staticmethod
     def multisigIxn(hab, rseal):
         ixn = hab.interact(data=[rseal])
-        gserder = coring.Serder(raw=ixn)
+        gserder = serdering.SerderKERI(raw=ixn)
 
         sn = gserder.sn
         said = gserder.said
@@ -822,7 +828,7 @@ class Credentialer(doing.DoDoer):
             bool: true if credential is valid against a known schema
 
         """
-        schema = creder.crd['s']
+        schema = creder.sad['s']
         scraw = self.verifier.resolver.resolve(schema)
         if not scraw:
             raise kering.ConfigurationError("Credential schema {} not found.  It must be loaded with data oobi before "
@@ -846,14 +852,14 @@ class Credentialer(doing.DoDoer):
             rmids (list[str] | None): optional group rotating member ids for multisig
                 need to contribute digest of next rotating key
         """
-        regk = creder.crd["ri"]
+        regk = creder.sad["ri"]
         registry = self.rgy.regs[regk]
         hab = registry.hab
         if isinstance(hab, GroupHab):
             smids = smids if smids is not None else hab.smids
             rmids = rmids if rmids is not None else hab.rmids
 
-        dt = creder.subject["dt"] if "dt" in creder.subject else None
+        dt = creder.attrib["dt"] if "dt" in creder.attrib else None
 
         vcid, seq = self.registrar.issue(regk=registry.regk, said=creder.said,
                                          dt=dt, smids=smids, rmids=rmids)
@@ -911,11 +917,11 @@ class Credentialer(doing.DoDoer):
                 continue
 
             issr = creder.issuer
-            regk = creder.status
+            regk = creder.regi
 
             print("Credential issuance complete, sending to recipient")
-            if "i" in creder.subject:
-                recp = creder.subject["i"]
+            if "i" in creder.attrib:
+                recp = creder.attrib["i"]
 
                 hab = self.hby.habs[issr]
                 if isinstance(hab, GroupHab):
@@ -925,51 +931,51 @@ class Credentialer(doing.DoDoer):
 
                 ikever = self.hby.db.kevers[issr]
                 for msg in self.hby.db.cloneDelegation(ikever):
-                    serder = coring.Serder(raw=msg)
+                    serder = serdering.SerderKERI(raw=msg)
                     atc = msg[serder.size:]
                     self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                 for msg in self.hby.db.clonePreIter(pre=issr):
-                    serder = coring.Serder(raw=msg)
+                    serder = serdering.SerderKERI(raw=msg)
                     atc = msg[serder.size:]
                     self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                 if regk is not None:
                     for msg in self.verifier.reger.clonePreIter(pre=regk):
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         atc = msg[serder.size:]
                         self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                 for msg in self.verifier.reger.clonePreIter(pre=creder.said):
-                    serder = coring.Serder(raw=msg)
+                    serder = serdering.SerderKERI(raw=msg)
                     atc = msg[serder.size:]
                     self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                 sources = self.verifier.reger.sources(self.hby.db, creder)
                 for source, atc in sources:
-                    regk = source.status
+                    regk = source.regi
                     vci = source.said
 
-                    issr = source.crd["i"]
+                    issr = source.sad["i"]
                     ikever = self.hby.db.kevers[issr]
                     for msg in self.hby.db.cloneDelegation(ikever):
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         atc = msg[serder.size:]
                         self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                     for msg in self.hby.db.clonePreIter(pre=issr):
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         atc = msg[serder.size:]
                         self.postman.send(src=sender, dest=recp, topic="credential", serder=serder,
                                           attachment=atc)
 
                     for msg in self.verifier.reger.clonePreIter(pre=regk):
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         atc = msg[serder.size:]
                         self.postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
                     for msg in self.verifier.reger.clonePreIter(pre=vci):
-                        serder = coring.Serder(raw=msg)
+                        serder = serdering.SerderKERI(raw=msg)
                         atc = msg[serder.size:]
                         self.postman.send(src=sender, dest=recp, topic="credential", serder=serder,
                                           attachment=atc)
@@ -1107,35 +1113,35 @@ def sendArtifacts(hby, reger, postman, creder, sender, recp):
 
     """
     issr = creder.issuer
-    isse = creder.subject["i"] if "i" in creder.subject else None
-    regk = creder.status
+    isse = creder.attrib["i"] if "i" in creder.attrib else None
+    regk = creder.regi
 
     ikever = hby.db.kevers[issr]
     for msg in hby.db.cloneDelegation(ikever):
-        serder = coring.Serder(raw=msg)
+        serder = serdering.SerderKERI(raw=msg)
         atc = msg[serder.size:]
         postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
     for msg in hby.db.clonePreIter(pre=issr):
-        serder = coring.Serder(raw=msg)
+        serder = serdering.SerderKERI(raw=msg)
         atc = msg[serder.size:]
         postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
     if isse != recp:
         ikever = hby.db.kevers[isse]
         for msg in hby.db.cloneDelegation(ikever):
-            serder = coring.Serder(raw=msg)
+            serder = serdering.SerderKERI(raw=msg)
             atc = msg[serder.size:]
             postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
         for msg in hby.db.clonePreIter(pre=isse):
-            serder = coring.Serder(raw=msg)
+            serder = serdering.SerderKERI(raw=msg)
             atc = msg[serder.size:]
             postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 
     if regk is not None:
         for msg in reger.clonePreIter(pre=regk):
-            serder = coring.Serder(raw=msg)
+            serder = serdering.SerderKERI(raw=msg)
             atc = msg[serder.size:]
             postman.send(src=sender, dest=recp, topic="credential", serder=serder, attachment=atc)
 

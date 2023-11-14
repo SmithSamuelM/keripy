@@ -202,7 +202,7 @@ class IssueHandler(doing.DoDoer):
 
                 creder = self.rgy.reger.creds.get(csaid)
                 if creder is not None:
-                    data["credential"]["sad"] = creder.crd
+                    data["credential"]["sad"] = creder.sad
 
                 # TODO:  Get schema resolver and Organizer to load schema and contact info if any.
                 self.notifier.add(attrs=data)
