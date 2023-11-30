@@ -423,13 +423,13 @@ class MatterCodex:
     X25519_Private:       str = 'O'  # X25519 private decryption key converted from Ed25519
     X25519_Cipher_Seed:   str = 'P'  # X25519 sealed box 124 char b64 Cipher of 44 char qb64 Seed
     ECDSA_256r1_Seed:     str = "Q"  # ECDSA secp256r1 256 bit random Seed for private key
-    Trait3:               str = 'R'  # Trait as 3 char B64 encoded like 'DND'
+    Trait3:               str = 'R'  # Trait3 as 3 char B64 encoded like 'DND'
     Large:                str = 'S'  # Large 5 byte b2 number
     Tall:                 str = 'T'  # Tall 11 byte b2 number
     Great:                str = 'U'  # Great 14 byte b2 number
     Vast:                 str = 'V'  # Vast 17 byte b2 number
-    Tag1:                 str = 'W'  # Tag as one char (bytes) field map label
-    Tag2:                 str = 'X'  # Tag as two char (bytes) field map label
+    Tag1:                 str = 'W'  # Tag1 as one char (bytes) field map label lead size 1
+    Tag2:                 str = 'X'  # Tag2 as two char (bytes) field map label lead size 0
     Salt_128:             str = '0A'  # 128 bit random salt or 128 bit number (see Huge)
     Ed25519_Sig:          str = '0B'  # Ed25519 signature.
     ECDSA_256k1_Sig:      str = '0C'  # ECDSA secp256k1 signature.
@@ -440,7 +440,7 @@ class MatterCodex:
     Long:                 str = '0H'  # Long 4 byte b2 number
     ECDSA_256r1_Sig:      str = '0I'  # ECDSA secp256r1 signature.
     Version:              str = '0J'  # Base64 encoded CESR native msg protocol version 0JKERIBB KERI1.1
-    Trait2:               str = '0K'  # Trait as 2 char B64 encoded like 'EO'
+    Trait2:               str = '0K'  # Trait2 as 2 char B64 encoded like 'EO'
     ECDSA_256k1N:         str = '1AAA'  # ECDSA secp256k1 verification key non-transferable, basic derivation.
     ECDSA_256k1:          str = '1AAB'  # ECDSA public verification or encryption key, basic derivation
     Ed448N:               str = '1AAC'  # Ed448 non-transferable prefix public signing verification key. Basic derivation.
