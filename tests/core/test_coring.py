@@ -365,7 +365,7 @@ def test_matter():
         'X25519_Private': 'O',
         'X25519_Cipher_Seed': 'P',
         'ECDSA_256r1_Seed': 'Q',
-        'Trait3': 'R',
+        'Bext3': 'R',
         'Large': 'S',
         'Tall': 'T',
         'Great': 'U',
@@ -381,8 +381,8 @@ def test_matter():
         'SHA2_512': '0G',
         'Long': '0H',
         'ECDSA_256r1_Sig': '0I',
-        'Version': '0J',
-        'Trait2': '0K',
+        'Bext2': '0J',
+        'Bext6': '0K',
         'ECDSA_256k1N': '1AAA',
         'ECDSA_256k1': '1AAB',
         'Ed448N': '1AAC',
@@ -413,7 +413,7 @@ def test_matter():
         'X25519_Cipher_L2': '6C',
         'X25519_Cipher_Big_L0': '7AAC',
         'X25519_Cipher_Big_L1': '8AAC',
-        'X25519_Cipher_Big_L2': '9AAC',
+        'X25519_Cipher_Big_L2': '9AAC'
     }
 
     assert Matter.Codex == MtrDex
@@ -465,8 +465,8 @@ def test_matter():
         '0G': Sizage(hs=2, ss=0, fs=88, ls=0),
         '0H': Sizage(hs=2, ss=0, fs=8, ls=0),
         '0I': Sizage(hs=2, ss=0, fs=88, ls=0),
-        '0J': Sizage(hs=2, ss=0, fs=8, ls=0),
-        '0K': Sizage(hs=2, ss=0, fs=4, ls=0),
+        '0J': Sizage(hs=2, ss=0, fs=4, ls=0),
+        '0K': Sizage(hs=2, ss=0, fs=8, ls=0),
         '1AAA': Sizage(hs=4, ss=0, fs=48, ls=0),
         '1AAB': Sizage(hs=4, ss=0, fs=48, ls=0),
         '1AAC': Sizage(hs=4, ss=0, fs=80, ls=0),
@@ -499,6 +499,7 @@ def test_matter():
         '8AAC': Sizage(hs=4, ss=4, fs=None, ls=1),
         '9AAC': Sizage(hs=4, ss=4, fs=None, ls=2)
     }
+
 
     assert Matter.Sizes['A'].hs == 1  # hard size
     assert Matter.Sizes['A'].ss == 0  # soft size
