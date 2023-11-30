@@ -5,7 +5,7 @@ Generic Constants and Classes
 import sys
 import re
 from collections import namedtuple
-
+from dataclasses import dataclass, astuple
 
 FALSEY = (False, 0, None, "?0", "no", "false", "False", "off")
 TRUTHY = (True, 1, "?1", "yes" "true", "True", 'on')
@@ -31,6 +31,29 @@ VERFULLSIZE = 17  # number of characters in full version string
 
 VEREX = b'(?P<proto>[A-Z]{4})(?P<major>[0-9a-f])(?P<minor>[0-9a-f])(?P<kind>[A-Z]{4})(?P<size>[0-9a-f]{6})_'
 Rever = re.compile(VEREX)  # compile is faster
+
+# maybe better as named tuple
+#@dataclass(frozen=True)
+#class ProtocolKindVersionCodex:
+    #"""ProtocolKindVersionCodex is codex of message protocols kind at version.
+    #Each protocol kind code primitive creates code space for packet types
+    #provided in separate packet type code primitive
+
+    #Only provide defined codes.
+    #Undefined are left out so that inclusion(exclusion) via 'in' operator works.
+    #"""
+    #KERI: str = 'AAA'  # KERI protocol kind
+    #ACDC: str = 'AAB'  # ACDC protocol kind
+    #CREL: str = 'AAB'  # CREL protocol kind
+
+
+    #def __iter__(self):
+        #return iter(astuple(self))  # enables inclusion test with "in"
+        ## duplicate values above just result in multiple entries in tuple so
+        ## in inclusion still works
+
+#KindDex = ProtocolKindVersionCodex()  # Make instance
+
 
 
 def versify(proto=Protos.keri, version=Version, kind=Serials.json, size=0):

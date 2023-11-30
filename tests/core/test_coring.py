@@ -31,7 +31,7 @@ from keri.core.coring import (Ilkage, Ilks, Labels, Saids, Protos, Protocolage,
 from keri.core.coring import Serialage, Serials, Tiers, Vstrings
 from keri.core.coring import (Sizage, MtrDex, Matter, Xizage, IdrDex, IdxSigDex,
                               IdxCrtSigDex, IdxBthSigDex, Indexer,
-                              CtrDex, Counter, sniff, ProDex)
+                              CtrDex, Counter, sniff, GenDex)
 from keri.core.coring import (Verfer, Cigar, Signer, Salter, Saider, DigDex,
                               Diger, Prefixer, Cipher, Encrypter, Decrypter)
 from keri.core.coring import versify, deversify, Rever, VERFULLSIZE, MINSNIFFSIZE
@@ -73,15 +73,15 @@ def test_prodex():
 
     """
 
-    assert dataclasses.asdict(ProDex) == {
+    assert dataclasses.asdict(GenDex) == {
         'KERI': '--AAA', # KERI and ACDC Protocol Stacks share the same tables
         'ACDC': '--AAA',
         }
 
-    assert '--AAA' in ProDex
-    assert ProDex.KERI == "--AAA"
-    assert ProDex.ACDC == "--AAA"
-    assert ProDex.KERI == ProDex.ACDC
+    assert '--AAA' in GenDex
+    assert GenDex.KERI == "--AAA"
+    assert GenDex.ACDC == "--AAA"
+    assert GenDex.KERI == GenDex.ACDC
 
     """End Test"""
 
@@ -372,6 +372,7 @@ def test_matter():
         'Vast': 'V',
         'Tag1': 'W',
         'Tag2': 'X',
+        'Bext7': 'Y',
         'Salt_128': '0A',
         'Ed25519_Sig': '0B',
         'ECDSA_256k1_Sig': '0C',
@@ -416,6 +417,7 @@ def test_matter():
         'X25519_Cipher_Big_L2': '9AAC'
     }
 
+
     assert Matter.Codex == MtrDex
 
     # first character of code with hard size of code
@@ -456,6 +458,7 @@ def test_matter():
         'V': Sizage(hs=1, ss=0, fs=24, ls=0),
         'W': Sizage(hs=1, ss=0, fs=4, ls=1),
         'X': Sizage(hs=1, ss=0, fs=4, ls=0),
+        'Y': Sizage(hs=1, ss=0, fs=8, ls=0),
         '0A': Sizage(hs=2, ss=0, fs=24, ls=0),
         '0B': Sizage(hs=2, ss=0, fs=88, ls=0),
         '0C': Sizage(hs=2, ss=0, fs=88, ls=0),

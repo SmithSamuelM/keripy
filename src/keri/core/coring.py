@@ -430,6 +430,7 @@ class MatterCodex:
     Vast:                 str = 'V'  # Vast 17 byte b2 number
     Tag1:                 str = 'W'  # Tag1 as one char (bytes) field map label lead size 1
     Tag2:                 str = 'X'  # Tag2 as two char (bytes) field map label lead size 0
+    Bext7:                str = 'Y'  # Bext7 7 B64 encoded chars for packet kind and version KERIVVV
     Salt_128:             str = '0A'  # 128 bit random salt or 128 bit number (see Huge)
     Ed25519_Sig:          str = '0B'  # Ed25519 signature.
     ECDSA_256k1_Sig:      str = '0C'  # ECDSA secp256k1 signature.
@@ -439,8 +440,8 @@ class MatterCodex:
     SHA2_512:             str = '0G'  # SHA2 512 bit digest self-addressing derivation.
     Long:                 str = '0H'  # Long 4 byte b2 number
     ECDSA_256r1_Sig:      str = '0I'  # ECDSA secp256r1 signature.
-    Bext2:                str = '0J'  # Bext3 3 B64 encoded chars for trait like 'EO' CESR native msg protocol version
-    Bext6:                str = '0K'  # Bext6 6 B64 encoded chars for protocol/version like KERIBB (KERI 1.1)
+    Bext2:                str = '0J'  # Bext2 2 B64 encoded chars for trait like 'EO' CESR native msg protocol version
+    Bext6:                str = '0K'  # Bext6 6 B64 encoded chars for protocol kind version like KERIVV (KERI 1.1) or KKKVVV (KERI 1.1.0)
     ECDSA_256k1N:         str = '1AAA'  # ECDSA secp256k1 verification key non-transferable, basic derivation.
     ECDSA_256k1:          str = '1AAB'  # ECDSA public verification or encryption key, basic derivation
     Ed448N:               str = '1AAC'  # Ed448 non-transferable prefix public signing verification key. Basic derivation.
@@ -785,6 +786,7 @@ class Matter:
         'V': Sizage(hs=1, ss=0, fs=24, ls=0),
         'W': Sizage(hs=1, ss=0, fs=4, ls=1),
         'X': Sizage(hs=1, ss=0, fs=4, ls=0),
+        'Y': Sizage(hs=1, ss=0, fs=8, ls=0),
         '0A': Sizage(hs=2, ss=0, fs=24, ls=0),
         '0B': Sizage(hs=2, ss=0, fs=88, ls=0),
         '0C': Sizage(hs=2, ss=0, fs=88, ls=0),
@@ -4574,8 +4576,8 @@ CtrDex = CounterCodex()
 
 
 @dataclass(frozen=True)
-class ProtocolGenusCodex:
-    """ProtocolGenusCodex is codex of protocol genera for code table.
+class GenusVersionCodex:
+    """GenusVersionCodex is codex of code table genera at version.
 
     Only provide defined codes.
     Undefined are left out so that inclusion(exclusion) via 'in' operator works.
@@ -4589,7 +4591,7 @@ class ProtocolGenusCodex:
         # duplicate values above just result in multiple entries in tuple so
         # in inclusion still works
 
-ProDex = ProtocolGenusCodex()  # Make instance
+GenDex = GenusVersionCodex()  # Make instance
 
 
 @dataclass(frozen=True)
