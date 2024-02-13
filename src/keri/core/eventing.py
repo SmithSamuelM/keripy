@@ -417,44 +417,6 @@ def deTransReceiptQuintuple(data, strip=False):
     return esaider, sprefixer, sseqner, ssaider, siger
 
 
-def validateSN(sn, inceptive=None):
-    """
-    Returns:
-        sn (int): converted from sn hex str
-
-    Raises ValueError if invalid sn
-
-    Parameters:
-       sn (str): hex char sequence number of event or seal in an event
-       inceptive(bool): Check sn value and raise ValueError if invalid
-                        None means check for sn < 0
-                        True means check for sn != 0
-                        False means check for sn < 1
-
-    """
-    if len(sn) > 32:
-        raise ValueError("Invalid sn = {} too large.".format(sn))
-
-    try:
-        sn = int(sn, 16)
-    except Exception as ex:
-        raise ValueError("Invalid sn = {}.".format(sn))
-
-    if inceptive is not None:
-        if inceptive:
-            if sn != 0:
-                raise ValidationError("Nonzero sn = {} for inception evt."
-                                      "".format(sn))
-        else:
-            if sn < 1:
-                raise ValidationError("Zero or less sn = {} for non-inception evt."
-                                      "".format(sn))
-    else:
-        if sn < 0:
-            raise ValidationError("Negative sn = {} for event.".format(sn))
-
-    return sn
-
 
 def verifySigs(raw, sigers, verfers):
     """
@@ -2797,7 +2759,8 @@ class Kever:
                 raise MissingDelegationError(f"No delegation seal for delegator "
                                          "{delpre} of evt = {serder.ked}.")
 
-        ssn = validateSN(sn=delseqner.snh, inceptive=False)  # delseqner Number should already do this
+        #ssn = validateSN(sn=delseqner.snh, inceptive=False)  # delseqner Number should already do this
+        ssn = Number(num=delseqner.sn).validate(inceptive=False).sn
         #ssn = sner.num sner is Number seqner is Seqner
         # ToDo XXXX need to replace Seqners with Numbers
 
@@ -2815,7 +2778,8 @@ class Kever:
 
             #  escrow event here
             inceptive = True if serder.ilk in (Ilks.icp, Ilks.dip) else False
-            sn = validateSN(sn=serder.snh, inceptive=inceptive)
+            #sn = validateSN(sn=serder.snh, inceptive=inceptive)
+            sn = Number(num=serder.sn).validate(inceptive=inceptive).sn
             self.escrowPSEvent(serder=serder, sigers=sigers, wigers=wigers, local=local)
             self.escrowPACouple(serder=serder, seqner=delseqner, saider=delsaider)
             raise MissingDelegationError("No delegating event from {} at {} for "

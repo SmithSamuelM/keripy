@@ -41,7 +41,7 @@ from keri.core.coring import (intToB64, intToB64b, b64ToInt, codeB64ToB2, codeB2
 from keri.help import helping
 from keri.kering import (EmptyMaterialError, RawMaterialError, DerivationError,
                          ShortageError, InvalidCodeSizeError, InvalidVarIndexError,
-                         InvalidValueError, DeserializeError)
+                         InvalidValueError, DeserializeError, ValidationError)
 from keri.kering import Version, Versionage, VersionError
 from keri.kering import (ICP_LABELS, DIP_LABELS, ROT_LABELS, DRT_LABELS, IXN_LABELS,
                       RPY_LABELS)
@@ -67,7 +67,7 @@ def test_protos():
 
     """End Test"""
 
-def test_prodex():
+def test_protocol_genus_codex():
     """
     Test genera in ProDex as instance of ProtocolGenusCodex
 
@@ -2443,6 +2443,7 @@ def test_counter():
         'KERIProtocolStack': '--AAA',
     }
 
+    # new version 2
     #assert dataclasses.asdict(CtrDex) == {
         #'ControllerIdxSigs': '-A',
         #'WitnessIdxSigs': '-B',
@@ -2818,7 +2819,7 @@ def test_counter():
 
 def test_seqner():
     """
-    Test Seqner sequence number subclass of CryMat
+    Test Seqner sequence number subclass Matter
     """
     number = Seqner()  # defaults to zero
     assert number.raw == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -2836,6 +2837,12 @@ def test_seqner():
 
     with pytest.raises(RawMaterialError):
         number = Seqner(raw=b'')
+
+    with pytest.raises(InvalidValueError):  # negative
+        number = Seqner(sn=-1)
+
+    with pytest.raises(ValidationError): # too big
+        number = Seqner(sn=(256 ** 16))
 
     number = Seqner(qb64b=snqb64b)
     assert number.raw == snraw
@@ -2979,8 +2986,26 @@ def test_number():
     """
     Test Number subclass of Matter
     """
+
+    assert dataclasses.asdict(NumDex) == {
+        'Short': 'M',
+        'Long': '0H',
+        'Tall': 'R',
+        'Big': 'N',
+        'Large': 'S',
+        'Great': 'T',
+        'Huge': '0A',
+        'Vast': 'U'
+    }
+
+    assert Number.Codex == NumDex
+
+
     with pytest.raises(RawMaterialError):
         number = Number(raw=b'')
+
+    with pytest.raises(InvalidValueError):
+        number = Number(num=-1)
 
     number = Number()  # test None defaults to zero
     assert number.code == NumDex.Short
@@ -3058,6 +3083,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
 
     number = Number(num=numh)  # num can be hext str too
@@ -3071,6 +3098,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
 
     number = Number(numh=numh)
@@ -3084,6 +3113,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb64=nqb64)
     assert number.code == code
@@ -3096,6 +3127,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb2=nqb2)
     assert number.code == code
@@ -3108,6 +3141,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(raw=raw, code=code)
     assert number.code == code
@@ -3120,15 +3155,17 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
-    num = (256 ** 4 - 1)
-    assert num == 4294967295
+    num = (256 ** 5 - 1)
+    assert num == 1099511627775
     numh = f"{num:x}"
-    assert numh == 'ffffffff'
-    raw = b'\xff\xff\xff\xff'
-    code = NumDex.Long
-    nqb64 = '0HD_____'  # '0H_____w'
-    nqb2 = b'\xd0p\xff\xff\xff\xff'  # b'\xd0\x7f\xff\xff\xff\xf0'
+    assert numh == 'ffffffffff'
+    raw = b'\xff\xff\xff\xff\xff'
+    code = NumDex.Tall
+    nqb64 = 'RP______'  # '0HD_____'  # '0H_____w'
+    nqb2 = b'D\xff\xff\xff\xff\xff' # b'\xd0p\xff\xff\xff\xff'
 
     number = Number(num=num)
     assert number.code == code
@@ -3141,6 +3178,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(numh=numh)
     assert number.code == code
@@ -3153,6 +3192,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb64=nqb64)
     assert number.code == code
@@ -3165,6 +3206,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb2=nqb2)
     assert number.code == code
@@ -3175,6 +3218,8 @@ def test_number():
     assert number.num == num
     assert number.numh == numh
     assert number.positive
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(raw=raw, code=code)
     assert number.code == code
@@ -3187,6 +3232,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     num = (256 ** 8 - 1)
     assert num == 18446744073709551615
@@ -3195,7 +3242,7 @@ def test_number():
     raw = b'\xff\xff\xff\xff\xff\xff\xff\xff'
     code = NumDex.Big
     nqb64 = 'NP__________'  # 'N__________8'
-    nqb2 = b'4\xff\xff\xff\xff\xff\xff\xff\xff'  # b'7\xff\xff\xff\xff\xff\xff\xff\xfc'
+    nqb2 = b'4\xff\xff\xff\xff\xff\xff\xff\xff'
 
     number = Number(num=num)
     assert number.code == code
@@ -3208,6 +3255,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(numh=numh)
     assert number.code == code
@@ -3220,6 +3269,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb64=nqb64)
     assert number.code == code
@@ -3232,6 +3283,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb2=nqb2)
     assert number.code == code
@@ -3244,6 +3297,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(raw=raw, code=code)
     assert number.code == code
@@ -3256,16 +3311,17 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
-    num = (256 ** 16 - 1)
-    assert num == 340282366920938463463374607431768211455
+    num = (256 ** 11 - 1)
+    assert num == 309485009821345068724781055
     numh = f"{num:x}"
-    assert numh == 'ffffffffffffffffffffffffffffffff'
-    raw = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-    code = NumDex.Huge
-    nqb64 = '0AD_____________________'  # '0A_____________________w'
-    nqb2 = b'\xd0\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-    #b'\xd0\x0f\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xf0'
+    assert numh == 'ffffffffffffffffffffff'
+    raw = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    code = NumDex.Large
+    nqb64 = 'SP______________' # 'NP__________'  # 'N__________8'
+    nqb2 = b'H\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff' # b'4\xff\xff\xff\xff\xff\xff\xff\xff'
 
     number = Number(num=num)
     assert number.code == code
@@ -3278,6 +3334,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(numh=numh)
     assert number.code == code
@@ -3290,6 +3348,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb64=nqb64)
     assert number.code == code
@@ -3302,6 +3362,8 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
     number = Number(qb2=nqb2)
     assert number.code == code
@@ -3314,6 +3376,88 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    number = Number(raw=raw, code=code)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    num = (256 ** 14 - 1)
+    assert num == 5192296858534827628530496329220095
+    numh = f"{num:x}"
+    assert numh == 'ffffffffffffffffffffffffffff'
+    raw = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    code = NumDex.Great
+    nqb64 = 'TP__________________' # '0AD_____________________'
+    nqb2 = b'L\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    # b'\xd0\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+
+    number = Number(num=num)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    number = Number(numh=numh)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    number = Number(qb64=nqb64)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    number = Number(qb2=nqb2)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
 
 
     number = Number(raw=raw, code=code)
@@ -3327,6 +3471,91 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    assert isinstance(number.seqner, Seqner)
+    assert number.seqner.sn == number.sn
+
+    num = (256 ** 17 - 1)
+    assert num == 87112285931760246646623899502532662132735
+    numh = f"{num:x}"
+    assert numh == 'ffffffffffffffffffffffffffffffffff'
+    raw = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    code = NumDex.Vast
+    nqb64 = 'UP______________________' #'TP__________________'
+    nqb2 =  b'P\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    # b'L\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+
+    number = Number(num=num)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    with pytest.raises(ValidationError):  # too big to be ordinal
+        number.seqner
+
+
+    number = Number(numh=numh)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    with pytest.raises(ValidationError):  # too big to be ordinal
+        number.seqner
+
+    number = Number(qb64=nqb64)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    with pytest.raises(ValidationError):  # too big to be ordinal
+        number.seqner
+
+    number = Number(qb2=nqb2)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    with pytest.raises(ValidationError):  # too big to be ordinal
+        number.seqner
+
+
+    number = Number(raw=raw, code=code)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    with pytest.raises(ValidationError):  # too big to be ordinal
+        number.seqner
+
 
     # tests with wrong size raw for code short
     num = (256 ** 2 - 1)
@@ -3390,7 +3619,44 @@ def test_number():
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
 
-    # raw to small for code raises error
+    # raw too small for code raises error
+    raw2bad = b'\xff'
+    assert raw != raw2bad
+    assert len(raw2bad) < len(raw)
+
+    with pytest.raises(RawMaterialError):
+        number = Number(raw=raw2bad, code=code)
+
+
+    # tests with wrong size raw for code large
+    num = (256 ** 5 - 1)
+    assert num == 1099511627775
+    numh = f"{num:x}"
+    assert numh == 'ffffffffff'
+    raw = b'\xff\xff\xff\xff\xff'
+    code = NumDex.Tall
+    nqb64 = 'RP______'  # '0HD_____'  # '0H_____w'
+    nqb2 = b'D\xff\xff\xff\xff\xff' # b'\xd0p\xff\xff\xff\xff'
+
+
+    # raw to large for code, then truncates
+    raw2bad = b'\xff\xff\xff\xff\xff\xff'
+    assert raw != raw2bad
+    assert len(raw2bad) > len(raw)
+
+    number = Number(raw=raw2bad, code=code)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+
+    # raw too small for code raises error
     raw2bad = b'\xff'
     assert raw != raw2bad
     assert len(raw2bad) < len(raw)
@@ -3470,6 +3736,85 @@ def test_number():
     with pytest.raises(RawMaterialError):
         number = Number(raw=raw2bad, code=code)
 
+
+    # tests with wrong size raw for code huge
+    num = (256 ** 17 - 1)
+    assert num == 87112285931760246646623899502532662132735
+    numh = f"{num:x}"
+    assert numh == 'ffffffffffffffffffffffffffffffffff'
+    raw = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+    code = NumDex.Vast
+    nqb64 = 'UP______________________' #'TP__________________'
+    nqb2 =  b'P\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+
+
+    # raw to large for code, then truncates
+    raw2bad = b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xffxff'
+    assert raw != raw2bad
+    assert len(raw2bad) > len(raw)
+
+    number = Number(raw=raw2bad, code=code)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+
+    # raw to small for code raises error
+    raw2bad = b'\xff'
+    assert raw != raw2bad
+    assert len(raw2bad) < len(raw)
+
+    with pytest.raises(RawMaterialError):
+        number = Number(raw=raw2bad, code=code)
+
+
+    # test with negative num
+    num = -1
+    numh = f"{num:x}"
+    assert numh == '-1'
+    code = NumDex.Short
+
+    with pytest.raises(InvalidValueError):
+        number = Number(num=num)
+
+    with pytest.raises(InvalidValueError):
+        number = Number(numh=numh)
+
+
+
+    # test using num to initialize Number
+    num = 0
+    numh = f"{num:x}"
+    assert numh == '0'
+    code = NumDex.Short
+    raw = b'\x00\x00'
+    nqb64 = 'MAAA'
+    nqb2 = b'0\x00\x00'
+    assert hex(int.from_bytes(nqb2, 'big')) == '0x300000'
+
+    number = Number(num=num)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert not number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    # test validate()
+    assert number.validate() == number  # default inceptive = None
+    assert number.validate(inceptive=True) == number  # inceptive = True
+    with pytest.raises(ValidationError):
+        number.validate(inceptive=False) # inceptive = False
+
     num = 1
     numh = f"{num:x}"
     assert numh == '1'
@@ -3490,7 +3835,67 @@ def test_number():
     assert number.positive
     bs = ceil((len(number.code) * 3) / 4)
     assert number.qb2[bs:] == number.raw
+    # test validate
+    assert number.validate() == number  # default inceptive = None
+    with pytest.raises(ValidationError):
+        number.validate(inceptive=True)  # inceptive = True
+    assert number.validate(inceptive=False) == number  # inceptive = False
 
+
+    num = 65536
+    numh = f"{num:x}"
+    assert numh == '10000'  # hex
+    code = NumDex.Tall
+    raw = b'\x00\x00\x01\x00\x00'
+    nqb64 = 'RAAAAQAA'
+    nqb2 = b'D\x00\x00\x01\x00\x00'
+    assert hex(int.from_bytes(nqb2, 'big')) == '0x440000010000'
+
+    number = Number(num=num)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    # test validate
+    assert number.validate() == number  # default inceptive = None
+    with pytest.raises(ValidationError):
+        number.validate(inceptive=True)  # inceptive = True
+    assert number.validate(inceptive=False) == number  # inceptive = False
+
+    # too big for ordinal
+    num = num = (256 ** 16)
+    numh = f"{num:x}"
+    assert numh == '100000000000000000000000000000000'  # hex
+    code = NumDex.Vast
+    raw =b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    nqb64 = 'UAEAAAAAAAAAAAAAAAAAAAAA'
+    nqb2 = b'P\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    assert hex(int.from_bytes(nqb2, 'big')) == '0x500100000000000000000000000000000000'
+
+    number = Number(num=num)
+    assert number.code == code
+    assert number.raw == raw
+    assert number.qb64 == nqb64
+    assert number.qb64b == nqb64.encode("utf-8")
+    assert number.qb2 == nqb2
+    assert number.num == num
+    assert number.numh == numh
+    assert number.positive
+    bs = ceil((len(number.code) * 3) / 4)
+    assert number.qb2[bs:] == number.raw
+    # test validate
+    with pytest.raises(ValidationError): # too big
+        number.validate() # default inceptive = None
+    with pytest.raises(ValidationError): # too big
+        number.validate(inceptive=True)  # inceptive = True
+    with pytest.raises(ValidationError): # too big
+        number.validate(inceptive=False)  # inceptive = False
 
     """ Done Test """
 
@@ -6146,7 +6551,8 @@ if __name__ == "__main__":
     #test_counter()
     #test_prodex()
     #test_indexer()
-    #test_number()
+    test_number()
+    test_seqner()
     #test_siger()
     #test_signer()
     #test_nexter()
@@ -6155,5 +6561,5 @@ if __name__ == "__main__":
     #test_labels()
     #test_prefixer()
     #test_genera()
-    test_prodex()
+    #test_protocol_genus_codex()
 
