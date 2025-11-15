@@ -1559,8 +1559,8 @@ class Baser(dbing.LMDBer):
                 self.groups.clear()
                 self.groups.update(copy.groups)
 
-        inner_dir = os.basename(self.path)
-        outer_dir = os.dirname(self.path)
+        inner_dir = os.path.basename(self.path)
+        outer_dir = os.path.dirname(self.path)
         pathfd: int = os.open(outer_dir, flags=os.O_DIRECTORY)
 
         # This should not fail, but we'll throw a ValueError so existing error handling logic is used
