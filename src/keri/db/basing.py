@@ -1582,27 +1582,39 @@ class Baser(dbing.LMDBer):
                 self.groups.clear()
                 self.groups.update(copy.groups)
 
-        # remove own db directory replace with clean clone copy
-        if os.path.exists(self.path):
-            shutil.rmtree(self.path)
+        inner_dir = os.path.basename(self.path)
+        outer_dir = os.path.dirname(self.path)
+        pathfd: int = os.open(outer_dir, flags=os.O_DIRECTORY)
 
-        dst = shutil.move(copy.path, self.path)  # move copy back to orig
+        # This should not fail, but we'll throw a ValueError so existing error handling logic is used
+        if pathfd < 0:
+            raise ValueError("Error cloning, unabled to open '{}'"
+                             .format(outer_dir))
+        else:
+            clean_dir = os.path.join(os.path.sep, "usr", "local", "var", "keri", "clean")
+            
+            # remove own db directory replace with clean clone copy
+            shutil.rmtree(inner_dir, dir_fd=pathfd)
 
-        if os.path.exists(os.path.join(os.path.sep, "usr", "local", "var", "keri", "clean")):
-            shutil.rmtree(os.path.join(os.path.sep, "usr", "local", "var", "keri", "clean"))
+            dst = shutil.move(copy.path, self.path)  # move copy back to orig
 
-        if not dst:  # move failed leave new in place so can manually fix
-            raise ValueError("Error cloning, unable to move {} to {}."
-                             "".format(copy.path, self.path))
+            # XXX: If this shares a prefix with self.path, it can use the `dir_fd` argument as well
+            shutil.rmtree(clean_dir, ignore_errors=True)
 
-        with reopenDB(db=self, reuse=True):  # make sure can reopen
-            if not isinstance(self.env, lmdb.Environment):
-                raise ValueError("Error cloning, unable to reopen."
-                                 "".format(self.path))
+            if not dst:  # move failed leave new in place so can manually fix
+                raise ValueError("Error cloning, unable to move {} to {}."
+                                 "".format(copy.path, self.path))
 
-        # clone success so remove if still there
-        if os.path.exists(copy.path):
-            shutil.rmtree(copy.path)
+            with reopenDB(db=self, reuse=True):  # make sure can reopen
+                if not isinstance(self.env, lmdb.Environment):
+                    raise ValueError("Error cloning, unable to reopen."
+                                     "".format(self.path))
+
+            # clone success so remove the copy
+            shutil.rmtree(copy.path, ignore_errors=True)
+
+            # close the directory handle
+            os.close(pathfd)
 
     def clonePreIter(self, pre, fn=0):
         """
