@@ -10,21 +10,20 @@ import pysodium
 import pytest
 
 from keri import kering
-from keri.kering import Vrsn_1_0, Vrsn_2_0
-from keri.app import habbing, keeping
+from keri.kering import Vrsn_1_0
+from keri.app import habbing
 from keri.app.keeping import openKS, Manager
 from keri import core
 from keri.core import Signer, Counter, Codens
-from keri.core import coring, eventing, parsing, serdering
+from keri.core import coring, eventing, parsing
 from keri.core.coring import (Diger, MtrDex, Matter,
                               Cigar,
                               Seqner, Verfer, Prefixer, DigDex)
-from keri.core.indexing import (IdrDex, IdxSigDex, Indexer, Siger)
+from keri.core.indexing import (IdrDex, IdxSigDex, Siger)
 from keri.core.eventing import Kever, Kevery, UnverifiedReceiptError
-from keri.core.eventing import (SealDigest, SealRoot, SealBack,
-                                SealEvent, SealLast, StateEvent, StateEstEvent)
-from keri.core.eventing import (TraitDex, LastEstLoc, Kinds, versify,
-                                simple, ample)
+from keri.core import (SealDigest, SealRoot, SealBack, SealEvent, SealLast)
+from keri.core.structing import (StateEvent, StateEstEvent)
+from keri.core.eventing import (TraitDex, LastEstLoc, Kinds, versify, simple, ample)
 from keri.core.eventing import (deWitnessCouple, deReceiptCouple, deSourceCouple,
                                 deReceiptTriple,
                                 deTransReceiptQuadruple, deTransReceiptQuintuple)
@@ -32,13 +31,11 @@ from keri.core.eventing import (incept, rotate, interact, receipt, query,
                                 delcept, deltate, state, messagize)
 from keri.core import serdering
 
-from keri.db import dbing, basing
 from keri.db.basing import openDB
 from keri.db.dbing import dgKey, snKey
-from keri.kering import (ValidationError, DerivationError, Ilks)
+from keri.kering import (ValidationError, Ilks)
 
 from keri import help
-from keri.help import helping
 
 logger = help.ogler.getLogger()
 
@@ -3314,7 +3311,7 @@ def test_receipt():
         #  coe process the escrow receipt from val
         parsing.Parser(version=Vrsn_1_0).parse(ims=res, kvy=coeKevery)
         #  check if in escrow database
-        result = coeKevery.db.ures.get(keys=(coeKever.prefixer.qb64, coring.Seqner(sn=2).qb64))
+        result = coeKevery.db.ures.get(keys=(coeKever.prefixer.qb64, coring.Number(num=2, code=coring.NumDex.Huge).qb64))
         rsaider, sprefixer, cigar = result[0]
 
         assert rsaider.qb64b == fake.encode("utf-8")
@@ -3519,7 +3516,7 @@ def test_process_attached_receipt_couples_firner_missing_fels():
         assert "Unverified receipt=" in str(exc_info.value)
         # Receipt must be escrowed (addUre via escrowUReceipt)
         sn = int(serder.sn, 16) if isinstance(serder.sn, str) else int(serder.sn)
-        ures = db.ures.get(keys=(serder.pre, coring.Seqner(sn=sn).qb64))
+        ures = db.ures.get(keys=(serder.pre, coring.Number(num=sn, code=coring.NumDex.Huge).qb64))
         assert len(ures) == 1
         diger, prefixer, cigar = ures[0]
         assert diger.qb64 == serder.said

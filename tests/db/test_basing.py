@@ -8,6 +8,7 @@ import os
 import platform
 import tempfile
 from dataclasses import dataclass, asdict
+import subprocess
 
 import pytest
 
@@ -16,7 +17,7 @@ from hio.base import doing
 from keri import core
 from keri.app import habbing
 from keri.core import coring, eventing, serdering, signing, indexing
-from keri.core.coring import Kinds, versify, Seqner
+from keri.core.coring import Kinds, versify, Seqner, Diger, Number, NumDex
 from keri.core.eventing import incept, rotate, interact, Kever
 from keri.core.serdering import Serder
 from keri.core.signing import Signer
@@ -1225,29 +1226,30 @@ def test_baser():
 
         # test .udes CatCesrSuber sub db methods
         assert isinstance(db.udes, subing.CatCesrSuber)
-        assert db.udes.klas == (coring.Seqner, coring.Diger)
+        assert db.udes.klas == (core.Number, coring.Diger)
 
         ssnu1 = b'0AAAAAAAAAAAAAAAAAAAAAAB'
         sdig1 = b'EALkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E'
         ssnu2 = b'0AAAAAAAAAAAAAAAAAAAAAAC'
         sdig2 = b'EBYYJRCCpAGO7WjjsLhtHVR37Pawv67kveIFUPvt38x0'
         val1 = ssnu1 + sdig1
-        tuple1 = (coring.Seqner(qb64b=ssnu1), coring.Diger(qb64b=sdig1))
+        num1 = coring.Number(qb64b=ssnu1)
         val2 = ssnu2 + sdig2
-        tuple2 = (coring.Seqner(qb64b=ssnu2), coring.Diger(qb64b=sdig2))
-
+        num2 = coring.Number(qb64b=ssnu2)
+        diger1 = coring.Diger(qb64b=sdig1)
+        diger2 = coring.Diger(qb64b=sdig2)
 
         assert db.udes.get(keys=key) == None
         assert db.udes.rem(keys=key) == False
-        assert db.udes.put(keys=key, val=tuple1) == True
-        seqner, saider = db.udes.get(keys=key)
-        assert seqner.qb64b + saider.qb64b == val1
-        assert db.udes.put(keys=key, val=tuple2) == False
-        seqner, saider = db.udes.get(keys=key)
-        assert seqner.qb64b + saider.qb64b == val1
-        assert db.udes.pin(keys=key, val=tuple2) == True
-        seqner, saider = db.udes.get(keys=key)
-        assert seqner.qb64b + saider.qb64b == val2
+        assert db.udes.put(keys=key, val=(num1, diger1)) == True
+        num, diger = db.udes.get(keys=key)
+        assert num.qb64b + diger.qb64b == val1
+        assert db.udes.put(keys=key, val=(num2, diger2)) == False
+        num, diger = db.udes.get(keys=key)
+        assert num.qb64b + diger.qb64b == val1
+        assert db.udes.pin(keys=key, val=(num2, diger2)) == True
+        num, diger = db.udes.get(keys=key)
+        assert num.qb64b + diger.qb64b == val2
         assert db.udes.rem(keys=key) == True
         assert db.udes.get(keys=key) == None
 
@@ -2485,9 +2487,9 @@ def test_clear_escrows():
         db.pdes.addOn(keys=pre, on=0, val=saidb)
         assert db.pdes.cnt(keys=snKey(pre, 0)) == 1
 
-        udesKey = dgKey('DAzwEHHzq7K0gzQPYGGwTmuupUhPx5_yZ-Wk1x4ejhcc'.encode("utf-8"),
+        udesKey = ('DAzwEHHzq7K0gzQPYGGwTmuupUhPx5_yZ-Wk1x4ejhcc'.encode("utf-8"),
                     'EGAPkzNZMtX-QiVgbRbyAIZGoXvbGv9IPb0foWTZvI_4'.encode("utf-8"))
-        db.udes.put(keys=udesKey, val=(coring.Seqner(qb64b=b'0AAAAAAAAAAAAAAAAAAAAAAB'),
+        db.udes.put(keys=udesKey, val=(coring.Number(qb64b=b'0AAAAAAAAAAAAAAAAAAAAAAB'),
                                    coring.Diger(qb64b=b'EALkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E')))
         assert db.udes.get(keys=udesKey) is not None
 
@@ -2548,6 +2550,77 @@ def test_clear_escrows():
         assert db.epsd.cntAll() == 0
         assert db.dpub.cntAll() == 0
 
+def test_db_keyspace_end_to_end_migration():
+    """
+    End-to-end test for DB keyspace migration from Seqner.qb64 to Number with Huge code.
+
+    Asserts:
+    - Correct DB writes using Number (Huge)
+    - Correct DB reads using Number (Huge)
+    - Backward compatibility with old Seqner.qb64 keys
+    - Round-trip correctness for Number (Huge)
+    - Lexicographic ordering == numeric ordering (for NEW keys)
+    - Mixed encodings do not break iteration
+    """
+
+    sns = [0, 1, 2, 10, 100, 999999, 2**40, 2**80]
+
+    with openDB() as db:
+        # Build a valid Cigar + Prefixer once, reuse in all values
+        signer = Signer()                     # ephemeral keypair
+        cigar = signer.sign(b"test")          # Cigar
+        pre = cigar.verfer.qb64               # non-transferable prefix
+
+        # old encoding (Seqner.qb64) – backward compatibility
+        for sn in sns:
+            old_key = Seqner(sn=sn).qb64
+            dig = Diger(raw=b"\x00" * 32)     # valid 32-byte raw
+            val = (dig, coring.Prefixer(qb64=pre), cigar)
+            db.ures.add(keys=("OLD", old_key), val=val)
+
+        # new encoding (Number with Huge code)
+        for sn in sns:
+            new_key = Number(num=sn, code=coring.NumDex.Huge).qb64
+            dig = Diger(raw=b"\x01" * 32)     # distinguishable but valid
+            val = (dig, coring.Prefixer(qb64=pre), cigar)
+            db.ures.add(keys=("NEW", new_key), val=val)
+
+        # round-trip correctness for Number with Huge code
+        for sn in sns:
+            enc = Number(num=sn, code=coring.NumDex.Huge).qb64
+            parsed = Number(qb64=enc)
+            assert parsed.num == sn
+
+        # read back old and new keys (existence + type)
+        for sn in sns:
+            old_key = Seqner(sn=sn).qb64
+            new_key = Number(num=sn, code=coring.NumDex.Huge).qb64
+
+            old_vals = db.ures.get(keys=("OLD", old_key))
+            new_vals = db.ures.get(keys=("NEW", new_key))
+
+            assert len(old_vals) == 1
+            assert len(new_vals) == 1
+
+            odig, opre, ocig = old_vals[0]
+            ndig, npre, ncig = new_vals[0]
+
+            assert isinstance(odig, Diger)
+            assert isinstance(opre, coring.Prefixer)
+            assert isinstance(ncig, type(cigar))
+            assert isinstance(ndig, Diger)
+            assert isinstance(npre, coring.Prefixer)
+
+        # lexicographic ordering must match numeric ordering for NEW keys
+        ordered_sns = []
+        for (pre_key, key), vals in db.ures.getItemIter():
+            if pre_key == "NEW":
+                n = Number(qb64=key)
+                ordered_sns.append(n.num)
+
+        assert ordered_sns == sns
+
+
 if __name__ == "__main__":
     test_baser()
     test_clean_baser()
@@ -2555,3 +2628,4 @@ if __name__ == "__main__":
     test_usebaser()
     test_dbdict()
     test_baserdoer()
+    test_db_keyspace_end_to_end_migration()
