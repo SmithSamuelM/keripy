@@ -699,6 +699,255 @@ ResidenceSchema = \
   'additionalProperties': False
 }
 
+# Age SEDI ACDC Schema
+# question should we add  ages 40, 62, 65, 67, 70, 75
+AgeSchemaSaid = 'EDydx4yv_AZUQJcEVuLCl9RwWXNDi4uuDN1DLutKHQh_'
+AgeSchema = \
+{
+  '$id': 'EDydx4yv_AZUQJcEVuLCl9RwWXNDi4uuDN1DLutKHQh_',
+  '$schema': 'https://json-schema.org/draft/2020-12/schema',
+  'title': 'SEDI Age Schema',
+  'description': 'SEDI Age JSON Schema for acg ACDC.',
+  'credentialType': 'SEDI_Age_ACDC_acg_message',
+  'version': '0.1.0',
+  'type': 'object',
+  'required': ['v', 'd', 'i', 'rd', 's', 'A', 'e', 'r'],
+  'properties':
+  {
+    'v': {'description': 'ACDC version string', 'type': 'string'},
+    't': {'description': 'Message type', 'type': 'string'},
+    'd': {'description': 'Message SAID', 'type': 'string'},
+    'u': {'description': 'Message UE', 'type': 'string'},
+    'i': {'description': 'Issuer AID', 'type': 'string'},
+    'rd': {'description': 'Registry SAID', 'type': 'string'},
+    's':
+    {
+      'description': 'Schema Section',
+      'oneOf':
+      [
+        {'description': 'Schema Section SAID', 'type': 'string'},
+        {'description': 'Schema Section Detail','type': 'object'}
+      ]
+    },
+    'A':
+    {
+      "description": "Aggregate Section",
+      "oneOf":
+      [
+        { "description": "Aggregate Section AGID", "type": "string"},
+        {
+          "description": "Aggregate Section Detail",
+          "type": "array",
+          "uniqueItems": True,
+          "items":
+          {
+            "anyOf":
+            [
+              {"description": "Aggregate Section AGID", "type": "string"},
+              {
+                "description": "Issuee Block",
+                "oneOf":
+                [
+                  { "description": "Issuee SAID", "type": "string"},
+                  {
+                    "description": "Issuee Detail",
+                    "type": "object",
+                    "required":
+                    [ "d", "u", "i"],
+                    "properties":
+                    {
+                      "d": {"description": "Block SAID", "type": "string"},
+                      "u": { "description": "Block UE", "type": "string"},
+                      "i": { "description": "Issuee SAID", "type": "string"}
+                    },
+                    "additionalProperties": False
+                  }
+                ]
+              },
+              {
+                "description": "Over13 Block",
+                "oneOf":
+                [
+                  { "description": "Over13 SAID", "type": "string"},
+                  {
+                    "description": "Over13 Detail",
+                    "type": "object",
+                    "required":
+                    [ "d", "u", "over13"],
+                    "properties":
+                    {
+                      "d": {"description": "Block SAID", "type": "string"},
+                      "u": { "description": "Block UUID", "type": "string"},
+                      "over13": { "description": "Over13 True if age>=13 else False", "type": "boolean"}
+                    },
+                    "additionalProperties": False
+                  },
+                ]
+              },
+              {
+                "description": "Over14 Block",
+                "oneOf":
+                [
+                  { "description": "Over14 SAID", "type": "string"},
+                  {
+                    "description": "Over14 Detail",
+                    "type": "object",
+                    "required":
+                    [ "d", "u", "over14"],
+                    "properties":
+                    {
+                      "d": {"description": "Block SAID", "type": "string"},
+                      "u": { "description": "Block UUID", "type": "string"},
+                      "over14": { "description": "Over14 True if age>=14 else False", "type": "boolean"}
+                    },
+                    "additionalProperties": False
+                },
+                ]
+              },
+              {
+                "description": "Over15 Block",
+                "oneOf":
+                [
+                  { "description": "Over15 SAID", "type": "string"},
+                  {
+                    "description": "Over15 Detail",
+                    "type": "object",
+                    "required":
+                    [ "d", "u", "over15"],
+                    "properties":
+                    {
+                      "d": {"description": "Block SAID", "type": "string"},
+                      "u": { "description": "Block UUID", "type": "string"},
+                      "over15": { "description": "Over15 True if age>=15 else False", "type": "boolean"}
+                    },
+                    "additionalProperties": False
+                  },
+                ]
+              },
+              {
+                "description": "Over16 Block",
+                "oneOf":
+                [
+                  { "description": "Over16 SAID", "type": "string"},
+                  {
+                    "description": "Over16 Detail",
+                    "type": "object",
+                    "required":
+                    [ "d", "u", "over16"],
+                    "properties":
+                    {
+                      "d": {"description": "Block SAID", "type": "string"},
+                      "u": { "description": "Block UUID", "type": "string"},
+                      "over16": { "description": "Over16 True if age>=16 else False", "type": "boolean"}
+                    },
+                    "additionalProperties": False
+                  },
+                ]
+              },
+              {
+                "description": "Over18 Block",
+                "oneOf":
+                [
+                    { "description": "Over18 SAID", "type": "string"},
+                    {
+                      "description": "Over18 Detail",
+                      "type": "object",
+                      "required":
+                      [ "d", "u", "over18"],
+                      "properties":
+                      {
+                        "d": {"description": "Block SAID", "type": "string"},
+                        "u": { "description": "Block UUID", "type": "string"},
+                        "over18": { "description": "Over18 True if age>=18 else False", "type": "boolean"}
+                      },
+                      "additionalProperties": False
+                   },
+                ]
+              },
+              {
+                "description": "Over21Block",
+                "oneOf":
+                [
+                    { "description": "Over21 SAID", "type": "string"},
+                    {
+                      "description": "Over21 Detail",
+                      "type": "object",
+                      "required":
+                      [ "d", "u", "over21"],
+                      "properties":
+                      {
+                        "d": {"description": "Block SAID", "type": "string"},
+                        "u": { "description": "Block UUID", "type": "string"},
+                        "over21": { "description": "Over21 True if age>=21 else False", "type": "boolean"}
+                      },
+                      "additionalProperties": False
+                    },
+                ]
+              },
+            ]
+          }
+        }
+      ]
+    },
+    'e':
+    {
+      'description': 'Edge Section',
+      'oneOf':
+      [
+        {'description': 'Edge Section SAID', 'type': 'string'},
+        {
+          'description': 'Edge Section Detail',
+          'type': 'object',
+          'required': ['d', 'u', 'utahAgent'],
+          'properties':
+          {
+            'd': {'description': 'Edge Section SAID', 'type': 'string'},
+            'u': {'description': 'Edge Section UE', 'type': 'string'},
+            'utahAgent':
+            {
+              'description': 'Utah Agent Edge Block',
+              'type': 'object',
+              'required': ['d', 'u', 'n', 's', 'o'],
+              'properties':
+              {
+                'd': {'description': 'Edge SAID', 'type': 'string'},
+                'u': {'description': 'Edge UE', 'type': 'string'},
+                'n': {'description': 'Far Node SAID', 'type': 'string'},
+                's': {'description': 'Far Node Schema SAID', 'type': 'string'},
+                'o': {'description': 'Edge Unary Operator', 'type': 'string'}
+              },
+              'additionalProperties': False
+            }
+          },
+          'additionalProperties': False
+        }
+      ]
+    },
+    'r':
+    {
+      'description': 'Rule Section',
+      'oneOf':
+      [
+        {'description': 'Rule Section SAID', 'type': 'string'},
+        {
+          'description': 'Rule Section Detail',
+          'type': 'object',
+          'required': ['d', 'l'],
+          'properties':
+          {
+            'd': {'description': 'Rule Section SAID', 'type': 'string'},
+            'l': {'description': 'Legal Language', 'type': 'string'}
+          },
+        'additionalProperties': False
+        }
+      ]
+    }
+  },
+  'additionalProperties': False
+}
+
+
+
 
 def test_sedi_schema():
     """Test setup of schema for core SEDI acdcs"""
