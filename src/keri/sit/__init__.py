@@ -7,5 +7,6 @@ SAIDed Info Tree
 
 """
 
-from .siting import (MaxHeight, MaxLimbLength, NodeSaidage, LeafSaidage,
-                     Nodage, Leafage, Siter)
+from .siting import (Version, MaxDepth, MaxDepthBytes, Kithage, Kiths,
+                     NodeSaidage, Nodage, LeafSaidage, Leafage, Partage,
+                     Siter)
