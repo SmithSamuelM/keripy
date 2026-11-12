@@ -10,49 +10,64 @@ from collections import namedtuple
 from ..core import MtrDex, DigDex, NonceDex, Noncer, Tagger, Diger, Number
 from ..help import intToB64
 
-MaxPathLengthBytes = 32
-MaxHeight = 2 ** 3 * MaxPathLengthBytes  # 256
-MaxPathLength = MaxHeight
+MaxLimbLenBytes = 32
+MaxHeight = 2 ** 3 * MaxLimbLenBytes  # 256
+MaxLimbLength = MaxHeight
+emptier = Noncer(nonce="")  # empty string
+EmptyQb2 = emptier.qb2
+EmptyQb64 = emptier.qb64
 
-
-# Per node fields
-#   said is digest of full node including per tree and per node elements
-#       saided data = tuid+verdig+path+height+left+right
+# Full Set of Fields for computing node SAID includes per tree fields
+# all fields as Matter primitive instances. SAID computed using qb64 encoding
+# Per tree fields:
+#   version is combined field with tree version and tree wide digest code
+#   tuid is tree unique identifier
+# Per node fields:
+#   said is digest of full node including per tree and per node fields
+#       said filled with dummy values for digest then replaced with computed SAID
+#       saided data = version+tuid+saiddummy+height+limb+left+right
 #   height is encoded 2 byte int of height of node
-#   path is encoded 256 bit path to node
+#   limb is encoded 256 bit branch path to node with depth=256-height MSbits
 #   left is encoded said of left child (node or leaf or empty if root node)
 #   right is encoded said of right child (node or leaf or empty if root node)
-# Encoding depends on context, for in memory storage its bytes qb2 binary
-# For computing SAIDs and on disk storage its qb64b text
-Nodage = namedtuple("Nodage", "said height path left right", defaults = ("", ""))
+NodeSaidage = namedtuple("NodeSaidage", "version tuid said height limb left right",
+                        defaults = ("EmptyQb2", "EmptyQb2"))
 
-
-# Full Set of Fields for computing node SAID includes per tree fields
-# Per tree fields
+# Full Set of Fields for computing leaf SAID includes per tree fields
+# all fields as Matter primitive instances. SAID computed using qb64 encoding
+# Per tree fields:
+#   version is combined field with tree version and tree wide digest code
 #   tuid is tree unique identifier
-#   verdig is combined field with tree version and tree wide digest code
-# Other fields same as Nodage
-NodageFull = namedtuple("NodageFull", "said tuid verdig height path left right",
-                        defaults = ("", ""))
+# Per leaf fields:
+#   said is digest of full leaf including per tree and per leaf fields
+#       said filled with dummy values for digest then replaced with computed SAID
+#       saided data = version+tuid+saiddummy+height+limb+info
+#   height is encoded 2 byte int of height of leaf (always zero)
+#   limb is encoded 256 bit branch path to leaf
+#   info is encoded said of leaf info using info specific digest code
+LeafSaidage = namedtuple("LeafSaidage", "version tuid said height limb info")
 
-# Per leaf storage
-#   said is digest of full leaf including per tree and per leaf elements
-#       saided data = tuid+verdig+height+path+info
-#   height is encoded 2 byte int of height of node
-#   path is encoded 256 bit path to leaf. Leaf path is tree-wide digest of Info SAID
-#   info is enacode said of bound info to leaf. The info said may use a different
+# Per node fields in compact qb2 as node tuple (said, leaf) where:
+#     said is qb2 of said computed for NodeSaidage
+#     node is nodage instance with each field in qb2
+# Nodage fields:
+#   height is qb2 Short of 2 byte int of height of node
+#   limb is qb2 Digest encoded 256 bit branch path to node with depth=256-height MSbits
+#   left is qb2 said Digest of left child's Saidage (node or leaf or empty if root node)
+#   right is qb2 said Digest right child's Saidage (node or leaf or empty if root node)
+Nodage = namedtuple("Nodage", "height limb left right", defaults=(EmptyQb2, EmptyQb2))
+
+# Per leaf fields in compact qb2 as leaf tuple (said, leaf) where:
+#     said is qb2 of said computed for LeafSaidage
+#     leaf is leafage instance with each field in qb2
+# Leafage Fields:
+#   height is qb2 Short of 2 byte int of height of leaf (always 0)
+#   limb is qb2 Digest encoded 256 bit branch path to leaf
+#   info is qb2 said of bound info to leaf. The info said may use a different
 #       code than the tree wide code
-# Encoding depends on context, for in memory storage its bytes qb2 binary
-# For computing SAIDs and on disk storage its qb64b text
-Leafage = namedtuple("Leafage", "said height path info")
+Leafage = namedtuple("Leafage", "height limb info")
 
 
-# Full Set of Fields for computing node SAID includes per tree fields
-# Per tree fields
-#   tuid is tree unique identifier
-#   verdig is combined field with tree version and tree wide digest code
-# Other fields same as Leafage
-LeafageFull = namedtuple("LeafageFull", "said tuid verdig height path info")
 
 class Siter:
     """Siter manages a SAIDed Info Tree (SIT)
@@ -61,12 +76,12 @@ class Siter:
     kith node or leaf
     version kith+major+minor  nodever = node+major+minor  leafver = leaf+major+minor
     node:  nodever said tuid height path left righ
-    leaf:  keafver said tuid height path info
+    leaf:  keafver said tuid height limb info
     NodeSaidage
     LeafSaidage
-    Nodage (height path left right)
+    Nodage (height limb left right)
     per node item (key, val) = (said, nodage)
-    Leafage (height path info)
+    Leafage (height limb info)
     per leaf item (key, val) = (said, leafage)
 
     Attributes::
@@ -91,7 +106,7 @@ class Siter:
     Dummy = '#'  # default dummy for computing SAIDS
 
     @classmethod
-    def saidify(cls, data, label=None, code=None):
+    def saidify(cls, saidage, label=None, code=None):
         """Computes and returns saidified copy of namedtuple data where said
         is always inserted field given by label. When label is None then
         defaults to first field
@@ -105,15 +120,15 @@ class Siter:
         code = code if code is not None else cls.Code
         size = Noncer._fullSize(code)
         dummy = cls.Dummy * size
-        label = label if label is not None else data._fields[0]
+        label = label if label is not None else saidage._fields[0]
         rkwa = dict()
         rkwa[label] = dummy
-        data = data._replace(**rkwa)  # replace said field at label with dummy
+        saidage = saidage._replace(**rkwa)  # replace said field at label with dummy
 
-        ser = "".join(data)  # concat fields in tuple
+        ser = "".join(saidage)  # concat fields in tuple
         said = Diger(ser=ser.encode(), code=code).qb64  # convert ser to bytes
         rkwa[label] = said
-        return data._replace(**rkwa)
+        return saidage._replace(**rkwa)
 
 
 
@@ -162,31 +177,31 @@ class Siter:
         rhqb64 = rnumber.qb64
         rhqb2 = rnumber.qb2
 
-        # root path always encoded 32 bytes or 256 bits of zeros
-        rpath = Diger(raw=bytes(MaxPathLengthBytes), code=self.code)
-        rpqb64 = rpath.qb64
-        rpqb2 = rpath.qb2
+        # root limb always encoded 32 bytes or 256 bits of zeros
+        rlimb = Diger(raw=bytes(MaxLimbLenBytes), code=self.code)
+        rpqb64 = rlimb.qb64
+        rpqb2 = rlimb.qb2
 
         childempty = Noncer(nonce="")  # creates cesr encoded empty NonceDex.Empty
         ceqb64 = childempty.qb64
         ceqb2 = childempty.qb2
 
         # qb64 encoded to compute said
-        rootFull = NodageFull(tuid=self.tuid,
-                              verdig=self.verdig,
-                              height=rhqb64,
-                              path=rpqb64,
-                              left=ceqb64,
-                              right=ceqb64)
+        #rootFull = NodageFull(tuid=self.tuid,
+                              #verdig=self.verdig,
+                              #height=rhqb64,
+                              #path=rpqb64,
+                              #left=ceqb64,
+                              #right=ceqb64)
 
         # replace rootFull with SAIDed copy
-        rootFull = self.saidify(data=rootFull, label="said", code=self.code)
+        rootFull = self.saidify(saidage=rootFull, label="said", code=self.code)
         rsqb64 = rootFull.said
         rsaid = Diger(qb64=rsqb64)
         rsqb2 = rsaid.qb2
 
         # empty root as compact per node only qb2 values with empty children
-        self.root = Nodage(said=rsqb2, height=rhqb2, path=rpqb2, left=ceqb2, right=ceqb2)
+        self.root = Nodage(said=rsqb2, height=rhqb2, limb=rpqb2, left=ceqb2, right=ceqb2)
 
         self.nodes = dict()  # indexed by qb2 of node said
         self.nodes[self.root.said] = self.root  # compact namedtuple with qb2 values
@@ -290,7 +305,7 @@ class SiterOld:
         rhqb2 = rnumber.qb2
 
         # root path always encoded 32 bytes or 256 bits of zeros
-        rpath = Diger(raw=bytes(MaxPathLengthBytes), code=self.code)
+        rpath = Diger(raw=bytes(MaxLimbLenBytes), code=self.code)
         rpqb64 = rpath.qb64
         rpqb2 = rpath.qb2
 
