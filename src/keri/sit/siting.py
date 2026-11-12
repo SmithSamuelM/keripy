@@ -34,8 +34,8 @@ Kiths = Kithage(node='node', leaf="leaf")
 #         said filled with dummy values for digest then replaced with computed SAID
 #         saided data = version+tuid+saiddummy+depth+limb+left+right
 #     depth is Number instance encoding 2 byte int of depth of node
-#     limb is Diger instance encoding 256 bit branch path to node with MSbits
-#         of limb span == depth
+#     limb is Diger instance encoding of 256 bit branch path to node with MSbits
+#         == depth == limb span
 #     left is Noncer instance encoding said of left child (node, leaf or empty)
 #     right is Noncer instance encoding said of right child (node, leaf or empty)
 NodeSaidage = namedtuple("NodeSaidage", "version tuid said depth limb left right")
@@ -53,10 +53,15 @@ NodeSaidage = namedtuple("NodeSaidage", "version tuid said depth limb left right
 #         saided data = version+tuid+saiddummy+depth+limb+info
 #     depth is Number instance encoding 2 byte int of potential depth of leaf
 #         leaf depth is always MaxDepth 256
-#     limb is Diger instance encoding 256 bit branch path to leaf with MSbits
-#         of limb span == 256 ==MaxDepth
-#     info is Diger instance encoding said of leaf info using info specific digest code
-LeafSaidage = namedtuple("LeafSaidage", "version tuid said depth limb info")
+#     limb is Diger instance encoding of 256 bit branch path to leaf with MSbits
+#         == 256 == MaxDepth == limb span
+#         limb calculated on leaf info said using tree specific digest code so
+#         limb inhabits same hash space as all other parts of tree.
+#         Leaf info said may use different digest algo from tree wide digest algo.
+#         Because limb makes secure committment to leaf info there is no security
+#         need to store leaf info said per leaf. It may be stored in separate
+#        field map indexed by limb for convenience.
+LeafSaidage = namedtuple("LeafSaidage", "version tuid said depth limb")
 
 # Per node fields in compact qb2 as node tuple (said, node) where:
 #     said is qb2 of said computed for NodeSaidage
@@ -74,9 +79,9 @@ Nodage = namedtuple("Nodage", "depth limb left right", defaults=(EmptyQb2, Empty
 # Leafage Fields:
 #     depth is qb2 of Number Short encoded 2 byte int of potential depth of leaf, always 256
 #     limb is qb2 of Digest encoded 256 bit branch path to leaf with MSbits == 256
-#     info is qb2 of Digest encoded said of bound info to leaf.
+#         limg is compute on leaf infos said bound to actual leaf info.
 #         The info said may differ from the tree wide code for nodes and leafs
-Leafage = namedtuple("Leafage", "depth limb info")
+Leafage = namedtuple("Leafage", "depth limb")
 
 # Partage as namedtuple of form (said, part)
 #     said is qb2 of said of full Saidage for part
@@ -88,18 +93,6 @@ Partage = namedtuple("Partage", "said part")
 class Siter:
     """Siter manages a SAIDed Info Tree (SIT)
 
-
-    kith node or leaf
-    version kith+major+minor  nodever = node+major+minor  leafver = leaf+major+minor
-    node saidage:  nodever tuid said depth path left righ
-    leaf saidage:  leafver tuid said depth limb info
-    Nodage (depth, limb, left, right) in qb2
-    node (said, nodage)
-    Leafage (depth limb info) in qb2
-    leaf (said, leafage)
-
-    per node item (key, val) = (said, nodage)
-    per leaf item (key, val) = (said, leafage)
 
     Attributes::
         svrsn (Versionage): Sit algorithm version for tree as major minor
@@ -113,12 +106,12 @@ class Siter:
         code (str): qb64 digest code shared by all node/leaf SAIDs
         rootage (Nodage): instance of root nodage
         root (Partage: instance of root Partage as (root said, rootage))
-        nodes (dict): indexed by SAID of each node
-                      to be modified with virtual interface
-                      that supports either in-memory and disk based storage
-        leaves (dict): indexed by SAID of each leaf
+        nodes (dict): Nodage instances indexed node said
+        leaves (dict): Leafage instances with qb2 vals indexed by leaf said qb2
+        infos (dict): leaf info saids as qb64 indexed by leaf limb qb64
 
-
+    ToDo: change .nodes, .leaves, and .infos to have virtual interface
+          that supports either in-memory and disk based storage
     """
     Dummy = b'#'  # default dummy for computing SAIDs always bytes
     Code = MtrDex.Blake3_256  # class default code for computing SAIDs
@@ -182,6 +175,7 @@ class Siter:
         self.leafVerser = Verser(proto=Kiths.leaf, pvrsn=self.svrsn)
         self.nodes = dict()
         self.leaves = dict()
+        self.infos = dict()
 
 
         # make root node and insert in .nodes
@@ -201,17 +195,101 @@ class Siter:
         # replace rootsaidage with SAIDed copy
         saidage = self.saidify(saidage=saidage, label="said", code=self.code)
 
-        # assign root nodage
+        # assign root nodage with qb2
         self.rootage = Nodage(depth=saidage.depth.qb2,
                               limb=saidage.limb.qb2,
                               left=saidage.left.qb2,
                               right=saidage.right.qb2)
 
-        # assign root node
-        self.root = Partage(said=saidage.said.qb2, part=self.rootage)
-
         # populate tree
-        self.nodes[self.root.said] = self.root.part
+        self.nodes[saidage.said.qb2] = self.rootage
+        root = Nodage(depth=saidage.depth,
+                      limb=saidage.limb,
+                      left=saidage.left,
+                      right=saidage.right)
+
+        # assign root node as Partage but with matter primitives values for compute
+        self.root = Partage(said=saidage.said, part=root)
 
 
 
+    def insert(self, leafer):
+        """Insert leafer idempotently into tree
+
+        Returns::
+            result (Partage): instance (leaf said, leafage) when insert succeeded
+                              None if leaf for leafer already in tree
+                              raises error otherwise
+
+        Parameters::
+            leafer (Diger): instance encoding of leaf info said which said is
+                            digest of actual leaf including
+
+        """
+        lepther = Number(num=256)  # leaf
+        limber = Diger(ser=leafer.qb64b, code=self.Code)
+
+        # create LeafSaidage and saidify
+        saidage = LeafSaidage(version=self.leafVerser,
+                                 tuid=self.tuider,
+                                 said=Emptier, # placeholder
+                                 depth=lepther,
+                                 limb=limber)
+
+        # replace saidage with SAIDed copy
+        saidage = self.saidify(saidage=saidage)
+
+
+        if saidage.said.qb2 in self.leaves:
+            return None  # already inserted
+
+        lsaider = saidage.said  # leaf said as Matter instance
+
+        # create leafage with qb2 values
+        leafage = Leafage(depth=saidage.depth.qb2,
+                          limb=saidage.limb.qb2)
+
+        # create lpart as Partage with (said, leafage) as qb2 values
+        lpart = Partage(said=saidage.said.qb2, part=leafage)
+
+        # create leaf as Leafage with matter primitives to enable compute
+        leaf = Leafage(depth=saidage.depth, limb=saidage.limb)
+
+        # attempt to insert
+        inserted = False
+        done = False
+
+        nsaid, node = self.root  # start at root values are matter primitives
+
+        while not done:
+            depth = node.depth.num  # get int
+
+            # walk down nodes if possible
+            if node.left.nonce: # left child not empty
+                if node.left.qb2 in self.nodes: # its a node
+                    pass
+                elif node.left.qb2 in self.leaves: # its a leaf
+                    pass
+                else:  # broken should not ever be
+                    raise ValueError(f"Bad left child of node said={nsaid.qb64}")
+
+            else:  # left child empty
+                pass
+
+            if node.right.nonce:  # right child not empty
+                if node.right.qb2 in self.nodes: # its a node
+                    pass
+                elif node.right.qb2 in self.leaves: # its a leaf
+                    pass
+                else:  # broken should not ever be
+                    raise ValueError(f"Bad right child of node said={nsaid.qb64}")
+
+            else:  # right child empty
+                pass
+
+
+            done = True
+
+
+        # do we want this to be Matter instances not qb2
+        return (lpart if inserted else None)

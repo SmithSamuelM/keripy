@@ -3723,8 +3723,8 @@ class Noncer(Diger):
         Parameters:
             nonce (str|bytes|None):  round trippable nonce value with nonce property
                 that accounts for empty nonce indicated by empty string.
-                Otherwise nonce holds qb64 or qb64b encoded nonce value
-                None means generate crypto strength random nonce value
+                Otherwise when not None, nonce holds qb64 or qb64b encoded nonce value
+                When None means generate crypto strength random nonce value
         """
         try:
             super(Noncer, self).__init__(raw=raw, qb64b=qb64b, code=code,
