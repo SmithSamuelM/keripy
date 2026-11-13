@@ -367,33 +367,6 @@ class Siter:
         return Partage(said=saider, part=leafage)
 
 
-    def getNode(self, saider):
-        """Gets node from .nodes at said given by saider.
-
-        Abstract interface to .nodes storage of Nodage for each node indexed
-        by is said. Interface uses Matter instances for said and Nodage field
-        values that hide the underlying serialization used by the storage.
-
-        For in memory use compact ,.qb2 values.
-        For archival on disk use .qb64 values.
-
-        Returns::
-            nodage (Nodage|None): instance whose values are Matter instances.
-                                  None when not found
-
-        Parameters::
-            saider (Diger): instance encoding said of nodage
-
-        """
-        if nodage := self.nodes.get(saider.qb2):
-            # convert to Matter instances for computation
-            nodage = Nodage(depth=Number(qb2=nodage.depth),
-                            limb=Diger(qb2=nodage.limb),
-                            left=Noncer(qb2=nodage.left),
-                            right=Noncer(qb2=nodage.right))
-        return nodage
-
-
     def putNode(self, saider, nodage):
         """Puts node given by nodage into .nodes at said given by .saider
         Put is idempotent. If node already exists put does not overwrite it.
@@ -428,7 +401,7 @@ class Siter:
 
 
     def pinNode(self, saider, nodage):
-        """PIns node given by nodage into .nodes at said given by .saider
+        """Pins node given by nodage into .nodes at said given by .saider
         Pin is not idempotent. If node already exists pin overwrites it.
 
         Abstract interface to .nodes storage of Nodage for each node indexed
@@ -451,6 +424,33 @@ class Siter:
         self.nodes[saider.qb2] = nodage
 
 
+    def getNode(self, saider):
+        """Gets node from .nodes at said given by saider.
+
+        Abstract interface to .nodes storage of Nodage for each node indexed
+        by is said. Interface uses Matter instances for said and Nodage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact ,.qb2 values.
+        For archival on disk use .qb64 values.
+
+        Returns::
+            nodage (Nodage|None): instance whose values are Matter instances.
+                                  None when not found
+
+        Parameters::
+            saider (Diger): instance encoding said of nodage
+
+        """
+        if nodage := self.nodes.get(saider.qb2):
+            # convert to Matter instances for computation
+            nodage = Nodage(depth=Number(qb2=nodage.depth),
+                            limb=Diger(qb2=nodage.limb),
+                            left=Noncer(qb2=nodage.left),
+                            right=Noncer(qb2=nodage.right))
+        return nodage
+
+
     def remNode(self, saider):
         """Removes node from .nodes at said given by saider.
 
@@ -471,6 +471,110 @@ class Siter:
         """
         try:
             del self.nodes[saider.qb2]
+        except KeyError as ex:
+            return False
+
+        return True
+
+
+    def putLeaf(self, saider, leafage):
+        """Puts leaf given by leafage into .leaves at said given by .saider
+        Put is idempotent. If leaf already exists put does not overwrite it.
+
+        Abstract interface to .leaves storage of Leafage for each leaf indexed
+        by is said. Interface uses Matter instances for said and Leafage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact ,.qb2 values.
+        For archival on disk use .qb64 values.
+
+        Returns::
+            result (bool): True if leafage added to .leaves
+                           False if entry at saider said already exists do
+                               does not overwrite
+
+        Parameters::
+            saider (Diger): instance encoding said of nodage
+            leafage (Leafage): instance whose field values are Matter instances
+
+        """
+        if saider.qb2 in self.leaves:
+            return False  # already in .leaves
+
+        # convert to qb2 for compact storage
+        leafage = Leafage(depth=leafage.depth.qb2,
+                        limb = leafage.limb.qb2)
+        self.leaves[saider.qb2] = leafage
+        return True
+
+
+    def pinLeaf(self, saider, leafage):
+        """Pins leaf given by leafage into .leaves at said given by .saider
+        Pin is not idempotent. If leaf already exists pin overwrites it.
+
+        Abstract interface to .leaves storage of Leafage for each leaf indexed
+        by is said. Interface uses Matter instances for said and Leafage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact ,.qb2 values.
+        For archival on disk use .qb64 values.
+
+        Parameters::
+            saider (Diger): instance encoding said of nodage
+            leafage (Leafage): instance whose field values are Matter instances
+
+        """
+        # convert to qb2 for compact storage
+        leafage = Leafage(depth=leafage.depth.qb2,
+                          limb = leafage.limb.qb2)
+        self.leaves[saider.qb2] = leafage
+
+
+    def getLeaf(self, saider):
+        """Gets leaf from .leaves at said given by saider.
+
+        Abstract interface to .leaves storage of Leafage for each leaf indexed
+        by is said. Interface uses Matter instances for said and Leafage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact ,.qb2 values.
+        For archival on disk use .qb64 values.
+
+        Returns::
+            leafage (Leafage|None): instance whose values are Matter instances.
+                                    None when not found
+
+        Parameters::
+            saider (Diger): instance encoding said of leafage
+
+        """
+        if leafage := self.leaves.get(saider.qb2):
+            # convert to Matter instances for computation
+            leafage = Leafage(depth=Number(qb2=leafage.depth),
+                              limb=Diger(qb2=leafage.limb))
+        return leafage
+
+
+    def remLeaf(self, saider):
+        """Removes leaf from .leaves at said given by saider.
+
+        Abstract interface to .leaves storage of Leafage for each leaf indexed
+        by is said. Interface uses Matter instances for said and Leafage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact ,.qb2 values.
+        For archival on disk use .qb64 values.
+
+        Returns::
+            result (bool): True if entry at saider in .leaves found and removed
+                           False if no entry at saider in .leaves
+
+        Parameters::
+            saider (Diger): instance encoding said of leafage
+
+        """
+        try:
+            del self.leaves[saider.qb2]
         except KeyError as ex:
             return False
 
