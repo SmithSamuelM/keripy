@@ -243,53 +243,205 @@ class Siter:
         if saidage.said.qb2 in self.leaves:
             return None  # already inserted
 
-        lsaider = saidage.said  # leaf said as Matter instance
 
-        # create leafage with qb2 values
+        # create leafage with qb2 values as variant to attach, insert, and return
         leafage = Leafage(depth=saidage.depth.qb2,
                           limb=saidage.limb.qb2)
 
-        # create lpart as Partage with (said, leafage) as qb2 values
-        lpart = Partage(said=saidage.said.qb2, part=leafage)
+        #leaf partage to return when successful insert
+        partage = Partage(said=saidage.said.qb2, part=leafage)
 
         # create leaf as Leafage with matter primitives to enable compute
+        lsaider = saidage.said  # leaf said as Matter instance
         leaf = Leafage(depth=saidage.depth, limb=saidage.limb)
+        leaflimb = int.from_bytes(leaf.limb.raw)  # convert leaf limb to int
 
-        # attempt to insert
+        # Setup for insert
         inserted = False
         done = False
-
-        nsaid, node = self.root  # start at root values are matter primitives
-
+        nsaid, node = self.root  # start at root with values as matter primitives
         while not done:
-            depth = node.depth.num  # get int
+            depth = node.depth.num  # get current node depth as int
+            limb = int.from_bytes(node.limb.raw)  # convert curent node limb to int
 
             # walk down nodes if possible
+            # leftage is retrieved child qb2, nodage or leafage, empty is None
+            # rightage is retrieved child qb2, nodage or leafage, empty is None
             if node.left.nonce: # left child not empty
-                if node.left.qb2 in self.nodes: # its a node
-                    pass
-                elif node.left.qb2 in self.leaves: # its a leaf
-                    pass
+                if (leftage := self.nodes.get(node.left.qb2)): # its a node
+                    leftIsNode = True
+                    # match limbs and walk down left side if match
+                    # right shift to prune suffix and mask with 1s of size depth
+                    mask = ((1 << depth) - 1)
+                    leafprefix = (leaflimb >> (MaxDepth - depth)) & mask
+                    nodeprefix = (limb >> (MaxDepth - depth)) & mask
+                    if leafprefix == nodeprefix:  # match so walk down
+                        # replace node with left child node to walk down one
+                        nsaid = Noncer(qb2=node.left.qb2)
+                        node = Nodage(depth=Number(qb2=leftage.depth),
+                                      limb=Diger(qb2=leftage.limb),
+                                      left=Noncer(qb2=leftage.left),
+                                      right=Noncer(qb2=leftage.right))
+                        continue  # resume on next level down on left
+                elif leftage := self.leaves.get(node.left.qb2): # its a leaf
+                    leftIsNode = False
                 else:  # broken should not ever be
                     raise ValueError(f"Bad left child of node said={nsaid.qb64}")
-
             else:  # left child empty
-                pass
+                leftage = None
 
-            if node.right.nonce:  # right child not empty
-                if node.right.qb2 in self.nodes: # its a node
-                    pass
-                elif node.right.qb2 in self.leaves: # its a leaf
-                    pass
+            if node.right.nonce: # right child not empty
+                if (rightage := self.nodes.get(node.right.qb2)): # its a node
+                    rightIsNode = True
+                    # match limbs and walk down right side if match
+                    # right shift to prune suffix and mask with 1s of size depth
+                    mask = ((1 << depth) - 1)
+                    leafprefix = (leaflimb >> (MaxDepth - depth)) & mask
+                    nodeprefix = (limb >> (MaxDepth - depth)) & mask
+                    if leafprefix == nodeprefix:  # match so walk down
+                        # replace node with left child node to walk down one
+                        nsaid = Noncer(qb2=node.right.qb2)
+                        node = Nodage(depth=Number(qb2=rightage.depth),
+                                      limb=Diger(qb2=rightage.limb),
+                                      left=Noncer(qb2=rightage.left),
+                                      right=Noncer(qb2=rightge.right))
+                        continue  # resume on next level down on right
+
+                elif rightage := self.leaves.get(node.right.qb2): # its a leaf
+                    rightIsNode = False
                 else:  # broken should not ever be
                     raise ValueError(f"Bad right child of node said={nsaid.qb64}")
-
             else:  # right child empty
+                rightage = None
+
+            # When we get here, then we can't walk down a node on neither side.
+            # an unwalkable node on a side means that the node limb path (size depth)
+            # on that side is not a prefix of the leaf limb path so leaf must go
+            # on other side. We must then do leaf rebalancing logic
+            # Cases:
+            #    a) left is an unwalkable node and right is leaf or empty
+            #    b) right is an unwalkable node and left is leaf or empty
+            #    c) left and right are both leaves or empty
+
+            if leftage and leftIsNode:  # case a) left is an unwalkable node,
+                if not rightage:  # rightage is empty so attach leaf to right child
+                    # assumes by construction that leaf prefix is compatible
+                    # with right child
+                    # attach leaf to right child of current, replace empty
+                    nodage = Nodage(depth=node.depth.qb2,
+                                    limb=node.limb.qb2,
+                                    left=node.left.qb2,
+                                    right=leafage)
+                    self.nodes[nsaid.qb2] = nodage  # replace prior tuple
+                    self.leaves[partage.said] = partage.part  # insert leaf
+                    self.infos[saidage.limb.qb64] = leafer.qb64  # insert info
+                    inserted = True
+                    done = True
+
+                else: # right is leaf so add node on right holding old and new leaves.
+                    # at first fork where old/new leaf limbs differ (fork height)
+                    # Insert node with leaves on correct sides as determined
+                    # by limb difference bit (left or right side)
+                    oldage = self.leaves[node.right.qb2]  # get old leaf qb2
+                    newsaid, nodage = self.fork(oldage=oldage,
+                                              newage=leafage,
+                                              depth=node.depth,
+                                              limb=node.limb,
+                                              side=True)
+                    self.nodes[newsaid] = nodage  # replace prior tuple
+                    self.leaves[partage.said] = partage.part  # insert leaf
+                    self.infos[saidage.limb.qb64] = leafer.qb64  # insert info
+                    inserted = True
+                    done = True
+
+
+
+
+            elif rightage and rightIsNode:  # case b) right is an unwalkable node,
+                if not leftage:  # leftage is empty so attach leaf to left child
+                    # assumes by construction that leaf prefix is compatible
+                    # with left child
+                    # attach leaf to left child of current, replace empty
+                    nodage = Nodage(depth=node.depth.qb2,
+                                    limb=node.limb.qb2,
+                                    left=leafage,
+                                    right=node.right.qb2)
+                    self.nodes[nsaid.qb2] = nodage  # replace prior tuple
+                    self.leaves[partage.said] = partage.part  # insert leaf
+                    self.infos[saidage.limb.qb64] = leafer.qb64  # insert info
+                    inserted = True
+                    done = True
+
+                else: # right is leaf so add node on right holding old and new leaves.
+                    # at first fork where old/new leaf limbs differ (fork height)
+                    # Insert node with leaves on correct sides as determined
+                    # by limb difference bit (left or right side)
+                    oldage = self.leaves[node.right.qb2]  # get old leaf qb2
+                    newsaid, nodage = self.fork(oldage=oldage,
+                                                newage=leafage,
+                                                depth=node.depth,
+                                                limb=node.limb,
+                                                side=False)
+                    self.nodes[newsaid] = nodage  # replace prior tuple
+                    self.leaves[partage.said] = partage.part  # insert leaf
+                    self.infos[saidage.limb.qb64] = leafer.qb64  # insert info
+                    inserted = True
+                    done = True
+
+            else: # case c) left and right are both leaves or empty
                 pass
+
+
+
 
 
             done = True
 
 
         # do we want this to be Matter instances not qb2
-        return (lpart if inserted else None)
+        return (partage if inserted else None)
+
+
+    def fork(self, oldage, newage, depth, limb, side):
+        """Given two leaves oldage and newage, create a node and attach the
+        leaves to appropriate children given by the lowest depth where the
+        limbs of the two leaves differ. Returns the newly created node
+
+        Parameters:
+            old (Leafage): instance (said, part) with said as qb2 where
+                           part is Leafage instance with qb2 values
+            new (Leafage): instance (said, part) with said as qb2 where
+                           part is Leafage instance with qb2 values
+            depth (Number):  depth of prior node
+            limb (Diger): limb of prior node
+            side (bool): side to attach new node to prior node.
+                         False is left side, True is right side
+                         Enables calculation of new limb from prior limb
+
+        Returns:
+            nodepartage (Partage): instance (said, part) where:
+                            said is qb2 of node
+                            part is Nodage instance with qb2 values
+                            old and new provide left and right as appropriate
+
+        """
+        # make matter instance value variant of oldage leaf
+        old = Leafage(depth=Number(qb2=oldage.depth, limb=Diger(qb2=oldage.limb)))
+        oldlimb = int.from_bytes(old.limb.raw)
+
+        # make matter instance value variant of newage leaf
+        new = Leafage(depth=Number(qb2=newage.depth, limb=Diger(qb2=newage.limb)))
+        newlimb = int.from_bytes(new.limb.raw)
+
+        for i in range(MaxDepth - 1, 0, -1):  # start at MSbit of limbs
+            oldbit = (oldlimb >> i) & 1  # mask off all but lsb after shift
+            newbit = (newlimb >> i) & 1  # mask off all but lsb after shift
+            if oldbit != newbit:
+                if oldbit:
+                    left = new
+                    right = old
+
+                else:
+                    left = old
+                    right = new
+                break
