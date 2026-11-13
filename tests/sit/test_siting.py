@@ -6,7 +6,7 @@ tests.sit.test_siting module
 
 import pytest
 from keri import Versionage
-from keri.core import NumDex, Number, DigDex, Diger, Noncer, Verser
+from keri.core import NumDex, Number, DigDex, Diger, Noncer, Verser, Ilker
 from keri.sit import (Version, MaxDepth, MaxDepthBytes, Kithage, Kiths,
                       NodeSaidage, Nodage, LeafSaidage, Leafage, Partage,
                       Siter)
@@ -19,44 +19,47 @@ def test_siting_siter_class():
     assert MaxDepth == 256
     assert MaxDepthBytes == 32
     assert MaxDepth == 2 ** 3 * MaxDepthBytes
+
     assert isinstance(Kiths, Kithage)
-    assert Kiths._asdict() == {'node': 'node', 'leaf': 'leaf'}
+    assert Kiths._asdict() == {'node': 'nod', 'leaf': 'lea'}
 
     assert EmptyQb64 == '1AAP'
     assert EmptyQb2 == b'\xd4\x00\x0f'
 
     assert Siter.Code == DigDex.Blake3_256
-    assert Siter.Dummy == b'#'
+    assert Siter.Dummy == '#'
 
     # test saidify
+    # tree wide
     # noncer = Noncer(nonce=None)  # creates random 16 bytes for nonce
     tuid = '0AAKbe-QRrZVxTMgs7gVAfp1'
     tuider = Noncer(nonce=tuid)
     assert tuider.nonce == tuid
 
-    # node specific
-    nverser = Verser(proto=Kiths.node, pvrsn=Version)
-    assert nverser.qb64 == 'YnodeAAA'
+    # test node saidify
+    # node type specific
+    nither = Ilker(ilk=Kiths.node, strict=False)
+    assert nither.tag == Kiths.node
+    assert nither.qb64 == 'Xnod'
+
     # per node
     nepther = Number(num=0)  # root
     assert nepther.qb64 == 'MAAA'
     nimber = Diger(raw=bytes(MaxDepthBytes), code=Siter.Code)
     assert nimber.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
-
-
     # create NodeSaidage and saidify with matter primitive instances
-    saidage = NodeSaidage(version=nverser,
-                             tuid=tuider,
-                             said=Emptier, # placeholder
-                             depth=nepther,
-                             limb=nimber,
-                             left=Emptier,
-                             right=Emptier)
+    saidage = NodeSaidage(kith=nither,
+                          tuid=tuider,
+                          said=Emptier, # placeholder
+                          depth=nepther,
+                          limb=nimber,
+                          left=Emptier,
+                          right=Emptier)
 
     assert saidage._asdict() == \
     {
-        'version': nverser,
+        'kith': nither,
         'tuid': tuider,
         'said': Emptier,
         'depth': nepther,
@@ -67,13 +70,13 @@ def test_siting_siter_class():
 
     # replace saidage with SAIDed copy
     saidage = Siter.saidify(saidage=saidage)
-    assert saidage.said.qb64 == 'ENUNJwkeHIGl3X8k5Adslk1RUUUChJqg4pT8xigvWL0F'
+    assert saidage.said.qb64 == 'EEg3acFSwntGOgT81WZPlcqup7ix1w9GTqDnVsXK3Mgr'
     dqb64 = {l: v.qb64 for l, v in saidage._asdict().items()}
     assert dqb64 == \
     {
-        'version': 'YnodeAAA',
+        'kith': 'Xnod',
         'tuid': '0AAKbe-QRrZVxTMgs7gVAfp1',
-        'said': 'ENUNJwkeHIGl3X8k5Adslk1RUUUChJqg4pT8xigvWL0F',
+        'said': 'EEg3acFSwntGOgT81WZPlcqup7ix1w9GTqDnVsXK3Mgr',
         'depth': 'MAAA',
         'limb': 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
         'left': '1AAP',
@@ -98,20 +101,24 @@ def test_siting_siter_class():
     }
 
     # create node Partage of nodage with qb2 values
-    node = Partage(said=saidage.said.qb2, part=nodage)
-    assert node._asdict() == \
+    part = Partage(said=saidage.said.qb2, part=nodage)
+    assert part._asdict() == \
     {
-        'said': b"\x10\xd5\r'\t\x1e\x1c\x81\xa5\xdd\x7f$\xe4\x07l\x96MQQE"
-                b'\x02\x84\x9a\xa0\xe2\x94\xfc\xc6(/X\xbd\x05',
+        'said': b'\x10H7i\xc1R\xc2{F:\x04\xfc\xd5fO\x95\xca\xae\xa7\xb8\xb1\xd7\x0fF'
+                b'N\xa0\xe7V\xc5\xca\xdc\xc8+',
         'part': Nodage(depth=b'0\x00\x00',
                        limb=b'\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                        left=b'\xd4\x00\x0f',
                        right=b'\xd4\x00\x0f')
     }
 
+    # test leaf saidify
     # leaf specific
-    lverser = Verser(proto=Kiths.leaf, pvrsn=Version)
-    assert lverser.qb64 == 'YleafAAA'
+    # leaf type specific
+    lither = Ilker(ilk=Kiths.leaf, strict=False)
+    assert lither.tag == Kiths.leaf
+    assert lither.qb64 == 'Xlea'
+
     # per leaf
     lepther = Number(num=256)  # leaf
     assert lepther.qb64 == 'MAEA'
@@ -121,15 +128,15 @@ def test_siting_siter_class():
     assert limber.qb64 == 'EKE_SPb9j35_FOnE649CPQfWNRYAq4JaklV-08uPpGP5'
 
     # create LeafSaidage and saidify with matter primitive instances
-    saidage = LeafSaidage(version=lverser,
-                             tuid=tuider,
-                             said=Emptier, # placeholder
-                             depth=lepther,
-                             limb=limber)
+    saidage = LeafSaidage(kith=lither,
+                          tuid=tuider,
+                          said=Emptier, # placeholder
+                          depth=lepther,
+                          limb=limber)
 
     assert saidage._asdict() == \
     {
-        'version': lverser,
+        'kith': lither,
         'tuid': tuider,
         'said': Emptier,
         'depth': lepther,
@@ -138,16 +145,17 @@ def test_siting_siter_class():
 
     # replace saidage with SAIDed copy
     saidage = Siter.saidify(saidage=saidage)
-    assert saidage.said.qb64 == 'EG4CbOPT7FuQ8D5Q6a4JFzsrJBSP3NwPjjlWgKmcwZKS'
+    assert saidage.said.qb64 == 'EKKDHvefxLQO_OGhjDAxf22fJVDsvTOYZqzo5mBhskbR'
     dqb64 = {l: v.qb64 for l, v in saidage._asdict().items()}
     assert dqb64 == \
     {
-        'version': 'YleafAAA',
+        'kith': 'Xlea',
         'tuid': '0AAKbe-QRrZVxTMgs7gVAfp1',
-        'said': 'EG4CbOPT7FuQ8D5Q6a4JFzsrJBSP3NwPjjlWgKmcwZKS',
+        'said': 'EKKDHvefxLQO_OGhjDAxf22fJVDsvTOYZqzo5mBhskbR',
         'depth': 'MAEA',
-        'limb': 'EKE_SPb9j35_FOnE649CPQfWNRYAq4JaklV-08uPpGP5',
+        'limb': 'EKE_SPb9j35_FOnE649CPQfWNRYAq4JaklV-08uPpGP5'
     }
+
 
     # create leafage with qb2 values
     leafage = Leafage(depth=saidage.depth.qb2,
@@ -161,28 +169,60 @@ def test_siting_siter_class():
     }
 
     # create leaf Partage of leafage with qb2 values
-    leaf = Partage(said=saidage.said.qb2, part=leafage)
-    assert leaf._asdict() == \
+    part = Partage(said=saidage.said.qb2, part=leafage)
+    assert part._asdict() == \
     {
-        'said': b'\x10n\x02l\xe3\xd3\xec[\x90\xf0>P\xe9\xae\t\x17;+$\x14'
-                b'\x8f\xdc\xdc\x0f\x8e9V\x80\xa9\x9c\xc1\x92\x92',
-        'part': Leafage(depth=b'0\x01\x00',
-                        limb=b'\x10\xa1?H\xf6\xfd\x8f~\x7f\x14\xe9\xc4\xeb\x8fB=\x07\xd65\x16\x00\xab\x82Z\x92U~\xd3\xcb\x8f\xa4c\xf9')
+        'said': b'\x10\xa2\x83\x1e\xf7\x9f\xc4\xb4\x0e\xfc\xe1\xa1\x8c01\x7fm\x9f%P'
+                b'\xec\xbd3\x98f\xac\xe8\xe6`a\xb2F\xd1',
+         'part': Leafage(depth=b'0\x01\x00',
+                         limb=b'\x10\xa1?H\xf6\xfd\x8f~\x7f\x14\xe9\xc4\xeb\x8fB=\x07\xd65\x16\x00\xab\x82Z\x92U~\xd3\xcb\x8f\xa4c\xf9')
     }
 
+    #test staticmethod .extendLimbRaw(limb, span=0, right=False)
+    limb = int.from_bytes(nimber.raw)  # get int
+    assert limb == 0
+    span = 0
+    assert limb == 0
+    limb, span = Siter.extendLimbRaw(limb=limb, span=span)  # default left
+    assert limb == 0
+    assert f"{limb:0256b}"[:8] == '00000000'
+    assert span == 1
+    limb, span = Siter.extendLimbRaw(limb=limb, span=span, right=True)  # right
+    assert limb == 2 ** (MaxDepth - span)
+    assert f"{limb:0256b}"[:8] == '01000000'
+    assert span == 2
+    limb, span = Siter.extendLimbRaw(limb=limb, span=span, right=True)  # right
+    assert f"{limb:0256b}"[:8] == '01100000'
+    assert span == 3
 
+    #test staticmethod .extendLimb(limber, spanner, right=False)
+    limber = Diger(qb64=nimber.qb64)
+    assert limber.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    spanner = Number(num=0)
+    assert spanner.qb64 == 'MAAA'
+
+    limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner)  # default left
+    assert limber.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    assert spanner.qb64 == 'MAAB'
+    limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner, right=True)  # right
+    assert limber.qb64 == 'EEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    limb = int.from_bytes(limber.raw)
+    assert f"{limb:0256b}"[:8] == '01000000'
+    assert spanner.qb64 == 'MAAC'
+    limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner, right=True)  # right
+    assert limber.qb64 == 'EGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    limb = int.from_bytes(limber.raw)
+    assert f"{limb:0256b}"[:8] == '01100000'
+    assert spanner.qb64 == 'MAAD'
 
     """Done Test"""
+
 
 def test_siter_basic():
     """Test basic siter instance creation and methods"""
     siter = Siter()  # default Siter
-    assert siter.svrsn == Version
     assert len(siter.tuider.qb64) == 24  # random tuid
     assert siter.code == DigDex.Blake3_256
-    assert siter.nodeVerser.qb64 == 'YnodeAAA'
-    assert siter.leafVerser.qb64 == 'YleafAAA'
-    assert siter.rootage
     assert siter.root
     assert len(siter.nodes) == 1
     assert siter.leaves == {}
@@ -190,28 +230,61 @@ def test_siter_basic():
 
     tuid = '0ACiicCYoKAqao8qDdnlFVrY'
     siter = Siter(tuid=tuid)  # Siter with known tuid
-    assert siter.svrsn == Version
     assert siter.tuider.qb64 == tuid
     assert siter.code == DigDex.Blake3_256
-    assert siter.nodeVerser.qb64 == 'YnodeAAA'
-    assert siter.leafVerser.qb64 == 'YleafAAA'
-    assert siter.rootage == Nodage(depth=b'0\x00\x00',
-                                   limb=b'\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                   left=b'\xd4\x00\x0f',
-                                   right=b'\xd4\x00\x0f')
-
-    assert siter.root.said.qb64 == 'EPWZ53lTK7o5oyC6cM2duB5vhNXRAFthkSndZQO4vArf'
-    assert siter.root.part.depth.num == 0
-    assert siter.root.part.limb.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    assert siter.root.part.left.nonce == ""
-    assert siter.root.part.right.nonce == ""
-
-    assert siter.nodes == \
+    assert siter.root
+    rqb64 = Partage(said=siter.root.said.qb64,
+                    part=Nodage(depth=siter.root.part.depth.qb64,
+                                limb=siter.root.part.limb.qb64,
+                                  left=siter.root.part.left.qb64,
+                                  right=siter.root.part.right.qb64))
+    assert rqb64._asdict() == \
     {
-        siter.root.said.qb2: siter.rootage,
+        'said': 'ENtWb6xykmkwzn3hiDmfCOS_crgAI6oQ6jLmHR_HlrF0',
+        'part': Nodage(depth='MAAA',
+                       limb='EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                       left='1AAP',
+                       right='1AAP')
     }
+    assert len(siter.nodes) == 1
+    nodage = siter.getNode(siter.root.said)
+    nqb64 = Nodage(depth=nodage.depth.qb64,
+                   limb=nodage.limb.qb64,
+                   left=nodage.left.qb64,
+                   right=nodage.right.qb64)
+    assert nqb64 == rqb64.part  # round trips
+
     assert siter.leaves == {}
     assert siter.infos == {}
+
+    # test .hashNode(self, nodage)
+    depther = Number(num=1)
+    limb = 2 ** 254
+    limber = Diger(raw=limb.to_bytes(MaxDepthBytes), code=Siter.Code)
+    assert limber.qb64 == 'EEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    nodage = Nodage(depth=depther,
+                    limb=limber,
+                    left=Noncer(nonce=""),
+                    right=Noncer(nonce=""))
+    partage = siter.hashNode(nodage)
+    assert partage.said.qb64 == 'ECD_U3STi9BvTJc5RSsBJubJtAFD-UTtS10biijM1hLE'
+
+    # test .hashLeaf(self, leafage)
+    depther = Number(num=256)  # leaf
+    infoer = Diger(ser=b"Leaf Info get it?", code=DigDex.Blake2b_256) # not default SIT code
+    limber = Diger(ser=infoer.qb64b, code=Siter.Code)
+    assert limber.qb64 == 'ECxPASxNTXD8J_qHJGxwvLqzjCNto7bJtIBivJNCJLS2'
+    leafage = Leafage(depth=depther, limb=limber)
+    partage = siter.hashLeaf(leafage)
+    assert partage.said.qb64 == 'EMOv2iXtQ43LBLXVs6xXrlH5ldjGCAHF-tMc0UqWA4sB'
+
+    # test node storage functions
+
+
+
+
+    # test leaf storage functions
+
 
 
     # test insert

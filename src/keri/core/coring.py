@@ -2308,7 +2308,8 @@ class Ilker(Tagger):
     """
 
 
-    def __init__(self, qb64b=None, qb64=None, qb2=None, tag='', ilk='', **kwa):
+    def __init__(self, qb64b=None, qb64=None, qb2=None, tag='', ilk='',
+                 strict=True, **kwa):
         """Initialize instance
 
         Inherited Parameters:  (see Tagger)
@@ -2329,6 +2330,8 @@ class Ilker(Tagger):
 
         Parameters:
             ilk (str):  message type from Ilks of Ilkage
+            strict (bool): True means ilk must be in Ilks else raise error
+                           False means ilk not limited to Ilks value
         """
 
         if not (qb64b or qb64 or qb2):
@@ -2341,7 +2344,7 @@ class Ilker(Tagger):
         if self.code not in (MtrDex.Tag3, ):
             raise InvalidCodeError(f"Invalid code={self.code} for Ilker "
                                    f"{self.ilk=}.")
-        if self.ilk not in Ilks:
+        if strict and self.ilk not in Ilks:
             raise InvalidSoftError(f"Ivalid ilk={self.ilk} for Ilker.")
 
 

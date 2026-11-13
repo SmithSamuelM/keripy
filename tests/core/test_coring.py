@@ -4169,6 +4169,10 @@ def test_ilker():
     with pytest.raises(InvalidSoftError):
         ilker = Ilker(ilk='bad')
 
+    # test not strict condition
+    ilker = Ilker(ilk='bad', strict=False)
+    assert ilker.ilk == 'bad'
+
     # ignores code
     ilker = Ilker(ilk=ilk, code=MtrDex.Tag4)
     assert ilker.code == ilker.hard == code
