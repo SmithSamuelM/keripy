@@ -306,21 +306,19 @@ class Siter:
                          limb=Diger(raw=bytes(MaxDepthBytes), code=self.code),
                          left=Noncer(nonce=""),
                          right=Noncer(nonce=""))
-        self.root = self.hashNode(nodage=rootage)  # Partage tuple
+        self.root = Partage(self.hashNode(rootage), rootage)
         self.pinNode(saider=self.root.said, nodage=self.root.part)
 
 
-
-
     def hashNode(self, nodage):
-        """Computes and returns partage of (said, nodage) where said is
+        """Computes and returns said of node as Matter primitive where said is
         computed with a NodeSaidage derived from nodage supplemented with per
         tree and per part field values taken from self (Siter instance)
         The said is essentially 'hashing' or digesting the node.
 
         Returns::
-            partage (Partage): instance of (said, nodage) where said is computed
-                               from NodeSaidage derived from nodage
+            saider (Diger): instance where said is computed from NodeSaidage
+                            derived from nodage as supplemented with tree fields
 
         Parameters::
             nodage (Nodage): instance of nodage whose field values are Matter
@@ -334,23 +332,18 @@ class Siter:
                               left=nodage.left,
                               right=nodage.right)
         saidage = self.saidify(saidage)
-        saider = saidage.said
-        nodage = Nodage(depth=saidage.depth,
-                        limb=saidage.limb,
-                        left=saidage.left,
-                        right=saidage.right)
-        return Partage(said=saider, part=nodage)
+        return saidage.said
 
 
     def hashLeaf(self, leafage):
-        """Computes and returns partage of (said, leafage) where said is
+        """Computes and returns said of leaf as Matter primitive where said is
         computed with a LeafSaidage derived from leafage supplemented with per
         tree and per part field values taken from self (Siter instance)
         The said is essentially 'hashing' or digesting the leaf.
 
         Returns::
-            partage (Partage): instance of (said, leafage) where said is computed
-                               from LeafSaidage derived from leafage
+            saider (Diger): instance where said is computed from LeafSaidage
+                            derived from leafage as supplemented with tree fields
 
         Parameters::
             leafage (Leafage): instance of leafage whose field values are Matter
@@ -362,9 +355,7 @@ class Siter:
                               depth=leafage.depth,
                               limb=leafage.limb)
         saidage = self.saidify(saidage)
-        saider = saidage.said
-        leafage = Leafage(depth=saidage.depth, limb=saidage.limb)
-        return Partage(said=saider, part=leafage)
+        return saidage.said
 
 
     def putNode(self, saider, nodage):
@@ -592,6 +583,21 @@ class Siter:
         Parameters::
             leafer (Diger): instance encoding of leaf info said which said is
                             digest of actual leaf including
+
+
+        Logic:
+            leaf can only attach to child of node on side given by bit in leaf
+            limb which bit is located above the node depth. This leaves room
+            for one more nodes to interpose allowing leaf to rebalance to move
+            to correct child of interposed node. If leaf limb side bit does not
+            exactly match side at depth+1 of node  to which it is attached then
+            there is no way to move it later to rebalance. Consequently leaves
+            attached to root must always attach to side given by bit at depth=1
+            in leaf limb (zero based bit index 0 from left, bit index 255 from right,
+            This means that one side of the root may remain empty always until
+            a leaf is inserted whose depth 1 bit matches the empty side.
+            This means that logic for attaching leaf to empty root is simple.
+            Just attach to side given by depth 1 limb bit. Root at depth 0.
 
         """
         lepther = Number(num=256)  # leaf

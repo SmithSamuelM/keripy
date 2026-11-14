@@ -266,28 +266,28 @@ def test_siter_basic():
                     limb=limber,
                     left=Noncer(nonce=""),
                     right=Noncer(nonce=""))
-    partage = siter.hashNode(nodage)
-    assert partage.said.qb64 == 'ECD_U3STi9BvTJc5RSsBJubJtAFD-UTtS10biijM1hLE'
+    saider = siter.hashNode(nodage)
+    assert saider.qb64 == 'ECD_U3STi9BvTJc5RSsBJubJtAFD-UTtS10biijM1hLE'
 
     # test node storage functions
-    assert not siter.getNode(partage.said)
-    assert siter.putNode(partage.said, partage.part)  # put node
-    result = siter.getNode(partage.said)  # round trip
+    assert not siter.getNode(saider)
+    assert siter.putNode(saider, nodage)  # put node
+    result = siter.getNode(saider)  # round trip
     assert isinstance(result, Nodage)
-    assert result.depth.qb64 == partage.part.depth.qb64
-    assert result.limb.qb64 == partage.part.limb.qb64
-    assert result.left.qb64 == partage.part.left.qb64
-    assert result.right.qb64 == partage.part.right.qb64
-    assert not siter.putNode(partage.said, partage.part)  # idempotent so second try fails
-    siter.pinNode(partage.said, partage.part)
+    assert result.depth.qb64 == nodage.depth.qb64
+    assert result.limb.qb64 == nodage.limb.qb64
+    assert result.left.qb64 == nodage.left.qb64
+    assert result.right.qb64 == nodage.right.qb64
+    assert not siter.putNode(saider, nodage)  # idempotent so second try fails
+    siter.pinNode(saider, nodage)
 
     # getNode fails is not in db
-    saider = Diger(ser=b"Bad one", code=siter.code)
-    assert not siter.getNode(saider)
+    badsaider = Diger(ser=b"Bad one", code=siter.code)
+    assert not siter.getNode(badsaider)
 
     # remNode
-    assert siter.remNode(partage.said)
-    assert not siter.getNode(partage.said)
+    assert siter.remNode(saider)
+    assert not siter.getNode(saider)
 
     # pin node round trip
     depther = Number(num=2)
@@ -295,17 +295,17 @@ def test_siter_basic():
                     limb=limber,
                     left=Noncer(nonce=""),
                     right=Noncer(nonce=""))
-    partage = siter.hashNode(nodage)
-    assert partage.said.qb64 == 'ELljrgeKAYxXg0YW3jR3lGRZ7sBSZU6JCq6VgvBO4rmF'
+    saider = siter.hashNode(nodage)
+    assert saider.qb64 == 'ELljrgeKAYxXg0YW3jR3lGRZ7sBSZU6JCq6VgvBO4rmF'
 
-    assert not siter.getNode(partage.said)
-    siter.pinNode(partage.said, partage.part)
-    result = siter.getNode(partage.said)
+    assert not siter.getNode(saider)
+    siter.pinNode(saider, nodage)
+    result = siter.getNode(saider)
     assert isinstance(result, Nodage)
-    assert result.depth.qb64 == partage.part.depth.qb64
-    assert result.limb.qb64 == partage.part.limb.qb64
-    assert result.left.qb64 == partage.part.left.qb64
-    assert result.right.qb64 == partage.part.right.qb64
+    assert result.depth.qb64 == nodage.depth.qb64
+    assert result.limb.qb64 == nodage.limb.qb64
+    assert result.left.qb64 == nodage.left.qb64
+    assert result.right.qb64 == nodage.right.qb64
 
 
     # test .hashLeaf(self, leafage)
@@ -314,41 +314,41 @@ def test_siter_basic():
     limber = Diger(ser=infoer.qb64b, code=Siter.Code)
     assert limber.qb64 == 'ECxPASxNTXD8J_qHJGxwvLqzjCNto7bJtIBivJNCJLS2'
     leafage = Leafage(depth=depther, limb=limber)
-    partage = siter.hashLeaf(leafage)
-    assert partage.said.qb64 == 'EMOv2iXtQ43LBLXVs6xXrlH5ldjGCAHF-tMc0UqWA4sB'
+    saider = siter.hashLeaf(leafage)
+    assert saider.qb64 == 'EMOv2iXtQ43LBLXVs6xXrlH5ldjGCAHF-tMc0UqWA4sB'
 
     # test leaf storage functions
-    assert not siter.getLeaf(partage.said)
-    assert siter.putLeaf(partage.said, partage.part)  # put leaf
-    result = siter.getLeaf(partage.said)  # round trip
+    assert not siter.getLeaf(saider)
+    assert siter.putLeaf(saider, leafage)  # put leaf
+    result = siter.getLeaf(saider)  # round trip
     assert isinstance(result, Leafage)
-    assert result.depth.qb64 == partage.part.depth.qb64
-    assert result.limb.qb64 == partage.part.limb.qb64
-    assert not siter.putLeaf(partage.said, partage.part)  # idempotent so second try fails
-    siter.pinLeaf(partage.said, partage.part)
+    assert result.depth.qb64 == leafage.depth.qb64
+    assert result.limb.qb64 == leafage.limb.qb64
+    assert not siter.putLeaf(saider, leafage)  # idempotent so second try fails
+    siter.pinLeaf(saider, leafage)
 
     # getLeaf fails is not in db
-    saider = Diger(ser=b"Bad one", code=siter.code)
-    assert not siter.getLeaf(saider)
+    badsaider = Diger(ser=b"Bad one", code=siter.code)
+    assert not siter.getLeaf(badsaider)
 
     # remLeaf
-    assert siter.remLeaf(partage.said)
-    assert not siter.getLeaf(partage.said)
+    assert siter.remLeaf(saider)
+    assert not siter.getLeaf(saider)
 
     # pin leaf round trip
     infoer = Diger(ser=b"Leaf Info got it", code=DigDex.Blake2b_256) # not default SIT code
     limber = Diger(ser=infoer.qb64b, code=Siter.Code)
     assert limber.qb64 == 'ECtlvjd2t7cqCsuJa8mmU8osQ6CkbuhRX-vcCPPvjN8y'
     leafage = Leafage(depth=depther, limb=limber)
-    partage = siter.hashLeaf(leafage)
-    assert partage.said.qb64 == 'ECHQjWDNTZw2V4pwnEOzNP_kxVW6LY2jr6t8huDu-mCY'
+    saider = siter.hashLeaf(leafage)
+    assert saider.qb64 == 'ECHQjWDNTZw2V4pwnEOzNP_kxVW6LY2jr6t8huDu-mCY'
 
-    assert not siter.getLeaf(partage.said)
-    siter.pinLeaf(partage.said, partage.part)
-    result = siter.getLeaf(partage.said)
+    assert not siter.getLeaf(saider)
+    siter.pinLeaf(saider, leafage)
+    result = siter.getLeaf(saider)
     assert isinstance(result, Leafage)
-    assert result.depth.qb64 == partage.part.depth.qb64
-    assert result.limb.qb64 == partage.part.limb.qb64
+    assert result.depth.qb64 == leafage.depth.qb64
+    assert result.limb.qb64 == leafage.limb.qb64
 
 
     # test insert
