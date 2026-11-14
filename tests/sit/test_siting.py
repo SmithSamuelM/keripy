@@ -20,6 +20,8 @@ def test_siting_siter_class():
     assert MaxDepthBytes == 32
     assert MaxDepth == 2 ** 3 * MaxDepthBytes
 
+    assert Diger._rawSize(DigDex.Blake3_256) == MaxDepthBytes
+
     assert isinstance(Kiths, Kithage)
     assert Kiths._asdict() == {'node': 'nod', 'leaf': 'lea'}
 
@@ -45,7 +47,7 @@ def test_siting_siter_class():
     # per node
     nepther = Number(num=0)  # root
     assert nepther.qb64 == 'MAAA'
-    nimber = Diger(raw=bytes(MaxDepthBytes), code=Siter.Code)
+    nimber = Diger(num=0, code=Siter.Code)
     assert nimber.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
     # create NodeSaidage and saidify with matter primitive instances
@@ -181,7 +183,7 @@ def test_siting_siter_class():
 
     # test staticmethods .extendLimbRaw(limb, span=0, right=False) and
     # .rightAtDepthInt(limb, depth)
-    limb = int.from_bytes(nimber.raw)  # get int
+    limb = nimber.num  # get int
     assert limb == 0
     span = 0
     assert limb == 0
@@ -281,7 +283,7 @@ def test_siter_basic():
     # test .sayNode(self, nodage)   (compute said)
     depther = Number(num=1)
     limb = 2 ** 254
-    limber = Diger(raw=limb.to_bytes(MaxDepthBytes), code=Siter.Code)
+    limber = Diger(num=limb, code=Siter.Code)  # limb all 0s
     assert limber.qb64 == 'EEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     nodage = Nodage(depth=depther,
                     limb=limber,

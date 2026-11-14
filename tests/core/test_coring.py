@@ -6031,6 +6031,33 @@ def test_diger():
     assert diger.num == 79934255688530727098852804500393089505535828727415781789409630334812377050033
     assert diger.numh == 'b0b92f7881543efb77f3186d8186094420a90063bb5a38c7551dfb3dac2febb1'
 
+    num = 2 ** 255
+    assert num.to_bytes(length=32) == (b'\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                                      b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+    assert f"{num:0256b}"[:8] == '10000000'
+    assert Diger._rawSize(code=DigDex.Blake3_256) == 32
+    diger = Diger(num=num)  # create digest directly as num converted to bytes
+    assert diger.num == num
+    assert diger.numh == '8000000000000000000000000000000000000000000000000000000000000000'
+
+    num = 0
+    assert num.to_bytes(length=32) == (b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                                      b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+    assert f"{num:0256b}"[:8] == '00000000'
+    assert Diger._rawSize(code=DigDex.Blake3_256) == 32
+    diger = Diger(num=num)  # create digest directly as num converted to bytes
+    assert diger.num == num
+    assert diger.numh == '0'
+
+    num = 1
+    assert num.to_bytes(length=32) == (b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                                      b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01')
+    assert f"{num:0256b}"[-8:] == '00000001'
+    assert Diger._rawSize(code=DigDex.Blake3_256) == 32
+    diger = Diger(num=num)  # create digest directly as num converted to bytes
+    assert diger.num == num
+    assert diger.numh == '1'
+
     diger = Diger(raw=dig, code=MtrDex.Blake3_256)
     assert diger.code == MtrDex.Blake3_256
     assert len(diger.raw) == Matter._rawSize(diger.code)

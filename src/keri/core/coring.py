@@ -3590,26 +3590,33 @@ class Diger(Matter):
         return (raw)
 
 
-    def __init__(self, raw=None, code=DigDex.Blake3_256, ser=None, strict=True,
-                 **kwa):
+    def __init__(self, raw=None, code=DigDex.Blake3_256, ser=None, num=None,
+                 strict=True, **kwa):
         """Initialize attributes
 
-        Inherited Parameters:
+        Inherited Parameters::
             See Matter
 
-        Parameters:
+        Parameters::
             ser (bytes): serialization from which raw is computed if not raw
+            num (int): creates raw from num.bytes of code fullsize
+                       useful for Diger instance as hash tree limb bit fork path
             strict (bool): True means enforce code must be in DigDex
                 False means do not enfoce code in DigDex this allows
                     subclasses to enforce different codex"""
 
         try:
             super(Diger, self).__init__(raw=raw, code=code, **kwa)
-        except EmptyMaterialError as ex:
-            if not ser:
-                raise ex
 
-            raw = self._digest(ser, code=code)
+        except EmptyMaterialError as ex:
+            if ser:
+                if hasattr(ser, 'encode'): # str
+                    ser.encode()  # make bytes
+                raw = self._digest(ser, code=code)
+            elif num is not None:
+                raw = num.to_bytes(length=self._rawSize(code))
+            if not raw:
+                raise ex
 
             super(Diger, self).__init__(raw=raw, code=code, **kwa)
 
