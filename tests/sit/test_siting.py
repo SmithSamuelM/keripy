@@ -266,7 +266,7 @@ def test_siter_basic():
                     limb=limber,
                     left=Noncer(nonce=""),
                     right=Noncer(nonce=""))
-    saider = siter.hashNode(nodage)
+    saider = siter.saidNode(nodage)
     assert saider.qb64 == 'ECD_U3STi9BvTJc5RSsBJubJtAFD-UTtS10biijM1hLE'
 
     # test node storage functions
@@ -295,7 +295,7 @@ def test_siter_basic():
                     limb=limber,
                     left=Noncer(nonce=""),
                     right=Noncer(nonce=""))
-    saider = siter.hashNode(nodage)
+    saider = siter.saidNode(nodage)
     assert saider.qb64 == 'ELljrgeKAYxXg0YW3jR3lGRZ7sBSZU6JCq6VgvBO4rmF'
 
     assert not siter.getNode(saider)
@@ -314,7 +314,7 @@ def test_siter_basic():
     limber = Diger(ser=infoer.qb64b, code=Siter.Code)
     assert limber.qb64 == 'ECxPASxNTXD8J_qHJGxwvLqzjCNto7bJtIBivJNCJLS2'
     leafage = Leafage(depth=depther, limb=limber)
-    saider = siter.hashLeaf(leafage)
+    saider = siter.saidLeaf(leafage)
     assert saider.qb64 == 'EMOv2iXtQ43LBLXVs6xXrlH5ldjGCAHF-tMc0UqWA4sB'
 
     # test leaf storage functions
@@ -340,7 +340,7 @@ def test_siter_basic():
     limber = Diger(ser=infoer.qb64b, code=Siter.Code)
     assert limber.qb64 == 'ECtlvjd2t7cqCsuJa8mmU8osQ6CkbuhRX-vcCPPvjN8y'
     leafage = Leafage(depth=depther, limb=limber)
-    saider = siter.hashLeaf(leafage)
+    saider = siter.saidLeaf(leafage)
     assert saider.qb64 == 'ECHQjWDNTZw2V4pwnEOzNP_kxVW6LY2jr6t8huDu-mCY'
 
     assert not siter.getLeaf(saider)
