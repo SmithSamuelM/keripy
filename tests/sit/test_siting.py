@@ -178,22 +178,30 @@ def test_siting_siter_class():
                          limb=b'\x10\xa1?H\xf6\xfd\x8f~\x7f\x14\xe9\xc4\xeb\x8fB=\x07\xd65\x16\x00\xab\x82Z\x92U~\xd3\xcb\x8f\xa4c\xf9')
     }
 
-    #test staticmethod .extendLimbRaw(limb, span=0, right=False)
+
+    # test staticmethods .extendLimbRaw(limb, span=0, right=False) and
+    # .rightAtDepthInt(limb, depth)
     limb = int.from_bytes(nimber.raw)  # get int
     assert limb == 0
     span = 0
     assert limb == 0
-    limb, span = Siter.extendLimbRaw(limb=limb, span=span)  # default left
+    with pytest.raises(ValueError):
+        Siter.rightAtDepthInt(limb, span)  # span of zero
+
+    limb, span = Siter.extendLimbInt(limb=limb, span=span)  # default left
     assert limb == 0
     assert f"{limb:0256b}"[:8] == '00000000'
     assert span == 1
-    limb, span = Siter.extendLimbRaw(limb=limb, span=span, right=True)  # right
+    assert not Siter.rightAtDepthInt(limb, span)  # left at depth=span=1
+    limb, span = Siter.extendLimbInt(limb=limb, span=span, right=True)  # right
     assert limb == 2 ** (MaxDepth - span)
     assert f"{limb:0256b}"[:8] == '01000000'
     assert span == 2
-    limb, span = Siter.extendLimbRaw(limb=limb, span=span, right=True)  # right
+    assert Siter.rightAtDepthInt(limb, span)  # right at depth=span=2
+    limb, span = Siter.extendLimbInt(limb=limb, span=span, right=True)  # right
     assert f"{limb:0256b}"[:8] == '01100000'
     assert span == 3
+    assert Siter.rightAtDepthInt(limb, span)  # right at depth=span=3
 
     #test staticmethod .extendLimb(limber, spanner, right=False)
     limber = Diger(qb64=nimber.qb64)
@@ -204,16 +212,29 @@ def test_siting_siter_class():
     limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner)  # default left
     assert limber.qb64 == 'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     assert spanner.qb64 == 'MAAB'
+    limb = int.from_bytes(limber.raw)
+    assert f"{limb:0256b}"[:8] == '00000000'
+    assert spanner.num == 1
+    assert not Siter.rightAtDepthInt(limb, spanner.num)  # left at depth=span=1
+
     limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner, right=True)  # right
     assert limber.qb64 == 'EEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    assert spanner.qb64 == 'MAAC'
     limb = int.from_bytes(limber.raw)
     assert f"{limb:0256b}"[:8] == '01000000'
-    assert spanner.qb64 == 'MAAC'
+    assert spanner.num == 2
+    assert Siter.rightAtDepthInt(limb, spanner.num)  # right at depth=span=2
+
     limber, spanner = Siter.extendLimb(limber=limber, spanner=spanner, right=True)  # right
     assert limber.qb64 == 'EGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     limb = int.from_bytes(limber.raw)
     assert f"{limb:0256b}"[:8] == '01100000'
     assert spanner.qb64 == 'MAAD'
+    assert spanner.num == 3
+    assert Siter.rightAtDepthInt(limb, spanner.num)  # right at depth=span=2
+
+
+
 
     """Done Test"""
 
@@ -257,7 +278,7 @@ def test_siter_basic():
     assert siter.leaves == {}
     assert siter.infos == {}
 
-    # test .hashNode(self, nodage)
+    # test .sayNode(self, nodage)   (compute said)
     depther = Number(num=1)
     limb = 2 ** 254
     limber = Diger(raw=limb.to_bytes(MaxDepthBytes), code=Siter.Code)
@@ -270,8 +291,10 @@ def test_siter_basic():
     assert saider.qb64 == 'ECD_U3STi9BvTJc5RSsBJubJtAFD-UTtS10biijM1hLE'
 
     # test node storage functions
+    assert not siter.hasNode(saider)
     assert not siter.getNode(saider)
     assert siter.putNode(saider, nodage)  # put node
+    assert siter.hasNode(saider)
     result = siter.getNode(saider)  # round trip
     assert isinstance(result, Nodage)
     assert result.depth.qb64 == nodage.depth.qb64
@@ -287,6 +310,7 @@ def test_siter_basic():
 
     # remNode
     assert siter.remNode(saider)
+    assert not siter.hasNode(saider)
     assert not siter.getNode(saider)
 
     # pin node round trip
@@ -298,8 +322,10 @@ def test_siter_basic():
     saider = siter.sayNode(nodage)
     assert saider.qb64 == 'ELljrgeKAYxXg0YW3jR3lGRZ7sBSZU6JCq6VgvBO4rmF'
 
+    assert not siter.hasNode(saider)
     assert not siter.getNode(saider)
     siter.pinNode(saider, nodage)
+    assert siter.hasNode(saider)
     result = siter.getNode(saider)
     assert isinstance(result, Nodage)
     assert result.depth.qb64 == nodage.depth.qb64
@@ -318,8 +344,10 @@ def test_siter_basic():
     assert saider.qb64 == 'EMOv2iXtQ43LBLXVs6xXrlH5ldjGCAHF-tMc0UqWA4sB'
 
     # test leaf storage functions
+    assert not siter.hasLeaf(saider)
     assert not siter.getLeaf(saider)
     assert siter.putLeaf(saider, leafage)  # put leaf
+    assert siter.hasLeaf(saider)
     result = siter.getLeaf(saider)  # round trip
     assert isinstance(result, Leafage)
     assert result.depth.qb64 == leafage.depth.qb64
@@ -333,6 +361,7 @@ def test_siter_basic():
 
     # remLeaf
     assert siter.remLeaf(saider)
+    assert not siter.hasLeaf(saider)
     assert not siter.getLeaf(saider)
 
     # pin leaf round trip
@@ -343,8 +372,10 @@ def test_siter_basic():
     saider = siter.sayLeaf(leafage)
     assert saider.qb64 == 'ECHQjWDNTZw2V4pwnEOzNP_kxVW6LY2jr6t8huDu-mCY'
 
+    assert not siter.hasLeaf(saider)
     assert not siter.getLeaf(saider)
     siter.pinLeaf(saider, leafage)
+    assert siter.hasLeaf(saider)
     result = siter.getLeaf(saider)
     assert isinstance(result, Leafage)
     assert result.depth.qb64 == leafage.depth.qb64

@@ -197,9 +197,9 @@ class Siter:
 
 
     @staticmethod
-    def extendLimbRaw(limb, span=0, right=False):
-        """Extends limb of span (depth) with bit value given by right and
-        returns new limb extended by 1 bit.
+    def extendLimbInt(limb, span=0, right=False):
+        """Extends limb  of span (depth) using  bit value given by right and
+        returns new limb extended by 1 bit.  Uses int values not Matter instances
 
         Returns:
             result (tuple): (limb, span) where:
@@ -217,14 +217,14 @@ class Siter:
             given limber as Diger instance of limb
             given spanner as Number instance of depth
 
-            limb = Sider.extendLimbRaw(limb=int.from_bytes(limber.raw),
-                                    span=spanner.num)
+            limb = Sider.extendLimbInt(limb=limber.num),
+                                       span=spanner.num)
 
             or
 
-            limb = Sider.extendLimbRaw(limb=int.from_bytes(limber.raw),
-                                    span=spanner.num,
-                                    right=True)
+            limb = Sider.extendLimbInt(limb=limber.num),
+                                       span=spanner.num,
+                                       right=True)
 
             limber = Diger(raw=limb.to_bytes(MaxDepthBytes))
             depther = Number(num=depther.num+1)
@@ -264,21 +264,45 @@ class Siter:
             given limber as Diger instance of limb
             given spanner as Number instance of depth
 
+            limber, spanner = Sider.extendLimb(limber=limber, spanner=spanner)
+
             limber, spanner = Sider.extendLimb(limber=limber,
-                                                    spanner=spanner)
-
-            or
-
-            limber, spanner = Sider.extendLimb(limb=int.from_bytes(limber.raw),
-                                    span=depther.num)
+                                               spanner=spanner,
+                                               right=True)
         """
         code = limber.code  # save to recreate
-        limb = int.from_bytes(limber.raw)
+        limb = limber.num
         span = spanner.num
-        limb, span = Siter.extendLimbRaw(limb=limb, span=span, right=right)
+        limb, span = Siter.extendLimbInt(limb=limb, span=span, right=right)
         limber = Diger(raw=limb.to_bytes(MaxDepthBytes), code=code)
         spanner = Number(num=span)
         return (limber, spanner)
+
+
+    @staticmethod
+    def rightAtDepthInt(limb, depth):
+        """Returns side of limb at depth where True is right and False is left
+        Usually applied to leaf limbs so uses convention of MSb at depth 1 and
+        LSb at depth 256 to better reason about leaf limb bit positions.
+        Minimum leaf depth is 1 and maximum is 256.
+        A leaf is always attached as a child of a parent node. The leaf child
+        side is determined by bit position in leave limb that must be greater
+        that span of parent node's span = parent nodes depth.
+
+        Returns:
+            side (bool): False if bit at depth is  0 (side is left)
+                         True if bit at depth is 1 (side is right)
+
+        Parameters:
+            limb (int): 256 bit int where MSbits are forks (0 left, 1 right)
+            depth (int): get bit at depth where:
+                         depth = 1 is MSb of limb
+                         depth = 256 is LSb of limb
+        """
+        if depth <= 0:
+            raise ValueError(f"Invalid {depth=} <= 0>")
+
+        return True if (limb >> (MaxDepth - depth) & 1) else False
 
 
 
@@ -314,7 +338,7 @@ class Siter:
         """Computes and returns said of node as Matter primitive where said is
         computed with a NodeSaidage derived from nodage supplemented with per
         tree and per part field values taken from self (Siter instance)
-        The said is essentially 'hashing' or digesting the node.
+        To 'say' is to 'hash' or to 'digest' the node.
 
         Returns::
             saider (Diger): instance where said is computed from NodeSaidage
@@ -335,27 +359,24 @@ class Siter:
         return saidage.said
 
 
-    def sayLeaf(self, leafage):
-        """Computes and returns said of leaf as Matter primitive where said is
-        computed with a LeafSaidage derived from leafage supplemented with per
-        tree and per part field values taken from self (Siter instance)
-        The said is essentially 'hashing' or digesting the leaf.
+    def hasNode(self, saider):
+        """Checks for node at saider in .nodes
+
+        Abstract interface to .leaves storage of Nodage for each node indexed
+        by is said. Interface uses Matter instances for said and Nodage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact .qb2 values.
+        For archival on disk use .qb64 values.
 
         Returns::
-            saider (Diger): instance where said is computed from LeafSaidage
-                            derived from leafage as supplemented with tree fields
+            result (bool): True if saider key in .nodes
+                           False otherwise
 
         Parameters::
-            leafage (Leafage): instance of leafage whose field values are Matter
-                             instances
+            saider (Diger): instance encoding said of Nodage
         """
-        saidage = LeafSaidage(kith=Ilker(ilk=Kiths.leaf, strict=False),
-                              tuid=self.tuider,
-                              said=Noncer(nonce=""),
-                              depth=leafage.depth,
-                              limb=leafage.limb)
-        saidage = self.saidify(saidage)
-        return saidage.said
+        return (saider.qb2 in self.nodes)
 
 
     def putNode(self, saider, nodage):
@@ -366,7 +387,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Nodage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -399,7 +420,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Nodage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Parameters::
@@ -422,7 +443,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Nodage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -449,7 +470,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Nodage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -468,6 +489,49 @@ class Siter:
         return True
 
 
+    def sayLeaf(self, leafage):
+        """Computes and returns said of leaf as Matter primitive where said is
+        computed with a LeafSaidage derived from leafage supplemented with per
+        tree and per part field values taken from self (Siter instance)
+        To 'say' is to 'hash' or to 'digest' the leaf.
+
+        Returns::
+            saider (Diger): instance where said is computed from LeafSaidage
+                            derived from leafage as supplemented with tree fields
+
+        Parameters::
+            leafage (Leafage): instance of leafage whose field values are Matter
+                             instances
+        """
+        saidage = LeafSaidage(kith=Ilker(ilk=Kiths.leaf, strict=False),
+                              tuid=self.tuider,
+                              said=Noncer(nonce=""),
+                              depth=leafage.depth,
+                              limb=leafage.limb)
+        saidage = self.saidify(saidage)
+        return saidage.said
+
+
+    def hasLeaf(self, saider):
+        """Checks for leaf at saider in .leaves
+
+        Abstract interface to .leaves storage of Leafage for each leaf indexed
+        by is said. Interface uses Matter instances for said and Leafage field
+        values that hide the underlying serialization used by the storage.
+
+        For in memory use compact .qb2 values.
+        For archival on disk use .qb64 values.
+
+        Returns::
+            result (bool): True if leafer key in .leaves
+                           False otherwise
+
+        Parameters::
+            saider (Diger): instance encoding said of Leafage
+        """
+        return (saider.qb2 in self.leaves)
+
+
     def putLeaf(self, saider, leafage):
         """Puts leaf given by leafage into .leaves at said given by .saider
         Put is idempotent. If leaf already exists put does not overwrite it.
@@ -476,7 +540,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Leafage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -485,7 +549,7 @@ class Siter:
                                does not overwrite
 
         Parameters::
-            saider (Diger): instance encoding said of nodage
+            saider (Diger): instance encoding said of leafage
             leafage (Leafage): instance whose field values are Matter instances
 
         """
@@ -507,11 +571,11 @@ class Siter:
         by is said. Interface uses Matter instances for said and Leafage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Parameters::
-            saider (Diger): instance encoding said of nodage
+            saider (Diger): instance encoding said of leafage
             leafage (Leafage): instance whose field values are Matter instances
 
         """
@@ -528,7 +592,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Leafage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -553,7 +617,7 @@ class Siter:
         by is said. Interface uses Matter instances for said and Leafage field
         values that hide the underlying serialization used by the storage.
 
-        For in memory use compact ,.qb2 values.
+        For in memory use compact .qb2 values.
         For archival on disk use .qb64 values.
 
         Returns::
@@ -600,55 +664,48 @@ class Siter:
             Just attach to side given by depth 1 limb bit. Root at depth 0.
 
         """
-        lepther = Number(num=256)  # leaf
-        limber = Diger(ser=leafer.qb64b, code=self.Code)
+        # make leafage from leafer
+        leafage = Leafage(depth=Number(num=256),
+                          limb=Diger(ser=leafer.qb64b, code=self.Code))
+        lsaider = self.sayLeaf(leafage)  # compute leaf said
+        leaf = Partage(said=lsaider, part=leafage)  # matter primitives
 
-        # create LeafSaidage and saidify
-        saidage = LeafSaidage(version=self.leafVerser,
-                                 tuid=self.tuider,
-                                 said=Emptier, # placeholder
-                                 depth=lepther,
-                                 limb=limber)
-
-        # replace saidage with SAIDed copy
-        saidage = self.saidify(saidage=saidage)
-
-
-        if saidage.said.qb2 in self.leaves:
+        if self.hasLeaf(leaf.said):
             return None  # already inserted
 
-
-        # create leafage with qb2 values as variant to attach, insert, and return
-        leafage = Leafage(depth=saidage.depth.qb2,
-                          limb=saidage.limb.qb2)
-
-        #leaf partage to return when successful insert
-        partage = Partage(said=saidage.said.qb2, part=leafage)
-
-        # create leaf as Leafage with matter primitives to enable compute
-        lsaider = saidage.said  # leaf said as Matter instance
-        leaf = Leafage(depth=saidage.depth, limb=saidage.limb)
-        leaflimb = int.from_bytes(leaf.limb.raw)  # convert leaf limb to int
-
         # Setup for insert
+        # leafint is leaf Leafage with values as ints
+        leafint = Leafage(depth=leaf.part.depth.num,
+                          limb=leaf.part.limb.num)
+        node = self.root  # start at root with values as matter primitives
         inserted = False
         done = False
-        nsaid, node = self.root  # start at root with values as matter primitives
         while not done:
-            depth = node.depth.num  # get current node depth as int
-            limb = int.from_bytes(node.limb.raw)  # convert curent node limb to int
+            # setup current node
+            # nodeint is node Leafage with values as ints since the only int
+            # fields of Nodage are same fields as Leafage
+            nodeint = Leafage(depth=node.part.depth.num,
+                              limb=node.part.limb.num)
 
-            # walk down nodes if possible
+            # walk down nodes on appropriate side if possible
             # leftage is retrieved child qb2, nodage or leafage, empty is None
             # rightage is retrieved child qb2, nodage or leafage, empty is None
-            if node.left.nonce: # left child not empty
+            if not node.left.nonce:  # node left child is empty (only root)
+                leftage = None
+                if node.part.depth.num != 0:  # not root
+                    raise ValueError(f"Invalid node={node.said.qb64}, not root "
+                                     f"but empty left child")
+                # if leaf side at depth 1 is left then attach
+                #leftage = leafage
+
+            else: # node left child not empty
                 if (leftage := self.nodes.get(node.left.qb2)): # its a node
                     leftIsNode = True
                     # match limbs and walk down left side if match
                     # right shift to prune suffix and mask with 1s of size depth
-                    mask = ((1 << depth) - 1)
-                    leafprefix = (leaflimb >> (MaxDepth - depth)) & mask
-                    nodeprefix = (limb >> (MaxDepth - depth)) & mask
+                    mask = ((1 << nodeint.depth) - 1)
+                    leafprefix = (limbleaf >> (MaxDepth - nodeint.depth)) & mask
+                    nodeprefix = (nodeint.limb >> (MaxDepth - nodeint.depth)) & mask
                     if leafprefix == nodeprefix:  # match so walk down
                         # replace node with left child node to walk down one
                         nsaid = Noncer(qb2=node.left.qb2)
@@ -661,17 +718,15 @@ class Siter:
                     leftIsNode = False
                 else:  # broken should not ever be
                     raise ValueError(f"Bad left child of node said={nsaid.qb64}")
-            else:  # left child empty
-                leftage = None
 
             if node.right.nonce: # right child not empty
                 if (rightage := self.nodes.get(node.right.qb2)): # its a node
                     rightIsNode = True
                     # match limbs and walk down right side if match
                     # right shift to prune suffix and mask with 1s of size depth
-                    mask = ((1 << depth) - 1)
-                    leafprefix = (leaflimb >> (MaxDepth - depth)) & mask
-                    nodeprefix = (limb >> (MaxDepth - depth)) & mask
+                    mask = ((1 << nodeint.depth) - 1)
+                    leafprefix = (limbleaf >> (MaxDepth - nodeint.depth)) & mask
+                    nodeprefix = (nodeint.limb >> (MaxDepth - nodeint.depth)) & mask
                     if leafprefix == nodeprefix:  # match so walk down
                         # replace node with left child node to walk down one
                         nsaid = Noncer(qb2=node.right.qb2)
@@ -801,15 +856,15 @@ class Siter:
         """
         # make matter instance value variant of oldage leaf
         old = Leafage(depth=Number(qb2=oldage.depth, limb=Diger(qb2=oldage.limb)))
-        oldlimb = int.from_bytes(old.limb.raw)
+        oldLimbInt = old.limb.num
 
         # make matter instance value variant of newage leaf
         new = Leafage(depth=Number(qb2=newage.depth, limb=Diger(qb2=newage.limb)))
-        newlimb = int.from_bytes(new.limb.raw)
+        newLimbInt = new.limb.num
 
         for i in range(MaxDepth - 1, 0, -1):  # start at MSbit of limbs
-            oldbit = (oldlimb >> i) & 1  # mask off all but lsb after shift
-            newbit = (newlimb >> i) & 1  # mask off all but lsb after shift
+            oldbit = (oldLimbInt >> i) & 1  # mask off all but lsb after shift
+            newbit = (newLimbInt >> i) & 1  # mask off all but lsb after shift
             if oldbit != newbit:
                 if oldbit:
                     left = new

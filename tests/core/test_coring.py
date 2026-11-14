@@ -6028,6 +6028,9 @@ def test_diger():
     assert diger.verify(ser=ser)
     assert not diger.verify(ser=ser + b'ABCDEF')
 
+    assert diger.num == 79934255688530727098852804500393089505535828727415781789409630334812377050033
+    assert diger.numh == 'b0b92f7881543efb77f3186d8186094420a90063bb5a38c7551dfb3dac2febb1'
+
     diger = Diger(raw=dig, code=MtrDex.Blake3_256)
     assert diger.code == MtrDex.Blake3_256
     assert len(diger.raw) == Matter._rawSize(diger.code)

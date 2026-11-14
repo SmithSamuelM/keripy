@@ -3616,6 +3616,25 @@ class Diger(Matter):
         if strict and self.code not in DigDex:
             raise InvalidCodeError(f"Unsupported Digest code={self.code}.")
 
+    @property
+    def num(self):
+        """Property num: raw bytes converted to int.
+        Useful when using digest as hash tree limb bit fork path.
+
+        Returns::
+            num(int): .raw converted to int
+        """
+        return int.from_bytes(self.raw, 'big')
+
+    @property
+    def numh(self):
+        """Property numh: raw bytes converted to int as hex string no leading zeros.
+        Useful when using digest as hash tree limb bit fork path.
+
+        Returns::
+            numh (str): .num int converted to hex str"""
+        return f"{self.num:x}"
+
 
     def verify(self, ser):
         """
