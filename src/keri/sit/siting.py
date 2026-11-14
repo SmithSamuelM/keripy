@@ -306,11 +306,11 @@ class Siter:
                          limb=Diger(raw=bytes(MaxDepthBytes), code=self.code),
                          left=Noncer(nonce=""),
                          right=Noncer(nonce=""))
-        self.root = Partage(self.saidNode(rootage), rootage)
+        self.root = Partage(self.sayNode(rootage), rootage)
         self.pinNode(saider=self.root.said, nodage=self.root.part)
 
 
-    def saidNode(self, nodage):
+    def sayNode(self, nodage):
         """Computes and returns said of node as Matter primitive where said is
         computed with a NodeSaidage derived from nodage supplemented with per
         tree and per part field values taken from self (Siter instance)
@@ -335,7 +335,7 @@ class Siter:
         return saidage.said
 
 
-    def saidLeaf(self, leafage):
+    def sayLeaf(self, leafage):
         """Computes and returns said of leaf as Matter primitive where said is
         computed with a LeafSaidage derived from leafage supplemented with per
         tree and per part field values taken from self (Siter instance)
