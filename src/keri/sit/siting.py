@@ -99,7 +99,7 @@ class Siter:
         tuider (Noncer): instance encoding crypto 16 byte4 tree unique identifier
                        this ensures separation of digests within each unique tree.
         code (str): qb64 digest code shared by all node/leaf SAIDs
-        root (Partage: instance of root Partage as (root said, rootage)) where
+        root (Partage: instance of root Partage as (said, nodage)) where
                        values are matter instances:
                        said is Diger instance, part is Nodage instance whose
                            values are Matter instances
@@ -588,11 +588,11 @@ class Siter:
 
         # make and insert root node in .nodes
         # span is 0, limb is all zeros, left is empty, right is empty
-        rootage = Nodage(span=Number(num=0),
+        nodage = Nodage(span=Number(num=0),
                          limb=Noncer(raw=bytes(MaxSpanBytes), code=self.code),
                          left=Noncer(nonce=""),
                          right=Noncer(nonce=""))
-        self.root = Partage(self.sayNode(rootage), rootage)
+        self.root = Partage(self.sayNode(nodage), nodage)
         self.pinNode(saider=self.root.said, nodage=self.root.part)
 
 

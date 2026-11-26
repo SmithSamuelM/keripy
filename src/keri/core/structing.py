@@ -18,6 +18,28 @@ from .coring import (IceMapDom, Diger, DigDex, Prefixer, Number, Verser,
 from .counting import Codens, Counter
 from .signing import Tiers, Salter
 
+
+
+# Sparse Merkle tree root hash types as derived from the SMT algorithm used for
+# the proto field in Verser Versionage. Values must be four Base64 characters
+# sit= 'SIT_' is for the sit Saided Info Tree library
+# kjf= 'KJF_' is for the sparse-kerkle-tree library impl of the JellyFish algorithm
+Rootage = namedtuple("Rootage", "sit kjf")
+Roots = Rootage(sit="SIT_", kjf="KJF_")
+
+
+# kith is the data type string of part typed structs or kithed structs whose
+# first field is four or eight character CESR primitive with 3 or 7 tag characters
+# codes X or Y.
+# node = 'nod' for SIT node NodeSaidage
+# leaf = 'lea' for SIT leaf LeafSaidage
+# noge = 'nog' for SIT Nodage
+# lege = 'leg' for SIT Leafage
+Kithage = namedtuple("Kithage", "node leaf noge lege")
+Kiths = Kithage(node='nod', leaf="lea", noge="nog", lege="leg")
+
+
+
 #  for the following Seal namedtuples use the ._asdict() method to convert to dict
 #  when using in events
 # to convert seal namedtuple to dict use namedtuple._asdict()
@@ -477,20 +499,39 @@ CodenToClans = { val: key for key, val in ClanToCodens.items()}  # invert dict
 
 
 class Structor:
-    """Structor class each instance holds a namedtuple .data of named values.
-    Each value is a primitive instance of CESR primitive subclass that supports
-    text (qb64) and binary (qb2) domains.
-    Structor instances can be serialized to or deserialized from concatenation
-    of the qb64 or qb2 representations of the data values. Creation requires
-    input of an instance of an ordered collection of named classes for creating
-    the named instances from the input data.
-    Smart data format inputs are supported to accomodate the many ways
-    the named data may appear in messages and or databases.
+    """Structor class instance holds a namedtuple .data of named instance values.
+    Each field value in data is a primitive instance of a CESR primitive subclass
+    that supports text (.qb64) and binary (.qb2) properties.
+
+    Structor instances can be serialized to or deserialized from a concatenation
+    of the qb64 or qb2 representations of the data values.
+
+    Structor creation is polymorphic with smart data format values for the given
+    namedtuple that accommodates the many ways that its values may appear in
+    messages and or databases. Namely instead of data, the values may be
+    provided via the crew where the crew may be provided as mapping with fields
+    names that correspond to known namedtuple class and when not known a custom
+    bespoke class created from those field names.
+    This is because various serializations may provide the equivalent data values
+    as a serialized mapping via crew instead of directly as the namedtuple data.
+    When crew provided instead of data, instance creation infers the equivalent
+    namedtuple class from the crew field names.
+
+    A Python namedtuple is an efficient data storage mechanism of an ordered
+    collection of values that allows reference to each value by name but where
+    the names are not stored with each instance of the collection of values but
+    only per class.  Because a tuple does not store its field names, the type
+    of namedtuple class must be known in order to parse concatenated
+    serializations of the tuple elements (fields). This approach to serialization
+    is most like a struct in C or other languages. This makes Structor instances
+    efficient for storage.  Structor is a Pythonic approach to structs and
+    provides connvenient ways to access, store, serialize and deserialize
+    collections of stuctured data while preserving the serialization efficiency.
 
     Instance Creation Patterns:
 
         Structor(data):
-        Structor(crew): when known cast in .Casts for crew fields mark
+        Structor(crew): when known cast in .Casts for crew as qb64 fields mark
 
         Structor(clan, crew):  when known cast in .Casts for clan fields mark
         Structor(clan, qb64): when known cast in .Casts for clan fields mark
@@ -536,21 +577,22 @@ class Structor:
 
     Properties:
         data (NamedTuple): instance whose fields are named instances of CESR primitives
-        clan (type[NamedTuple]): .data's class, class object reference
+        clan (type[NamedTuple]): .data's namedtuple class, class object reference
         cast (NamedTuple | None): values are Castage instances that each provide
             CESR primitive class references and primitive init parameters
             used to initialize .data's primitive instances.
-        crew (NamedTuple): named qb64 serialized values of .data's CESR primitives
-            data.x = Matter(qb64=crew.x). Use crew to deserialize
-            to data. Use cast to deserialize crew to data with
-            Matter init parameter besides qb64. Clan holds class.
+        crew (NamedTuple): instance with .qb64 serialized values of .data's CESR
+            primitives where data.x = Matter(qb64=crew.x).
+            Use crew to deserialize values provided in qb64 form.
+            Use cast to convert crew values to data CESR/Matter instance values
+            when need Matter init parameter besides qb64. Clan holds class.
         qb64 (str): concatenated data values as qb64 str of data's primitives
         qb64b (bytes): concatenated data values as qb64b  of data's primitives
         qb2 (bytes): concatenated data values as qb2 bytes of data's primitives
-        saids (dict):   default saidive fields at top-level.
+        saids (dict):   default saidive field labels and codes at top-level.
             Assumes .mad already in most compact form.
             Each key is label of saidive field.
-            Each value is default primitive code of said digest
+            Each value is default primitive code of said digest algo for field
                 value to be computed from serialized dummied .mad
         saidive (bool): True means compute SAID(s) for toplevel fields in .saids
             False means do not compute SAIDs
@@ -586,10 +628,11 @@ class Structor:
     number = Number(numh=value)
     getattr(number,'numh')== value
 
-    Note that default of ipn='qb64' is already property of Matter base class
-    as in:
-    matter = Matter(qb64=value)
-    matter.qb64 == value"""
+    Note that default of ipn='qb64' is already property of Matter base class as in:
+        matter = Matter(qb64=value)
+        matter.qb64 == value
+    """
+
     Clans = AClanDom  # EClanDom known namedtuple clans. Override in subclass with non-empty
     Casts = ACastDom  # ECastDom known namedtuple casts. Override in subclass with non-empty
     # Create .Names dict that maps tuple of clan/cast fields names to its namedtuple
@@ -605,15 +648,18 @@ class Structor:
 
     @classmethod
     def enclose(cls, structors, cold=Colds.txt):
-        """Serializes structors of same clan with prepended counter code in
-        either text or binary domain as bytes determined by cold where
-        text='txt' or binary='bny'.
-        All structors must be of the same clan to join into one group.
-        Uses .clan of zeroth structure to determine counter.code from .ClanCodes
+        """Serializes a group of one or more structors all of same clan with a
+        prepended counter code in either text or binary domain as bytes determined
+        by cold where text='txt' qb64 or binary='bny' qb2.
+        All structors must be of the same clan in order join into one group with
+        one prepended group count code.
+
+        Uses .clan of zeroth member of structor group to determine counter.code
+        for all members of group from .ClanCodes
 
         Returns:
-            enclosure (bytearray): enclosure serialized structors with
-                leading Counter using .clan of zeroth structor that maps to
+            enclosure (bytearray): encloses a group of serialized structors with
+                leading group Counter using .clan of zeroth structor that maps to
                 Counter code given by .ClanCodes.
                 When cold==Colds.txt then enclosure is in qb64 text domain
                 When cold==Colds.bny then enclosure is in qb2 binary domain
@@ -622,7 +668,8 @@ class Structor:
             structors (list[Structor]): instances of Structure.
                 Must all share the same clan
             cold (str): Colds value, 'txt' means qb64b text domain
-                Colds value, 'bny' means qb2 binary domain"""
+                Colds value, 'bny' means qb2 binary domain
+        """
         buf = bytearray()
         clan = None
         for structor in structors:
@@ -674,7 +721,8 @@ class Structor:
                 serializaton of framed counter group (count code inclusive)
             strip (bool): when True and qb64 or qb2 is bytearray then strip
                     extracted group from qb64/qb2
-                Otherwise  do not strip"""
+                Otherwise  do not strip
+        """
         qb64b = qb64b if qb64b is not None else qb64
         structors = []
 
@@ -762,7 +810,8 @@ class Structor:
                 Each value is default primitive code of said digest
                     value to be computed from serialized dummied .mad
             saidive (bool): True means compute SAID(s) for toplevel fields in .saids
-                False means do not compute SAIDs"""
+                False means do not compute SAIDs
+        """
         makify = True if makify else False
         verify = True if verify else False
 
@@ -780,31 +829,34 @@ class Structor:
             # when cast is not None then will be used instead of generating
             # custom cast below
 
-        else:  # no data and not counter so see if can infer clan from cast or crew
+        else:  # no data, can clan (namedtuple class) be inferred from cast or crew
             if not clan:  # attempt to get from cast and/or crew
                 if cast and isinstance(cast, tuple) and hasattr(cast, "_fields"):
-                    clan = cast.__class__
+                    clan = cast.__class__  # use cast's namedtuple class
 
                 if not clan and crew:
                     if isinstance(crew, tuple) and hasattr(crew, "_fields"):
-                        clan = crew.__class__
+                        clan = crew.__class__  # use crew's namedtuple class
 
                 if not clan and isinstance(cast, Mapping):  # get clan from cast
+                    # cast is mapping, make bespoke tuple mark from cast's field names
                     mark = tuple(cast)  # create custom clan based on cast mark
+                    # check if bespoke mark is name of known namedtuple class
                     if (cname := self.Names.get(mark)):  # get known else None
                         clan = self.Clans[cname]
                         cast = self.Casts[cname]
 
-                    else:  # create custom clan from cast
+                    else:  # create custom namedtuple class from cast mark for clan
                         clan = namedtuple("_".join(mark), mark)  # custom clan
 
                 if not clan and isinstance(crew, Mapping):  # get clan from crew
+                    # crew is mapping, make bespoke tuple mark from crew's field names
                     mark = tuple(crew)  # create custom clan based on crew mark
                     if (cname := self.Names.get(mark)):  # get known else None
                         clan = self.Clans[cname]
                         cast = self.Casts[cname]
 
-                    else:  # create custom clan from crew
+                    else:  # create custom namedtuple class from crew mark for clan
                         clan = namedtuple("_".join(mark), mark)  # custom clan from cast keys
 
             if clan:
@@ -844,14 +896,14 @@ class Structor:
                 else:  # cast missing or unobtainable
                     raise InvalidValueError(f"Missing or unobtainable cast.")
 
-            # have cast now
+            # have cast now of same namedtuple class clan used by data and crew
             for cstg in cast:
                 if not (hasattr(cstg.kls, "qb64b") and hasattr(cstg.kls, "qb2")):
                     raise InvalidValueError(f"Cast member {cstg.kls=} not CESR"
                                             " Primitive.")
 
             qb64b = qb64b if qb64b is not None else qb64  # copy qb64 to qb64b
-            if crew:  # have clan and cast and crew
+            if crew:  # have clan, cast, and crew so create data from them
                 if not isinstance(crew, clan):
                     if isinstance(crew, tuple) and hasattr(crew, "_fields"):
                         if crew._fields != clan._fields:  # fields is mark
@@ -859,7 +911,7 @@ class Structor:
                                                     f"{clan._fields} and crew="
                                                     f"{crew._fields}.")
 
-                        crew = clan(**crew._asdict())  # apply clan
+                        crew = clan(**crew._asdict())  # apply clan to crew
 
                     elif isinstance(crew, Mapping):
                         if tuple(crew) != clan._fields:  # fields is mark
@@ -867,7 +919,7 @@ class Structor:
                                                     f"{clan._fields} and keys crew="
                                                     f"{tuple(crew)}.")
 
-                        crew = clan(**crew)  # allpy clan
+                        crew = clan(**crew)  # apply clan to crew
 
                     elif isinstance(crew, helping.isNonStringSequence):
                         crew = clan(*crew)  # apply clan assumes elements in correct order
@@ -875,10 +927,11 @@ class Structor:
                     else:
                         raise InvalidValueError(f"Invalid {crew=}.")
 
+                # create date from crew using cast
                 data = clan(*(cstg.kls(**{cstg.ipn if cstg.ipn is not None else 'qb64': val})
                               for cstg, val in zip(cast, crew)))
 
-            elif qb64b:  # have clan and cast but not crew
+            elif qb64b:  # no crew but clan, cast and qb64 so make data from latter
                 if hasattr(qb64b, "encode"):
                     qb64b = qb64b.encode()
 
@@ -889,13 +942,13 @@ class Structor:
                     pi = cstg.kls(qb64b=mv[o:])
                     pis.append(pi)
                     o += len(pi.qb64b)
-                data = clan(*pis)
+                data = clan(*pis)  # make data
 
                 if strip and isinstance(qb64b, bytearray):
                     del mv  # release memoryview ref count so can resize buffer
                     del qb64b[:o]  # strip original  to final offset
 
-            elif qb2:  # have clan and cast but not crew
+            elif qb2:  # no crew but clan, cast, and qb2 so make data from latter
                 o = 0  # offset into memoryview of qb2
                 pis = []  # primitive instances
                 mv = memoryview(qb2)
@@ -903,7 +956,7 @@ class Structor:
                     pi = cstg.kls(qb2=mv[o:])
                     pis.append(pi)
                     o += len(pi.qb2)
-                data = clan(*pis)
+                data = clan(*pis)  # make data
 
                 if strip and isinstance(qb2, bytearray):
                     del mv  # release memoryview ref count so can resize buffer
@@ -947,7 +1000,7 @@ class Structor:
 
 
         self._data = data  # now have self.clan which is self._data.__class__
-        if cast is None:
+        if cast is None:  # no cast but data and clan so make cast from latter
             if naive:  # force naive
                 cast = self.clan(*(Castage(val.__class__) for val in self.data))
             elif cname := self.Names.get(self.clan._fields):  # fields is mark
@@ -994,7 +1047,8 @@ class Structor:
         Returns:
             data (NamedTuple): ._data namedtuple of primitive instances
 
-        Getter for ._data makes it read only"""
+        Getter for ._data makes it read only
+        """
         return self._data
 
 
@@ -1003,7 +1057,8 @@ class Structor:
         """Property clan
 
         Returns:
-            clan (type[NamedTuple]): class of .data"""
+            clan (type[NamedTuple]): class of .data
+        """
         return self.data.__class__
 
 
@@ -1012,7 +1067,8 @@ class Structor:
         """Property name
 
         Returns:
-            name (str): name of class of .data"""
+            name (str): name of class of .data
+        """
         return self.data.__class__.__name__
 
 
@@ -1023,7 +1079,8 @@ class Structor:
         Returns:
             cast (NamedTuple): named primitive classes in .data
 
-        Getter for ._cast makes it read only when not None"""
+        Getter for ._cast makes it read only when not None
+        """
         return self._cast
 
 
@@ -1056,32 +1113,35 @@ class Structor:
         Note that default of ipn='qb64' is already property of Matter base class
         as in:
         matter = Matter(qb64=value)
-        matter.qb64 == value"""
+        matter.qb64 == value
+        """
         return (self.clan(*(getattr(val, cstg.ipn if cstg.ipn is not None else "qb64")
                     for cstg, val in zip(self.cast, self.data))))
 
 
     @property
     def asdict(self):
-        """Property asdict shorthand for .crew._asdict() for round trip
-        conversion for sad dict representation in Serder instances.
+        """Property .asdict to ducktype with dict. Same as .crew._asdict() so
+        round trips conversion for sad dict representation in Serder instances.
 
-        .crew is namedtuple whose fields values are serializations of the data
-        values that respect .cast Castage.ipn formats.
+        Recall that .crew is namedtuple whose fields values are serializations
+        of the data values that respect .cast Castage.ipn formats.
 
         Returns:
-            dcrew (dict): .crew._asdict() as a field value map (dict) with
+            dictcrew (dict): .crew._asdict() as a field value map (dict) with
                 serialized values of the data value Matter instances whose
-                serializations respect the .cast Castage.ipn serialization formats."""
+                serializations respect the .cast Castage.ipn serialization formats.
+        """
         return self.crew._asdict()
 
 
     @property
     def qb64(self):
-        """Property qb64
+        """Property qb64  concatenated qb64 field values
 
         Returns:
-            qb64 (str): concatenated qb64 of each primitive in .data"""
+            qb64 (str): concatenated qb64 of each primitive in .data
+            """
         return (''.join(val.qb64 for val in self.data))
 
 
@@ -1090,16 +1150,18 @@ class Structor:
         """Property qb64b
 
         Returns:
-            qb64b (bytes): concatenated qb64b of each primitive in .data"""
+            qb64b (bytes): concatenated qb64b of each primitive in .data
+        """
         return (b''.join(val.qb64b for val in self.data))
 
 
     @property
     def qb2(self):
-        """Property qb2
+        """Property qb2  concatenated qb2 field values
 
         Returns:
-            qb2 (bytes): concatenated qb2 of each primitive in .data"""
+            qb2 (bytes): concatenated qb2 of each primitive in .data
+        """
         return (b''.join(val.qb2 for val in self.data))
 
     @property
@@ -1108,7 +1170,8 @@ class Structor:
 
         Returns:
             said (str|None): primary said field value if any. None otherwise
-                primary has same label as zeroth item in .saids"""
+                primary has same label as zeroth item in .saids
+        """
         if self.saidive and self.saids:
             l = list(self.saids.keys())[0]  # primary said is zeroth entry in said
             v = getattr(self.data, l, None)
@@ -1123,7 +1186,8 @@ class Structor:
 
         Returns:
             said (bytes|None): primary said field value if any. None otherwise
-                primary has same label as zeroth item in .saids"""
+                primary has same label as zeroth item in .saids
+        """
         return self.said.encode() if self.said is not None else None
 
 
@@ -1137,7 +1201,8 @@ class Structor:
                 Assumes .mad already in most compact form.
                 Each key is label of saidive field.
                 Each value is default primitive code of said digest
-                    value to be computed from serialized dummied .mad"""
+                    value to be computed from serialized dummied .mad
+        """
         return self._saids
 
 
@@ -1147,7 +1212,8 @@ class Structor:
 
         Returns:
             saidive (bool): True means compute SAID(s) for toplevel fields in .saids
-                False means do not compute SAIDs"""
+                False means do not compute SAIDs
+        """
         return self._saidive
 
 
@@ -1229,7 +1295,8 @@ class Sealer(Structor):
             assert sealer.name == SealDigest.__name__
             assert sealer.cast == SealDigest(d=Castage(Diger))
             assert sealer.crew == SealDigest(d=dig)
-            assert sealer.asdict == data._asdict() ==sealer.crew._asdict()"""
+            assert sealer.asdict == data._asdict() ==sealer.crew._asdict()
+    """
     Clans = SClanDom  # known namedtuple clans. Override in subclass with non-empty
     Casts = SCastDom  # known namedtuple casts. Override in subclass with non-empty
     # Create .Names dict that maps clan/cast fields names to its namedtuple
@@ -1286,12 +1353,21 @@ class Sealer(Structor):
 
 class Blinder(Structor):
     """Blinder is Structor subclass each instance holds a namedtuple .data of
-    named values belonging to ACDC blinded state attribute for blindable state
+    named values belonging to some blinded state attribute.
+
+    Typical use case is for ACDC blinded state attribute for blindable state
     registry for TEL for ACDC to unblind the state attribute via a message
     attachment. Supports both BlindState and BoundState blinded state.
+    Could be used for any blinded state that is bound to a SAID provided in the
+    `d` field.
+
+    The field names for blind state are: 'd' 'u' 'td' 'ts'
+    The field names for blind bound state are: 'd' 'u' 'td' 'ts' 'bn' 'bd'
+
+    Blinder could be extended to support other struct field sets as long as there
+    is a corresponding CESR group code to indicate the type of struct.
 
     See Structor class for more details.
-
 
     Inherited Class Attributes:
         Clans (type[Namedtuple]): each value is known NamedTuple class keyed
@@ -1403,9 +1479,10 @@ class Blinder(Structor):
                 u=noncer.nonce,
                 td=adig,
                 ts=labeler.text)
-            assert blinder.asdict == data._asdict() == sealer.crew._asdict()"""
-    Clans = BSClanDom  # known namedtuple clans. Override in subclass with non-empty
-    Casts = BSCastDom  # known namedtuple casts. Override in subclass with non-empty
+            assert blinder.asdict == data._asdict() == sealer.crew._asdict()
+    """
+    Clans = BSClanDom  # known namedtuple clans. Override in subclass to amend
+    Casts = BSCastDom  # known namedtuple casts. Override in subclass to amend
     # Create .Names dict that maps clan/cast fields names to its namedtuple
     # class type name so can look up a know clan or cast given a matching set
     # of either field names from a namedtuple or keys from a dict.
@@ -1433,7 +1510,8 @@ class Blinder(Structor):
             salt (str|None): qb64 of 128 bit random salt
             sn (int): sequence number of blindable update message. Converted to
                 Number.snh which is hex str no leading zeros
-            tier (str|None): used to generate salt when not provided"""
+            tier (str|None): used to generate salt when not provided
+        """
         tier = tier if tier is not None else cls.Tier
         salter = Salter(raw=raw, qb64=salt, tier=tier)
         path = Number(num=sn).snh
@@ -1473,7 +1551,8 @@ class Blinder(Structor):
             bd (str): bound key event said of latest issuee key event at
                 time of state update as (cross anchor)
                     when bound==True and bsaid is not empty
-                Empty string means placeholder and bsn must be 0"""
+                Empty string means placeholder and bsn must be 0
+        """
         uuid = cls.makeUUID(raw=raw, salt=salt, sn=sn, tier=tier)
 
         if bound:
@@ -1487,11 +1566,18 @@ class Blinder(Structor):
     def unblind(cls, said, *, uuid=None, acdc="", states=None,
                 raw=None, salt=None, sn=1, tier=None, bound=False, bounds=None):
         """Creates unblinded blinder given said, uuid, acdc said, and states
-        list of possible state values
+        list of possible state values. Always attempts to unblind against the
+        empty placeholder "" state event wehen not already in states. Always
+        attempts to unblind against the empty acdc placeholder "" in addition
+        to the provided acdc SAID.
+
+        unblind is agnostic about what the SAID provided by the acdc value is a
+        SAID of, not only an ACDC SAID. Blinder may therefore be used for other
+        applications where a blinded committment to so content is desirable.
 
         Returns:
-            blinder (Blinder): unblinded blinder when possbile
-                otherwise returns None
+            blinder (Blinder): unblinded blinder (.crew) when possbile
+                               otherwise returns None
 
         Parameters:
             said (str): qb64 said of blinded blinder
@@ -1518,7 +1604,8 @@ class Blinder(Structor):
         Tests possible combinations of empty acdc, provided acdc,  with
         empty state string plus all states strings provided by states to find
         and unblinded blinder that verifies against the provided said and uuid.
-        Empty combinations for placeholder blinder"""
+        Empty combinations for placeholder blinder
+        """
         if uuid is None:  # create uuid from salt and sn
             if salt is None:
                 raise InvalidValueError(f"Invalid {salt=}")
@@ -1591,7 +1678,8 @@ class Blinder(Structor):
                           Each value is default primitive code of said digest
                               value to be computed from serialized dummied .mad
             saidive (bool): True means compute SAID(s) for toplevel fields in .saids
-                        False means do not compute SAIDs"""
+                        False means do not compute SAIDs
+        """
         super(Blinder, self).__init__(saidive=saidive, **kwa)
 
         if self.clan not in self.Clans:
@@ -1603,7 +1691,8 @@ class Blinder(Structor):
         """blid property getter (alias of .said)
 
         Returns:
-            blid (str): blid of BlindState CESR .data.d 'd' field"""
+            blid (str): blid of BlindState CESR .data.d 'd' field
+        """
         return self.said
 
 
@@ -1612,7 +1701,8 @@ class Blinder(Structor):
         """blidb property getter (alias of .saidb)
 
         Returns:
-            blidb (bytes): qb64b blid of BlindState CESR .data.d 'd' field"""
+            blidb (bytes): qb64b blid of BlindState CESR .data.d 'd' field
+        """
         return self.saidb
 
 
@@ -1621,7 +1711,8 @@ class Blinder(Structor):
         """uuid property getter
 
         Returns:
-            uuid (str): uuid of BlindState CESR .data.u 'u' field"""
+            uuid (str): uuid of BlindState CESR .data.u 'u' field
+        """
         return self.data.u.nonce
 
 
