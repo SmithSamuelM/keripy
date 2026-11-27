@@ -20,136 +20,316 @@ from .signing import Tiers, Salter
 
 
 
-# Sparse Merkle tree root hash types as derived from the SMT algorithm used for
-# the proto field in Verser Versionage. Values must be four Base64 characters
-# sit= 'SIT_' is for the sit Saided Info Tree library
-# kjf= 'KJF_' is for the sparse-kerkle-tree library impl of the JellyFish algorithm
+"""Rootage Doc String
+Sparse Merkle tree root hash types as derived from the SMT algorithm used for
+the proto field in Verser Versionage. Values must be four Base64 characters
+sit= 'SIT_' is for the sit Saided Info Tree library
+kjf= 'KJF_' is for the sparse-kerkle-tree library impl of the JellyFish algorithm
+"""
 Rootage = namedtuple("Rootage", "sit kjf")
 Roots = Rootage(sit="SIT_", kjf="KJF_")
 
 
-# kith is the data type string of part typed structs or kithed structs whose
-# first field is four or eight character CESR primitive with 3 or 7 tag characters
-# codes X or Y.
-# node = 'nod' for SIT node NodeSaidage
-# leaf = 'lea' for SIT leaf LeafSaidage
-# noge = 'nog' for SIT Nodage
-# lege = 'leg' for SIT Leafage
-Kithage = namedtuple("Kithage", "node leaf noge lege")
-Kiths = Kithage(node='nod', leaf="lea", noge="nog", lege="leg")
+"""Kithage Doc String
+Kithage provides tag values for TypedStucts group counters (kithed struct)
+whose first field named kith has a Matter tag (Tagger) value which tag value
+determines the remaining fields in the struct.
+Needed to ser/des groups using codes:
+TypedStructs '-d'  and  BigTypedStructs: str = '--d'
+Kiths (tags):
+node = 'nod' means NodeSaidage for SIT algorithm node
+leaf = 'lea' means LeafSaidage for SIT algorithm leaf
+"""
+Kithage = namedtuple("Kithage", "node leaf")
+Kiths = Kithage(node='nod', leaf="lea")
 
 
+"""Seal Doc String
+Anchoring seal namedtuple types
+The following Seal namedtuples use the ._asdict() method to convert to dict
+when using in events. For example,
+To convert seal namedtuple to dict use namedtuple._asdict() such as,
+seal == SealEvent(i="abc",s="1",d="efg")
+sealdict =seal._asdict()
+To invert, convert dict to namedtuple use ** unpacking as in
+seal = SealDigest(**sealdict)
+To check if dict of seal matches fields of associted namedtuple use ._fields,
+tuple(sealdict) == SealEvent._fields
+"""
 
-#  for the following Seal namedtuples use the ._asdict() method to convert to dict
-#  when using in events
-# to convert seal namedtuple to dict use namedtuple._asdict()
-# seal == SealEvent(i="abc",s="1",d="efg")
-# sealdict =seal._asdict()
-# to convet dict to namedtuple use ** unpacking as in seal = SealDigest(**sealdict)
-# to check if dict of seal matches fields of associted namedtuple
-# if tuple(sealdict) == SealEvent._fields:
 
-# Digest Seal: uniple (d,)
-# d = digest qb64 of data  (usually SAID)
-# use DigestSealSingles as count code for CESR native
+"""SealDigest Doc String
+Digest Seal: uniple (d,)
+d = digest qb64 of data  (usually SAID)
+use DigestSealSingles as count code for CESR native
+"""
 SealDigest = namedtuple("SealDigest", 'd')
 
-# Root Seal: uniple (rd,)
-# rd = Merkle tree root digest qb64 digest of anchored (sealed) data in Merkle tree
-# use MerkleRootSealSingles as count code for CESR native
+"""SealRoot DocString
+Root Seal: uniple (rd,)
+rd = Merkle tree root digest qb64 digest of anchored (sealed) data in Merkle tree
+use MerkleRootSealSingles as count code for CESR native
+"""
 SealRoot = namedtuple("SealRoot", 'rd')
 
-# Event Seal: triple (i, s, d)
-# i = pre is qb64 of identifier prefix of KEL for event,
-# s = sn of event as lowercase hex string snh no leading zeros,
-# d = SAID digest qb64 of key event
-# use SealSourceTriples as count code for CESR native
+"""SealEvent Doc String
+Event Seal: triple (i, s, d)
+i = pre is qb64 of identifier prefix of KEL for event,
+s = sn of event as lowercase hex string snh no leading zeros,
+d = SAID digest qb64 of key event
+use SealSourceTriples as count code for CESR native
+"""
 SealEvent = namedtuple("SealEvent", 'i s d')
 
-# Source Seal: duple (s, d)  for Issuance, Delegation, or Transaction Event
-# where the AID pre of the issuer is implied by the context wherein the seal appears.
-# s = sn of event as lowercase hex string snh  no leading zeros,
-# d = SAID digest qb64 of event (issuance, delegation, or transaction)
-# the pre is provided in the 'i' field  qb64 of identifier prefix of KEL
-# use SealSourceCouples as count code for CESR native
+"""SealSource Doc String
+Source Seal: duple (s, d)  for Issuance, Delegation, or Transaction Event
+where the AID pre of the issuer is implied by the context wherein the seal appears.
+s = sn of event as lowercase hex string snh  no leading zeros,
+d = SAID digest qb64 of event (issuance, delegation, or transaction)
+the pre is provided in the 'i' field  qb64 of identifier prefix of KEL
+use SealSourceCouples as count code for CESR native
+"""
 SealSource = namedtuple("SealSource", 's d')
 
-# Last Establishment Event Seal: uniple (i,)
-# i = pre is qb64 of identifier prefix of KEL from which to get last est, event
-# used to indicate to get the latest keys available from KEL for 'i'
-# use SealSourceLastSingles as count code for CESR native
+"""SealLast Doc String
+Last Establishment Event Seal: uniple (i,)
+i = pre is qb64 of identifier prefix of KEL from which to get last est, event
+used to indicate to get the latest keys available from KEL for 'i'
+use SealSourceLastSingles as count code for CESR native
+"""
 SealLast = namedtuple("SealLast", 'i')
 
-# Backer Seal: couple (bi, d)
-# bi = pre qb64 backer nontrans identifier prefix
-# d = digest qb64 of backer metadata anchored to event usually SAID of data (Diger)
-# use BackerRegistrarSealCouples as count code for CESR native
+"""SealBack Doc String
+Backer Seal: couple (bi, d)
+bi = pre qb64 backer nontrans identifier prefix
+d = digest qb64 of backer metadata anchored to event usually SAID of data (Diger)
+use BackerRegistrarSealCouples as count code for CESR native
+"""
 SealBack = namedtuple("SealBack", 'bi d')
 
-# Kind Digest Seal for typed versioned digests : duple (t, d)
-# t = type of digest as (Verser)moo
-# d = digest or nonce using custom derivation given by type field (Noncer)
-# use TypedDigestSealCouples count code for CESR Native
+"""SealKind Doc String
+Kind Digest Seal for typed versioned digests : duple (t, d)
+t = type of digest as (Verser)moo
+d = digest or nonce using custom derivation given by type field (Noncer)
+use TypedDigestSealCouples count code for CESR Native
+"""
 SealKind = namedtuple("SealKind", 't d')
 
-# Nonce Seal: uniple (d,)
-# nd = nonce or digest qb64 as data
-# use NonceSealSingles as count code for CESR native
+"""SealNonce Doc String
+Nonce Seal: uniple (d,)
+nd = nonce or digest qb64 as data
+use NonceSealSingles as count code for CESR native
+"""
 SealNonce = namedtuple("SealNonce", 'nd')
 
 
-# following are attachments
+# Attachments (not anchoring seals)
 
-# Blinded State quadruple for Blindable State Update Event 'bup' for Transaction
-# Event Registry
-# d = SAID digest qb64 of blindable state (Noncer)
-# u = UUID blind as deterministically derived from update sn and salty nonce (Noncer)
-# td = SAID of ACDC top-level 'd' field value (Noncer)
-# ts = state as string text (Labeler)
-# use BlindedStateQuadruples count code for CESR native
+"""BlindState Doc String
+Blinded State quadruple for Blindable State Update Event 'bup' for Transaction
+Event Registry
+d = SAID digest qb64 of blindable state (Noncer)
+u = UUID blind as deterministically derived from update sn and salty nonce (Noncer)
+td = SAID of ACDC top-level 'd' field value (Noncer)
+ts = state as string text (Labeler)
+use BlindedStateQuadruples count code for CESR native
+"""
 BlindState = namedtuple("BlindState", 'd u td ts')
 
-# Bound Blinded State sextuple for Blindable State Update Event 'bup' for Transaction
-# Event Registry. Binds the key state of the issue to the state update. This
-# effectively cross anchors the issuees key state to the issuers key state at
-# the time of the state update so that downstream issuances by issuee can be
-# verified against the delegated entitlements (authorizations) from issuer
-# d = SAID digest qb64 of blindable state (Noncer)
-# u = UUID blind as deterministically derived from update sn and salty nonce (Noncer)
-# td = SAID of ACDC top-level 'd' field value (Noncer)
-# ts = state as string text (Labeler)
-# bn = bound issuee key event hex sequence number bnh at time of state update
-# bd = bound issuee key event SAID at time of state update
-# use BoundStateSextuples count code for CESR native
+"""BoundState Doc String
+Bound Blinded State sextuple for Blindable State Update Event 'bup' for Transaction
+Event Registry. Binds the key state of the issue to the state update. This
+effectively cross anchors the issuees key state to the issuers key state at
+the time of the state update so that downstream issuances by issuee can be
+verified against the delegated entitlements (authorizations) from issuer
+d = SAID digest qb64 of blindable state (Noncer)
+u = UUID blind as deterministically derived from update sn and salty nonce (Noncer)
+td = SAID of ACDC top-level 'd' field value (Noncer)
+ts = state as string text (Labeler)
+bn = bound issuee key event hex sequence number bnh at time of state update
+bd = bound issuee key event SAID at time of state update
+use BoundStateSextuples count code for CESR native
+"""
 BoundState = namedtuple("BoundState", 'd u td ts bn bd')
 
-# Typed and Blinded Media quadruple for IANA media-type media in attachment
-# d = SAID digest qb64 of blindable media  (Noncer)
-# u = UUID blind as salty nonce (Noncer)
-# mt = IANA media type text string (Labeler)
-# mv = media value as Text (Texter)
-# use TypedMediaQuadruples count code for CESR native
+"""TypeMedia Doc String
+Typed and Blinded Media quadruple for IANA media-type media in attachment
+d = SAID digest qb64 of blindable media  (Noncer)
+u = UUID blind as salty nonce (Noncer)
+mt = IANA media type text string (Labeler)
+mv = media value as Text (Texter)
+use TypedMediaQuadruples count code for CESR native
+"""
 TypeMedia = namedtuple("TypeMedia", 'd u mt mv')
 
-# FirstSeen
-# f = fn first seen number of event as lowercase hex string snh no leading zeros, (Number)
-# dt = date time stamp str of RFC-3339 profile of ISO-8601 (Dater)
-# use FirstSeenReplayCouples count code for CESR native
+"""FirstSeen Doc String
+First seen event couple of fn and datetime
+f = fn first seen number of event as lowercase hex string snh no leading zeros, (Number)
+dt = date time stamp str of RFC-3339 profile of ISO-8601 (Dater)
+use FirstSeenReplayCouples count code for CESR native
+"""
 FirstSeen = namedtuple("FirstSeen", 'f, dt')
 
-# Transferable Signatures
-# i = AID pre qb64 of signer (Prefixer)
-# n = sn of signing est event as lowercase hex string snh no leading zeros, (Number)
-# d = SAID digest qb64 of signing est event (Diger)
-# iss = signer indexed signatures qb64 list[Siger]
-# use TransIdxSigGroups count code for CESR native
+"""TransSigs Doc String
+Transferable Signatures
+i = AID pre qb64 of signer (Prefixer)
+n = sn of signing est event as lowercase hex string snh no leading zeros, (Number)
+d = SAID digest qb64 of signing est event (Diger)
+iss = signer indexed signatures qb64 list[Siger]
+use TransIdxSigGroups count code for CESR native
+"""
 TransSigs = namedtuple("TransSigs", 'i, n, d, iss')
 
-# Transferable Last Signatures
-# i = AID pre qb64 of signer (Prefixer)
-# iss = signer indexed signatures qb64 list[Siger]
-# use TransLastIdxSigGroups count code for CESR native
+"""TransLastSigs Doc String
+Transferable Last Signatures
+i = AID pre qb64 of signer (Prefixer)
+iss = signer indexed signatures qb64 list[Siger]
+use TransLastIdxSigGroups count code for CESR native
+"""
 TransLastSigs = namedtuple("TransLastSigs", 'i, iss')
+
+
+"""Saidive Structs Doc String
+These include kithed structs (TypedStructs) and non-kithed structs. What is
+common is that these are structs that need to be ser/des to/from qb64 or qb2 to
+Matter instance field values.
+
+The saidive field labels in each of these namedtuples may not be the default 'd'
+Each Python Structor subclass needs to define as a default its 'saids' property
+with dict value as __init__ param  default and it class variable 'Saids' to
+indicate other than the default for saidive field labels.
+A parser can then depend on the correct Structor subclass to know the saidive
+fields so that said make and verify use the correct field label(s) such as 'said'
+instead of 'd'
+
+"""
+
+"""Kithed Structs (TypedStructs) Doc String
+
+These have an entry in Kiths so that deserializer of group code can lookup
+the field  structure KithToClans. See above about Saidive Structs saids field
+
+"""
+
+"""NodeSaidage Doc String
+Full Set of Fields (per tree and per part) used to compute node SAID.
+Values are Matter instances. The said field is computed using the .qb64 property
+of each instance
+
+Per tree/part type field values:
+    kith is Ilker instance encoding of node kith, value == Kiths.node
+    tuid is Noncer instance encoding the tree unique identifier.
+        This default is a CESR encoded crypto strength 16 byte (128 bit) value.
+        Because it is CESR encoded other namespacing information can be included
+        in a bigger tuid value as long as it includes at least 128 bits of entropy
+Per node fields:
+    said is Noncer instance digesting NodeSaidage content using SAID protocol
+        said filled with dummy values for digest then replaced with computed SAID
+        saided data = kith+tuid+saiddummy+span+limb+left+right
+    span is Number instance encoding 2 byte int of number of MSbits in node limb
+             min 0 for root to max of 255 = MaxSpan-1
+    limb is Diger instance encoding of up to 256 bits with limb span MSbits
+    left is Noncer instance encoding said of left child (node, leaf or empty)
+    right is Noncer instance encoding said of right child (node, leaf or empty)
+"""
+NodeSaidage = namedtuple("NodeSaidage", "kith tuid said span limb left right")
+
+"""LeafSaidage Doc String
+Full Set of Fields (per tree and per part) used to compute leaf SAID.
+Values are Matter instances. The said field is computed using the .qb64 property
+of each instance
+
+Per tree/part type field values:
+    kith is Ilker instance encoding of leaf kith, value == Kiths.leaf
+    tuid is Noncer instance encoding the tree unique identifier.
+        This default is a CESR encoded crypto strength 16 byte (128 bit) value.
+        Because it is CESR encoded other namespacing information can be included
+        in a bigger tuid value as long as it includes at least 128 bits of entropy
+Per leaf fields:
+    said is Noncer instance digesting LeafSaidage content using SAID protocol
+        said filled with dummy values for digest then replaced with computed SAID
+        saided data = kith+tuid+saiddummy+span+limb
+    span is Number instance encoding 2 byte int of number of MSbits in leaf limb
+             always 256 == MaxSpan
+    limb is Diger instance encoding of 256 bit branch path to leaf with MSbits
+        always 256 == MaxSpan
+        limb calculated on leaf info said using tree specific digest code so
+        limb inhabits same hash space as all other parts of tree.
+        Leaf info said may use different digest algo from tree wide digest algo.
+        Because limb makes secure committment to leaf info there is no security
+        need to store leaf info said per leaf. It may be stored in separate
+        field map indexed by limb for convenience.
+       """
+LeafSaidage = namedtuple("LeafSaidage", "kith tuid said span limb")
+
+
+""" Other ser/des struct namedtuple classes
+Other structs for ser/des to from database (in memory or on disk) need to able
+to ser/des based on Clan Class name or isinstance of class
+
+See above about Saidive Structs saids field
+"""
+
+"""Nodage Doc String
+A Nodage instance holds the per node fields where values use the appropriate
+encoding depending on context.
+For computation each field value is a Matter instance that enables convenient
+access to the corresponding raw value of each instance.
+For compact in memory storage each field value is serialized as the corresponding
+.qb2 value of each instance.
+For archival (disk) storage the field values are serialized as the corresponding
+.qb64 value of each instance
+
+Nodage fields:
+    span is Number instance encoding 2 byte int of number of MSbits in node limb
+        min 0 for root to max of 255 = MaxSpan-1
+    limb is Diger instance encoding the 256 bits of which the MS (big endian)
+        span bits provide the child forks to node. Depth == limb span MSbits
+    left is Noncer instance of left child's Saidage:
+        node or leaf or empty (only root node children can be empty)
+    right is Noncer instance of right child's Saidage:
+        node or leaf or empty (only root node children can be empty)
+"""
+Nodage = namedtuple("Nodage", "span limb left right")
+
+"""Leafage Doc String
+A Leafage instance holds the per leaf fields where values use the appropriate
+encoding depending on context.
+For computation each field value is a Matter instance that enables convenient
+access to the corresponding raw value of each instance.
+For compact in memory storage each field value is serialized as the corresponding
+.qb2 value of each instance.
+For archival (disk) storage the field values are serialized as the corresponding
+.qb64 value of each instance
+
+Leafage Fields:
+    span is Number instance encoding 2 byte int of number of MSbits in leaf limb
+             always 256 == MaxSpan
+    limb is Diger instance encoding the 256 bits (big endian) of potential
+        child forks to leaf. All 256 bits are meaningful but for any leaf attached
+        to a given node only the MS node span+1 are used to address that leaf
+        The limb digest is computed on leaf infos said which said is bound to
+        actual leaf info. The info said algo may differ from the tree wide algo
+        used to compute node and leaf saids.
+"""
+Leafage = namedtuple("Leafage", "span limb")
+
+"""Partage Doc String
+Partage is namedtuple of tree part (node or leaf) of form (said, part).
+A Partage instance field values use the appropriate encoding depending on context.
+For computation each field value is a Matter instance that enables convenient
+access to the corresponding raw value of each instance.
+For compact in memory storage each field value is serialized as the corresponding
+.qb2 value of each instance.
+For archival (disk) storage the field values are serialized as the corresponding
+.qb64 value of each instance
+
+Partage fields:
+    said is Diger instance of said of full Saidage for part
+    part is either a Nodage or Leafage instance as appropriate for part
+"""
+Partage = namedtuple("Partage", "said part")
+
 
 # Following are not seals or attachments only used in database
 

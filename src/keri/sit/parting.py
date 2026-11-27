@@ -10,10 +10,6 @@ from collections import namedtuple
 
 from ..core import Noncer
 
-Emptier = Noncer(nonce="")  # empty string
-EmptyQb2 = Emptier.qb2
-EmptyQb64 = Emptier.qb64
-
 
 # kith is the data type string of part, i.e. ilk for node and leaf parts
 Kithage = namedtuple("Kithage", "node leaf")
@@ -90,7 +86,7 @@ Nodage fields:
     right is Noncer instance of right child's Saidage:
         node or leaf or empty (only root node children can be empty)
 """
-Nodage = namedtuple("Nodage", "span limb left right", defaults=(EmptyQb2, EmptyQb2))
+Nodage = namedtuple("Nodage", "span limb left right")
 
 """Leafage Doc String
 A Leafage instance holds the per leaf fields where values use the appropriate

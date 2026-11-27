@@ -257,8 +257,8 @@ class CounterCodex_2_0(IceMapDom):
     BigBoundStateSextuples: str = '--b'  # Big Bound Blinded transaction event state sextuples blid+uuid+said+state+bsnu+bsaid.
     TypedMediaQuadruples: str = '-c'  # Typed and Blinded IANA media type quadruples blid+uuid+type+media
     BigTypedMediaQuadruples: str = '--c'  # Big Type and Blinded IANA media type  quadruples blid+uuid+type+media
-    TypedStructs: str = '-d'  # Ilked structs with variable fields based on ilk, ilk+fields
-    BigTypedStructs: str = '--d'  # Ilked structs with variable fields based on ilk, ilk+fields
+    TypedStructs: str = '-d'  # Typed structs with leading tag field to determine others tag+fields
+    BigTypedStructs: str = '--d'  # Big typed structs with leading tag field to determine others tag+fields
 
     KERIACDCGenusVersion: str = '-_AAA'  # KERI ACDC Stack CESR Protocol Genus Version (Universal)
 

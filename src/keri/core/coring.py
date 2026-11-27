@@ -286,7 +286,7 @@ class MatterCodex:
     X25519_Cipher_Salt:   str = '1AAH'  # X25519 sealed box 100 char qb64 Cipher of 24 char qb64 Salt
     ECDSA_256r1N:         str = '1AAI'  # ECDSA secp256r1 verification key non-transferable, basic derivation.
     ECDSA_256r1:          str = '1AAJ'  # ECDSA secp256r1 verification or encryption key, basic derivation
-    Null:                 str = '1AAK'  # Null None or empty value
+    Null:                 str = '1AAK'  # Null or None
     No:                   str = '1AAL'  # No Falsey Boolean value
     Yes:                  str = '1AAM'  # Yes Truthy Boolean value
     Tag8:                 str = '1AAN'  # Tag8 8 B64 encoded chars for special values
@@ -2139,8 +2139,8 @@ class Tagger(Matter):
     Tagger is subclass of Matter, cryptographic material, for compact special
     fixed size primitive with non-empty soft part and empty raw part.
 
-    Tagger provides a more compact representation of small Base64 values in
-    as soft part of code rather than would be obtained by by using a small raw
+    Tagger provides a more compact representation of small Base64 values given
+    in soft part of code rather than would be obtained by by using a small raw
     part whose ASCII representation is converted to Base64.
 
     Attributes:

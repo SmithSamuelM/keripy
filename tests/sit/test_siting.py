@@ -11,8 +11,9 @@ import pytest
 from keri import Versionage
 from keri.core import (NumDex, Number, DigDex, Diger, NonceDex, Noncer, Ilker)
 from keri.sit import (Version, MaxSpan, MaxSpanBytes, Kithage, Kiths,
-                      NodeSaidage, Nodage, LeafSaidage, Leafage, Partage,
-                      Siter, Emptier, EmptyQb2, EmptyQb64)
+                      NodeSaidage, Nodage, LeafSaidage, Leafage, Partage, Siter)
+
+Emptier = Noncer(nonce="")  # empty string
 
 
 def test_siting_siter_class():
@@ -25,9 +26,6 @@ def test_siting_siter_class():
 
     assert isinstance(Kiths, Kithage)
     assert Kiths._asdict() == {'node': 'nod', 'leaf': 'lea'}
-
-    assert EmptyQb64 == '1AAP'
-    assert EmptyQb2 == b'\xd4\x00\x0f'
 
     assert Siter.Code == DigDex.Blake3_256
     assert Siter.Dummy == '#'
